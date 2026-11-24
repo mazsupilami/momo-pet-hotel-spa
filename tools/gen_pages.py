@@ -11,6 +11,9 @@ ADDR = "177 Tôn Thất Thuyết, Phường Khánh Hội, TP. Hồ Chí Minh"
 PHONE, PHONE_TEL = "0968 198 406", "0968198406"
 EMAIL = "xinchao@momopet.example"
 FACEBOOK = "https://www.facebook.com/profile.php?id=61597136690392"  # Facebook Page của Momo
+INSTAGRAM = "https://www.instagram.com/momo_suteki/"
+YOUTUBE = "https://www.youtube.com/@MomoPetHotelSpa"
+YOUTUBE_VIDEO = "BGgRwsH_8vE"  # video giới thiệu Momo trên kênh YouTube của shop
 MAP_Q = "177+T%C3%B4n+Th%E1%BA%A5t+Thuy%E1%BA%BFt,+Kh%C3%A1nh+H%E1%BB%99i,+H%E1%BB%93+Ch%C3%AD+Minh"
 
 
@@ -45,6 +48,8 @@ HEADER = f"""
       </div>
       <div class="topbar-social">
         <a href="{FACEBOOK}" target="_blank" rel="noopener" aria-label="Facebook">{ic('facebook')}</a>
+        <a href="{INSTAGRAM}" target="_blank" rel="noopener" aria-label="Instagram">{ic('instagram')}</a>
+        <a href="{YOUTUBE}" target="_blank" rel="noopener" aria-label="YouTube">{ic('youtube')}</a>
       </div>
     </div>
   </div>
@@ -77,6 +82,8 @@ FOOTER = f"""
           <p>Khách sạn và spa chăm sóc chó mèo tại Phường Khánh Hội, TP. Hồ Chí Minh. Chăm sóc chuẩn spa, yêu thương như ở nhà.</p>
           <div class="socials">
             <a href="{FACEBOOK}" target="_blank" rel="noopener" aria-label="Facebook">{ic('facebook')}</a>
+            <a href="{INSTAGRAM}" target="_blank" rel="noopener" aria-label="Instagram">{ic('instagram')}</a>
+            <a href="{YOUTUBE}" target="_blank" rel="noopener" aria-label="YouTube">{ic('youtube')}</a>
           </div>
         </div>
         <div>
@@ -447,6 +454,20 @@ page("about.html", "about", "Về chúng tôi",
       </div>
     </section>
 
+    <section class="section bg-ink">
+      <div class="container split">
+        <div>
+          <span class="eyebrow">Video giới thiệu</span>
+          <h2>Một vòng quanh Momo trong 30 giây</h2>
+          <p class="muted">Dịch vụ, bảng giá và gương mặt quen thuộc nhất tiệm. Theo dõi kênh YouTube của Momo để xem thêm video chăm sóc các bé.</p>
+          <a href="{YOUTUBE}" class="btn" target="_blank" rel="noopener">{ic('youtube')} Kênh YouTube của Momo</a>
+        </div>
+        <div class="embed">
+          <iframe src="https://www.youtube-nocookie.com/embed/{YOUTUBE_VIDEO}" title="Video YouTube: giới thiệu Momo Pet Hotel &amp; Spa" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+
     <section class="section bg-sand">
       <div class="container split">
         <div>
@@ -548,7 +569,7 @@ page("service.html", "service", "Chi tiết dịch vụ",
 page("bookings.html", "bookings", "Lịch hẹn của tôi",
      "Xem, sửa và hủy lịch hẹn chăm sóc thú cưng tại Momo Pet Hotel & Spa.",
      page_hero("svc-bath-2.jpg", "Lịch hẹn của tôi", "Lịch hẹn của tôi",
-               "Đổi ngày giờ, cập nhật cân nặng của bé hoặc hủy lịch. Lịch hẹn được lưu theo trình duyệt bạn đã dùng để đặt.") + f"""
+               "Đổi ngày giờ, cập nhật cân nặng của bé hoặc hủy lịch. Đăng nhập để xem lịch hẹn trên mọi thiết bị.") + f"""
     <section class="section">
       <div class="container">
         <div class="notice" id="db-notice" hidden></div>

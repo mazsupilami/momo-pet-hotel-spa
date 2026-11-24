@@ -113,3 +113,17 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Mọi ô mật khẩu có nút mắt hiện/ẩn; trang Đăng ký kiểm tra 2 mật khẩu khớp nhau.
 - Khôi phục mật khẩu: gửi email bằng `resetPasswordForEmail`, liên kết mở `reset-password.html` để đặt mật khẩu mới; liên kết sai hoặc hết hạn thì báo lỗi và cho gửi lại.
 - Một trang đăng nhập chung: admin vào trang Quản trị, khách vào trang Tài khoản.
+
+## Prompt 11 — Instagram, YouTube, test toàn bộ và deploy (25/11/2026)
+
+**Prompt**: Người dùng đã tạo Instagram (`momo_suteki`) và YouTube (`@MomoPetHotelSpa`), nhờ thêm logo, thông tin, bài đăng/video và thay link SNS trên website. Nhờ cấu hình URL Configuration, test website, database, mật khẩu, tạo tài khoản khách, đặt lịch, chức năng admin; nếu ổn thì deploy lên GitHub để chạy trên web.
+
+**Kết quả**:
+- Test trên máy: khách ẩn danh đặt lịch, đăng ký (lịch được giữ lại), sửa hồ sơ, đăng xuất, đăng nhập sai/đúng, sửa và hủy lịch, khách bị chặn ở trang Quản trị; admin đổi trạng thái, tìm kiếm, lọc, xóa. Sửa thông báo lỗi "mật khẩu mới trùng mật khẩu cũ" sang tiếng Việt.
+- Tạo repo Public `mazsupilami/momo-pet-hotel-spa`, push code, bật GitHub Pages: https://mazsupilami.github.io/momo-pet-hotel-spa/
+- Supabase URL Configuration: Site URL là link GitHub Pages; Redirect URLs gồm link GitHub Pages và `http://localhost:8000`.
+- Test lại trên website thật: đăng nhập, đặt, sửa, hủy lịch; gửi email khôi phục mật khẩu (Supabase ghi nhận đã gửi).
+- Instagram: ảnh đại diện logo Momo, tiểu sử, 3 bài đăng (giới thiệu, câu chuyện Momo, bảng giá).
+- YouTube: ảnh đại diện, ảnh bìa, mô tả kênh, 3 liên kết (website, Facebook, Instagram), video giới thiệu 30 giây tự dựng từ ảnh (https://youtu.be/BGgRwsH_8vE).
+- Website: nút Facebook, Instagram, YouTube trỏ đúng trang của shop; nhúng video giới thiệu của shop vào trang Về chúng tôi.
+- Viết `BAOCAO.md` kèm ảnh chụp màn hình trong `docs/screenshots/`.

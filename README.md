@@ -6,6 +6,8 @@ Website giới thiệu dịch vụ và đặt lịch của thương hiệu hư c
 
 - **Website**: https://mazsupilami.github.io/momo-pet-hotel-spa/
 - **Facebook**: https://www.facebook.com/profile.php?id=61597136690392
+- **Instagram**: https://www.instagram.com/momo_suteki/
+- **YouTube**: https://www.youtube.com/@MomoPetHotelSpa
 - **Báo cáo**: [BAOCAO.md](BAOCAO.md)
 
 ## Công nghệ
@@ -36,7 +38,8 @@ data/services.csv  Dữ liệu dịch vụ gốc
 supabase/schema.sql  Mã tạo bảng và quy tắc bảo mật
 supabase/update_images.sql  Đổi hình dịch vụ sang ảnh thật
 supabase/auth_admin.sql     Tài khoản khách, quản trị viên, trạng thái lịch hẹn
-tools/gen_pages.py          Sinh 8 trang HTML từ một mẫu header/footer chung
+tools/gen_pages.py          Sinh 12 trang HTML từ một mẫu header/footer chung
+docs/screenshots/           Ảnh chụp màn hình dùng trong BAOCAO.md
 ```
 
 ## Các file .md
