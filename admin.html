@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quản trị | Momo Pet Hotel &amp; Spa</title>
+  <meta name="description" content="Trang quản trị nội bộ của Momo Pet Hotel & Spa.">
+  <meta name="theme-color" content="#0E7C7B">
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo-mark.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261125b">
+</head>
+<body data-page="admin">
+  <header class="site-header admin-header">
+    <div class="container nav-wrap">
+      <a href="admin.html" class="brand"><img src="assets/img/logo.svg" alt="Momo Pet Hotel &amp; Spa - Trang quản trị" width="174" height="48"></a>
+      <span class="admin-badge"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#shield"/></svg> Trang quản trị</span>
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-small btn-outline"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#home"/></svg> Xem website</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="admin-head">
+      <div class="container">
+        <span class="eyebrow">Nội bộ</span>
+        <h1>Trang quản trị</h1>
+        <p class="muted">Quản lý lịch hẹn, bảng giá dịch vụ và đánh giá của khách. Chỉ tài khoản quản trị viên mới truy cập được.</p>
+      </div>
+    </section>
+    <section class="section tight">
+      <div class="container">
+        <div class="notice" id="db-notice" hidden></div>
+        <div id="admin-root"><p class="loading">Đang kiểm tra quyền truy cập…</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="admin-footer">
+    <div class="container">© 2026 Momo Pet Hotel &amp; Spa · Trang quản trị nội bộ · <a href="index.html">Về website</a></div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="assets/js/config.js?v=20261125b"></script>
+  <script src="assets/js/db.js?v=20261125b"></script>
+  <script src="assets/js/app.js?v=20261125b"></script>
+</body>
+</html>

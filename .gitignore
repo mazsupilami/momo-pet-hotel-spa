@@ -1,0 +1,6 @@
+superbase.txt
+supabase.txt
+*.env
+.env*
+.claude/
+__pycache__/
