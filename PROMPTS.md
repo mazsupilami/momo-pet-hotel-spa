@@ -127,3 +127,15 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - YouTube: ảnh đại diện, ảnh bìa, mô tả kênh, 3 liên kết (website, Facebook, Instagram), video giới thiệu 30 giây tự dựng từ ảnh (https://youtu.be/BGgRwsH_8vE).
 - Website: nút Facebook, Instagram, YouTube trỏ đúng trang của shop; nhúng video giới thiệu của shop vào trang Về chúng tôi.
 - Viết `BAOCAO.md` kèm ảnh chụp màn hình trong `docs/screenshots/`.
+
+## Prompt 12 — Admin có nên đặt lịch ở trang khách? (25/11/2026)
+
+**Prompt**: Gửi ảnh trang chi tiết dịch vụ khi đăng nhập tài khoản quản trị vẫn thấy form đặt lịch. Hỏi có đúng logic không, nhờ đánh giá có nên sửa.
+
+**Đánh giá**: chưa hợp lý. Lịch đặt từ form khách gắn với tài khoản admin, lẫn với lịch của khách; admin viết đánh giá cho chính tiệm cũng không nên. Nhu cầu thật là nhân viên đặt hộ khách gọi hotline, nên chức năng này thuộc trang Quản trị.
+
+**Kết quả**:
+- Admin vào trang chi tiết dịch vụ: form đặt lịch và form đánh giá được thay bằng thông báo và nút "Tạo lịch hẹn cho khách".
+- Trang Quản trị có tab "Tạo lịch hẹn": chọn dịch vụ, thông tin khách và thú cưng, ngày giờ, trạng thái (mặc định Đã xác nhận). Mở thẳng bằng `admin.html#tao-lich`.
+- Trang Lịch hẹn của tôi nhắc admin xem toàn bộ lịch ở trang Quản trị; sửa link đăng nhập cho khách sang `login.html`.
+- Đã test trên máy: tạo lịch hộ khách thành công, đã xóa lịch thử.

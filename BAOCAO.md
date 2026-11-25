@@ -89,6 +89,7 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 | Admin đổi trạng thái lịch hẹn | **UPDATE** | `bookings` | Quản trị |
 | Admin xóa lịch hẹn, xóa đánh giá | **DELETE** | `bookings`, `reviews` | Quản trị |
 | Admin sửa giá, chọn dịch vụ nổi bật | **UPDATE** | `services` | Quản trị |
+| Admin tạo lịch hộ khách gọi hotline | **INSERT** | `bookings` | Quản trị, tab Tạo lịch hẹn |
 
 ### 3.3. Tài khoản và quản trị
 
@@ -96,7 +97,8 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 - Một trang đăng nhập chung: admin đăng nhập xong vào trang Quản trị, khách vào trang Tài khoản.
 - Nút mắt hiện/ẩn mật khẩu ở mọi ô mật khẩu; trang Đăng ký kiểm tra hai mật khẩu khớp nhau.
 - Khôi phục mật khẩu qua email (`resetPasswordForEmail`).
-- Trang Quản trị: thống kê (tổng lịch, chờ xác nhận, lịch hôm nay, doanh thu dự kiến), tìm kiếm và lọc lịch hẹn, đổi trạng thái, xóa; sửa giá dịch vụ; xóa đánh giá.
+- Trang Quản trị: thống kê (tổng lịch, chờ xác nhận, lịch hôm nay, doanh thu dự kiến), tìm kiếm và lọc lịch hẹn, đổi trạng thái, xóa; tạo lịch hộ khách gọi hotline; sửa giá dịch vụ; xóa đánh giá.
+- Phân vai rõ ràng: admin không dùng form đặt lịch và form đánh giá của khách (lịch sẽ gắn sai tài khoản, đánh giá phải là của khách). Thay vào đó admin thấy thông báo và nút sang trang Quản trị.
 
 ### 3.4. Nhúng
 
@@ -150,6 +152,7 @@ Chi tiết từng prompt ở **[PROMPTS.md](PROMPTS.md)**. Tóm tắt:
 | 9 | Tách giao diện Admin, gộp đăng nhập | Header riêng cho Admin, phân luồng theo vai trò |
 | 10 | Hiện mật khẩu, tách Đăng nhập/Đăng ký, khôi phục mật khẩu | 4 trang xác thực mới, nút mắt, email khôi phục |
 | 11 | Instagram, YouTube, test toàn bộ, deploy | Test đạt, deploy GitHub Pages, Instagram 3 bài, YouTube ảnh bìa + video, báo cáo này |
+| 12 | Admin đăng nhập vẫn đặt lịch được, có đúng không? | Ẩn form đặt lịch/đánh giá với admin, thêm tab Tạo lịch hẹn hộ khách trong Quản trị |
 
 ## Đối chiếu tiêu chí chấm
 

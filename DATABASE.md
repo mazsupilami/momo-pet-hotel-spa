@@ -81,6 +81,7 @@ Hàm `is_admin()` trả về `true` nếu người đang đăng nhập có trong
 | Đổi mật khẩu | Supabase Auth | `DB.changePassword` |
 | Gửi email khôi phục mật khẩu | Supabase Auth | `DB.sendPasswordReset` |
 | Admin: xem mọi lịch hẹn | select `bookings` | `DB.adminGetBookings` |
+| Admin: tạo lịch hộ khách | **insert** `bookings` | `DB.adminCreateBooking` |
 | Admin: đổi trạng thái lịch | **update** `bookings` | `DB.adminSetStatus` |
 | Admin: xóa lịch hẹn | **delete** `bookings` | `DB.adminDeleteBooking` |
 | Admin: sửa giá, dịch vụ nổi bật | **update** `services` | `DB.adminUpdateService` |

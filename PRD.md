@@ -60,6 +60,9 @@ Mọi trang có chung header và footer, trong đó có đủ link tới các tr
 | F12 | Quản trị: sửa giá, chọn dịch vụ nổi bật | **update** | `services` |
 | F13 | Khôi phục mật khẩu qua email | Supabase Auth | `auth.users` |
 | F14 | Nút mắt hiện/ẩn mật khẩu ở mọi ô mật khẩu | — | — |
+| F15 | Quản trị: tạo lịch hẹn hộ khách gọi hotline hoặc đến tiệm, chọn sẵn trạng thái | **insert** | `bookings` |
+
+**Quy tắc vai trò**: tài khoản quản trị không dùng form đặt lịch và form đánh giá dành cho khách (hai form được thay bằng thông báo và link sang trang Quản trị). Admin đặt lịch hộ khách trong tab "Tạo lịch hẹn" của trang Quản trị.
 
 ## 5. Yêu cầu khác
 

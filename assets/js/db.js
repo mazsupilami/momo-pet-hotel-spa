@@ -277,6 +277,14 @@
       return data;
     },
 
+    // INSERT bookings do admin tạo hộ khách gọi điện (có thể đặt sẵn trạng thái)
+    async adminCreateBooking(booking) {
+      requireDb();
+      const { data, error } = await sb.from("bookings").insert(booking).select("*, services(id, name, price, unit)").single();
+      if (error) throw new Error("Không tạo được lịch hẹn: " + error.message);
+      return data;
+    },
+
     // UPDATE bookings.status (chỉ admin)
     async adminSetStatus(id, status) {
       requireDb();

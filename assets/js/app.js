@@ -236,8 +236,21 @@
     $("#booking-section").hidden = false;
     showDbNotice();
 
+    const isAdmin = await DB.isAdmin();
+    if (isAdmin) {
+      const bookPanel = $("#dat-lich");
+      bookPanel.querySelector("form").remove();
+      bookPanel.querySelector("p.muted").outerHTML = `
+        <div class="notice">${ic("shield")} Bạn đang đăng nhập bằng <strong>tài khoản quản trị</strong>. Form này dành cho khách tự đặt lịch.</div>
+        <p class="muted">Khách gọi hotline hoặc đến tiệm? Hãy tạo lịch hộ khách trong trang Quản trị.</p>
+        <a class="btn btn-brand" href="admin.html#tao-lich">${ic("calendar")} Tạo lịch hẹn cho khách</a>`;
+      const rf = $("#review-form");
+      rf.outerHTML = `<p class="notice" style="margin-top:20px">${ic("shield")} Tài khoản quản trị không viết đánh giá. Bạn có thể xóa đánh giá không phù hợp trong trang <a href="admin.html">Quản trị</a>.</p>`;
+    }
+
     // Form đặt lịch (INSERT bookings)
     const form = $("#booking-form");
+    if (form) {
     form.booking_date.min = todayISO();
     form.booking_date.value = todayISO();
     form.booking_time.innerHTML = timeOptions("09:00");
@@ -276,6 +289,8 @@
       }
     });
 
+    }
+
     // Đánh giá (SELECT + INSERT reviews)
     const reviewList = $("#review-list");
     async function loadReviews() {
@@ -298,7 +313,7 @@
     loadReviews();
 
     const reviewForm = $("#review-form");
-    reviewForm.addEventListener("submit", async (e) => {
+    if (reviewForm) reviewForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!reviewForm.reportValidity()) return;
       const review = {
@@ -321,11 +336,15 @@
   // ---------- Lịch hẹn của tôi: xem, sửa (UPDATE), hủy (DELETE) ----------
   async function initBookings() {
     showDbNotice();
-    DB.getAuth().then((auth) => {
+    DB.getAuth().then(async (auth) => {
       const el = $("#db-notice");
-      if (el && DB.isConfigured() && !auth.loggedIn) {
+      if (!el || !DB.isConfigured()) return;
+      if (!auth.loggedIn) {
         el.hidden = false;
-        el.innerHTML = 'Bạn đang dùng phiên khách nên lịch hẹn chỉ hiện trên trình duyệt này. <a href="account.html">Đăng nhập hoặc tạo tài khoản</a> để xem lịch trên mọi thiết bị.';
+        el.innerHTML = 'Bạn đang dùng phiên khách nên lịch hẹn chỉ hiện trên trình duyệt này. <a href="login.html">Đăng nhập</a> hoặc <a href="register.html">tạo tài khoản</a> để xem lịch trên mọi thiết bị.';
+      } else if (await DB.isAdmin()) {
+        el.hidden = false;
+        el.innerHTML = `${ic("shield")} Đây là trang lịch hẹn của khách. Toàn bộ lịch hẹn của tiệm nằm trong <a href="admin.html">trang Quản trị</a>.`;
       }
     });
     const list = $("#booking-list");
@@ -670,6 +689,7 @@
           <button type="button" role="tab" data-tab="bookings" aria-selected="true">Lịch hẹn</button>
           <button type="button" role="tab" data-tab="services" aria-selected="false">Dịch vụ &amp; giá</button>
           <button type="button" role="tab" data-tab="reviews" aria-selected="false">Đánh giá</button>
+          <button type="button" role="tab" data-tab="create" aria-selected="false">${ic("calendar")} Tạo lịch hẹn</button>
         </div>
         <div id="admin-panel"><p class="loading">Đang tải dữ liệu…</p></div>`;
 
@@ -832,7 +852,62 @@
         });
       }
 
-      const views = { bookings: bookingsView, services: servicesView, reviews: reviewsView };
+      // Tạo lịch hẹn hộ khách gọi điện hoặc đến tiệm (INSERT bookings)
+      function createView() {
+        panel.innerHTML = `
+          <form class="panel" id="admin-create" novalidate style="max-width:820px">
+            <h2>Tạo lịch hẹn cho khách</h2>
+            <p class="muted">Dùng khi khách gọi hotline hoặc đến trực tiếp. Lịch được lưu dưới tài khoản quản trị và hiện ngay trong tab Lịch hẹn.</p>
+            <div class="form-grid">
+              <div class="field full"><label for="ac-service">Dịch vụ</label><select id="ac-service" name="service_id" required>${services
+                .map((s) => `<option value="${Number(s.id)}">${esc(s.name)} — ${money(s.price)} / ${esc(s.unit)}</option>`)
+                .join("")}</select></div>
+              <div class="field"><label for="ac-name">Tên khách</label><input id="ac-name" name="owner_name" required maxlength="60"></div>
+              <div class="field"><label for="ac-phone">Số điện thoại</label><input id="ac-phone" name="phone" type="tel" required pattern="[0-9+ ]{8,15}" maxlength="15"></div>
+              <div class="field"><label for="ac-pet">Tên thú cưng</label><input id="ac-pet" name="pet_name" required maxlength="40"></div>
+              <div class="field"><label for="ac-type">Loài</label><select id="ac-type" name="pet_type"><option>Chó</option><option>Mèo</option><option>Khác</option></select></div>
+              <div class="field"><label for="ac-weight">Cân nặng (kg)</label><input id="ac-weight" name="pet_weight" type="number" required min="0.1" max="99" step="0.1"></div>
+              <div class="field"><label for="ac-status">Trạng thái</label><select id="ac-status" name="status">${Object.entries(STATUS)
+                .map(([k, v]) => `<option value="${k}"${k === "confirmed" ? " selected" : ""}>${v}</option>`)
+                .join("")}</select></div>
+              <div class="field"><label for="ac-date">Ngày hẹn</label><input id="ac-date" name="booking_date" type="date" required min="${todayISO()}" value="${todayISO()}"></div>
+              <div class="field"><label for="ac-time">Giờ hẹn</label><select id="ac-time" name="booking_time">${timeOptions("09:00")}</select></div>
+              <div class="field full"><label for="ac-note">Ghi chú</label><input id="ac-note" name="note" maxlength="300" placeholder="Ví dụ: khách gọi hotline, bé sợ máy sấy"></div>
+            </div>
+            <div class="form-actions"><button type="submit" class="btn">${ic("calendar")} Tạo lịch hẹn</button></div>
+          </form>`;
+        const f = $("#admin-create");
+        f.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          if (!f.reportValidity()) return;
+          if (f.booking_date.value < todayISO()) return toast("Ngày hẹn không được ở trong quá khứ.", true);
+          const booking = {
+            service_id: Number(f.service_id.value),
+            owner_name: f.owner_name.value.trim(),
+            phone: f.phone.value.trim(),
+            pet_name: f.pet_name.value.trim(),
+            pet_type: f.pet_type.value,
+            pet_weight: Number(f.pet_weight.value),
+            booking_date: f.booking_date.value,
+            booking_time: f.booking_time.value,
+            note: f.note.value.trim() || null,
+            status: f.status.value,
+          };
+          try {
+            const created = await withButton(f.querySelector('button[type="submit"]'), "Đang tạo…", () => DB.adminCreateBooking(booking));
+            bookings.unshift(created);
+            renderStats();
+            toast(`Đã tạo lịch cho bé ${booking.pet_name} lúc ${booking.booking_time} ngày ${dateVN(booking.booking_date)}.`);
+            f.reset();
+            f.booking_date.value = todayISO();
+            f.status.value = "confirmed";
+          } catch (err) {
+            toast(err.message, true);
+          }
+        });
+      }
+
+      const views = { bookings: bookingsView, services: servicesView, reviews: reviewsView, create: createView };
       root.querySelector(".tabs").addEventListener("click", (e) => {
         const b = e.target.closest("button[data-tab]");
         if (!b) return;
@@ -840,6 +915,11 @@
         root.querySelectorAll(".tabs button").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
         views[tab]();
       });
+
+      if (location.hash === "#tao-lich") {
+        tab = "create";
+        root.querySelectorAll(".tabs button").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.tab === "create")));
+      }
 
       try {
         [bookings, services, reviews] = await Promise.all([DB.adminGetBookings(), DB.getServices(true), DB.adminGetReviews()]);

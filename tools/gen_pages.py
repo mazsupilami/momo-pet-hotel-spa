@@ -34,7 +34,7 @@ def head(title, desc):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261125b">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261125c">
 </head>"""
 
 
@@ -129,9 +129,9 @@ FOOTER = f"""
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script src="assets/js/config.js?v=20261125b"></script>
-  <script src="assets/js/db.js?v=20261125b"></script>
-  <script src="assets/js/app.js?v=20261125b"></script>
+  <script src="assets/js/config.js?v=20261125c"></script>
+  <script src="assets/js/db.js?v=20261125c"></script>
+  <script src="assets/js/app.js?v=20261125c"></script>
 </body>
 </html>
 """
