@@ -65,6 +65,10 @@ Website có 14 trang. Tất cả các trang khách dùng chung header (menu) và
 |---|---|
 | ![Quên mật khẩu](docs/screenshots/forgot-password.png) | ![Quản trị](docs/screenshots/admin.jpg) |
 
+| Cẩm nang | Bài viết |
+|---|---|
+| ![Cẩm nang](docs/screenshots/cam-nang.png) | ![Bài viết](docs/screenshots/bai-viet.png) |
+
 ## 3. Các chức năng được thực hiện
 
 ### 3.1. Database Supabase

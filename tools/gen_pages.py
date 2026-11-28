@@ -560,7 +560,7 @@ page("about.html", "about", "Về chúng tôi",
 page("services.html", "services", "Dịch vụ & Bảng giá",
      "Các gói spa, khách sạn và combo chăm sóc chó mèo tại Momo Pet Hotel & Spa, Khánh Hội.",
      page_hero("room-deluxe.jpg", "Dịch vụ &amp; Bảng giá", "Dịch vụ &amp; Bảng giá",
-               "Spa, khách sạn và combo cho chó mèo. Chọn một gói để xem chi tiết và đặt lịch trực tuyến.") + f"""
+               "Spa, khách sạn, combo và dịch vụ tại nhà cho chó mèo. Chọn một gói để xem chi tiết và đặt lịch trực tuyến.") + f"""
     <section class="section">
       <div class="container">
         <div class="filters" id="filters" role="group" aria-label="Lọc theo nhóm dịch vụ"></div>
