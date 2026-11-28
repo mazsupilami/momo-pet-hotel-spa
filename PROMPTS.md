@@ -245,3 +245,4 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Trang Lịch hẹn: hiện khoảng ngày, số đêm, chế độ ăn, thuốc, tạm tính; sửa được ngày trả. Quản trị: cột ngày hiện khoảng ngày, doanh thu tính theo số đêm/ngày và cân nặng, "Lịch hôm nay" gồm bé đang lưu trú; tab Tạo lịch có ngày trả. Telegram và nút thêm vào lịch hiện khoảng ngày.
 - Chưa chạy SQL thì lịch vẫn lưu được, thông tin ngày trả, ăn, thuốc được ghi vào ghi chú.
 - Không làm quản lý phòng trống (ghi vào hướng phát triển).
+- Sau khi người dùng chạy `stay_dates.sql` và deploy lại `notify-booking`: đặt thử Phòng Deluxe 01/12 → 07/12 (6 đêm), bé 15 kg. Trang Lịch hẹn hiện đúng khoảng ngày, chế độ ăn, thuốc (lưu ở cột riêng, không còn ghi vào ghi chú), tạm tính 1.966.000đ; Telegram nhận tin (log POST 200). Đã hủy lịch thử.

@@ -166,6 +166,7 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 | Chatbot trả lời 14 câu hỏi mẫu (giá, đặt lịch, giờ mở cửa, đưa đón, cân nặng, mèo, khách sạn…) | Đạt |
 | Chatbot AI (Gemini): tính giá theo cân nặng, áp ưu đãi lưu trú, từ chối câu lạc đề, nhớ ngữ cảnh; trang lạ gọi function bị chặn | Đạt |
 | Đặt lịch mới, database gọi `notify-booking`, Telegram nhận tin (log POST 200) | Đạt |
+| Đặt Phòng Deluxe 6 đêm: lưu ngày trả, chế độ ăn, thuốc; tạm tính 1.966.000đ (đã giảm 10%); Telegram nhận tin | Đạt |
 | Thanh dọc hiện đủ icon Zalo, Messenger, Gọi; số điện thoại là link gọi | Đạt |
 | Pop-up sau 3 giây; dàn thú cưng hiện chú thích khi rê chuột; Cẩm nang lọc theo chủ đề, mở bài viết | Đạt |
 
