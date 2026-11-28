@@ -771,3 +771,44 @@ textarea { resize: vertical; min-height: 90px; }
   .mega-col a small { display: none; }
   .mega-title { border: 0; padding: 6px 0 0; margin: 0; }
 }
+
+/* ---------- Thời tiết ---------- */
+.weather { margin-top: 22px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 28px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px 22px; }
+.weather-now { display: flex; align-items: center; gap: 16px; }
+.weather-temp { font-size: 2.2rem; font-weight: 800; color: var(--accent); line-height: 1; }
+.weather-now strong { display: block; }
+.weather-now small { color: var(--muted); }
+.weather-tip { margin: 0; flex: 1 1 320px; color: var(--ink); display: flex; gap: 8px; align-items: flex-start; }
+.weather-tip .i { color: var(--brand); flex: none; margin-top: 3px; width: 18px; height: 18px; }
+
+/* ---------- Đưa đón ---------- */
+.check { display: flex; gap: 10px; align-items: center; font-weight: 600; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--brand); }
+.pickup-box { margin-top: 10px; background: var(--bg); border-radius: 12px; padding: 14px; }
+.pickup-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.pickup-row input { flex: 1 1 260px; }
+.pickup-result { margin: 10px 0 0; font-size: .92rem; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.pickup-result .i { width: 16px; height: 16px; color: var(--brand); }
+.pickup-result.error { color: #b42318; }
+
+/* ---------- Captcha, đặt lịch xong, thêm vào lịch ---------- */
+.captcha { margin: 16px 0 4px; min-height: 65px; }
+.captcha[hidden] { display: none; }
+.booking-done { margin-top: 20px; border: 1px solid var(--brand); background: var(--brand-soft); border-radius: var(--radius-lg); padding: 20px; }
+.booking-done h3 { display: flex; gap: 8px; align-items: center; color: var(--brand-dark); margin: 0 0 6px; }
+.booking-done h3 .i { width: 22px; height: 22px; }
+.cal-links { display: inline-flex; flex-wrap: wrap; gap: 8px; }
+.cal-links .i { width: 16px; height: 16px; }
+
+/* ---------- Đánh giá có xác thực, ảnh bé ---------- */
+.verified { display: inline-flex; align-items: center; gap: 4px; font-size: .78rem; font-weight: 700; color: var(--brand-dark); background: var(--brand-soft); padding: 2px 8px; border-radius: 999px; }
+.verified .i { width: 13px; height: 13px; }
+.review-head { flex-wrap: wrap; gap: 8px; }
+.review-photo { display: block; margin-top: 10px; width: 160px; height: 120px; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); }
+.photo-preview { display: block; margin-top: 10px; max-width: 200px; max-height: 150px; border-radius: 12px; object-fit: cover; }
+.review-gate .notice a, .review-gate a { font-weight: 700; }
+
+/* ---------- Quản trị trực tiếp ---------- */
+.live { display: inline-flex; align-items: center; gap: 8px; font-size: .85rem; font-weight: 700; color: var(--brand-dark); margin: 0 0 12px; }
+.live-dot { width: 9px; height: 9px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 0 rgba(34, 197, 94, .6); animation: live-pulse 1.6s infinite; }
+@keyframes live-pulse { 70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }

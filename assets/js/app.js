@@ -6,7 +6,7 @@
   // ---------- Tiện ích ----------
   const esc = (v) =>
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128h#${name}"/></svg>`;
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128j#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
   // Phụ thu theo cân nặng: dưới 10 kg giá niêm yết, 10–20 kg +30%, trên 20 kg +60%
   const WEIGHT_TIERS = [1, 1.3, 1.6];
@@ -200,11 +200,238 @@
     });
   }
 
+
+  // ---------- Cấu hình chung ----------
+  const CFG = window.APP_CONFIG || {};
+  const STORE = { lat: Number(CFG.STORE_LAT) || 10.7545, lon: Number(CFG.STORE_LON) || 106.7075 };
+  const STORE_ADDR = "177 Tôn Thất Thuyết, Phường Khánh Hội, TP. Hồ Chí Minh";
+
+  // ---------- Captcha chống spam (Cloudflare Turnstile) ----------
+  let turnstileLoading = null;
+  function loadTurnstile() {
+    if (!turnstileLoading)
+      turnstileLoading = new Promise((resolve, reject) => {
+        const sc = document.createElement("script");
+        sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+        sc.async = true;
+        sc.onload = () => resolve(window.turnstile);
+        sc.onerror = () => reject(new Error("Không tải được captcha."));
+        document.head.append(sc);
+      });
+    return turnstileLoading;
+  }
+  // Gắn captcha vào form (ô [data-captcha]). Không cấu hình khóa thì trả về token null, form chạy như cũ.
+  function mountCaptcha(form) {
+    const box = form && form.querySelector("[data-captcha]");
+    if (!CFG.TURNSTILE_SITE_KEY || !box) return { token: () => null, reset() {} };
+    box.hidden = false;
+    let token = null;
+    let id = null;
+    loadTurnstile()
+      .then((ts) => {
+        id = ts.render(box, {
+          sitekey: CFG.TURNSTILE_SITE_KEY,
+          language: "vi",
+          callback: (t) => (token = t),
+          "expired-callback": () => (token = null),
+        });
+      })
+      .catch(() => (box.textContent = "Không tải được captcha, vui lòng tải lại trang."));
+    return {
+      token() {
+        if (!token) throw new Error('Vui lòng tích ô xác nhận "Tôi không phải robot".');
+        return token;
+      },
+      reset() {
+        token = null;
+        if (id !== null && window.turnstile) window.turnstile.reset(id);
+      },
+    };
+  }
+
+  // ---------- Thêm vào lịch (Google Calendar, file .ics) ----------
+  function calendarLinks(b, serviceName) {
+    const [y, m, d] = String(b.booking_date).split("-").map(Number);
+    const [hh, mm] = String(b.booking_time).split(":").map(Number);
+    // Giờ Việt Nam (UTC+7) -> UTC
+    const start = new Date(Date.UTC(y, m - 1, d, hh - 7, mm));
+    const end = new Date(start.getTime() + 60 * 60000);
+    const fmt = (dt) => dt.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+    const title = `Momo Pet: ${serviceName} cho bé ${b.pet_name}`;
+    const details = `Lịch hẹn tại Momo Pet Hotel & Spa. Mang theo sổ tiêm phòng của bé. Hotline/Zalo 0968 198 406.`;
+    const g = new URL("https://calendar.google.com/calendar/render");
+    g.searchParams.set("action", "TEMPLATE");
+    g.searchParams.set("text", title);
+    g.searchParams.set("dates", `${fmt(start)}/${fmt(end)}`);
+    g.searchParams.set("details", details);
+    g.searchParams.set("location", STORE_ADDR);
+    const icsText = (t) => String(t).replace(/([,;\\])/g, "\\$1");
+    const ics = [
+      "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Momo Pet Hotel & Spa//VI", "BEGIN:VEVENT",
+      `UID:momo-${b.id || Date.now()}@momo-pet`, `DTSTAMP:${fmt(new Date())}`, `DTSTART:${fmt(start)}`, `DTEND:${fmt(end)}`,
+      `SUMMARY:${icsText(title)}`, `DESCRIPTION:${icsText(details)}`, `LOCATION:${icsText(STORE_ADDR)}`,
+      "BEGIN:VALARM", "TRIGGER:-PT2H", "ACTION:DISPLAY", "DESCRIPTION:Sắp đến giờ hẹn ở Momo", "END:VALARM",
+      "END:VEVENT", "END:VCALENDAR",
+    ].join("\r\n");
+    const icsHref = "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
+    return `<span class="cal-links">
+      <a class="btn btn-small btn-outline" href="${esc(g.toString())}" target="_blank" rel="noopener">${ic("calendar")} Google Calendar</a>
+      <a class="btn btn-small btn-outline" href="${icsHref}" download="momo-lich-hen.ics">${ic("calendar")} Tải file .ics</a>
+    </span>`;
+  }
+
+  // ---------- Đưa đón: tính khoảng cách bằng OpenStreetMap (Nominatim + OSRM) ----------
+  const pickupFee = (km) => (km <= 3 ? 0 : Math.ceil(km - 3) * 10000);
+  async function geocodeAddress(addr) {
+    // Thử lần lượt: đủ địa chỉ, bỏ số nhà, chỉ tên đường (tên phường mới có thể chưa có trên bản đồ)
+    const noNumber = addr.replace(/^\s*[\d\/\-]+[a-zA-Z]?\s*/, "");
+    const tries = [...new Set([addr, noNumber, noNumber.split(",")[0].trim()])].filter((q) => q.length >= 3);
+    for (const q of tries) {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=vn&accept-language=vi&viewbox=106.55,10.95,106.90,10.60&bounded=1&q=${encodeURIComponent(q + ", Thành phố Hồ Chí Minh")}`;
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const [hit] = await res.json();
+      if (hit) return { lat: Number(hit.lat), lon: Number(hit.lon), label: hit.display_name };
+    }
+    throw new Error("Không tìm thấy địa chỉ. Hãy ghi rõ tên đường và phường.");
+  }
+  async function reverseGeocode(lat, lon) {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&accept-language=vi&lat=${lat}&lon=${lon}`);
+    const j = res.ok ? await res.json() : null;
+    return j && j.display_name ? j.display_name.split(",").slice(0, 3).join(",") : `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+  }
+  async function routeKm(lat, lon) {
+    const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${STORE.lon},${STORE.lat};${lon},${lat}?overview=false`);
+    const j = res.ok ? await res.json() : null;
+    if (!j || j.code !== "Ok" || !j.routes.length) throw new Error("Không tính được quãng đường, vui lòng thử lại.");
+    return j.routes[0].distance / 1000;
+  }
+  function setupPickup(form) {
+    const box = $("#pickup-box");
+    const out = $("#pickup-result");
+    if (!box) return () => null;
+    let info = null;
+    const show = (html, err = false) => {
+      out.innerHTML = html;
+      out.classList.toggle("error", err);
+    };
+    form.pickup.addEventListener("change", () => {
+      box.hidden = !form.pickup.checked;
+      if (form.pickup.checked) form.pickup_address.focus();
+    });
+    form.pickup_address.addEventListener("input", () => (info = null));
+    async function calcFrom(lat, lon, address) {
+      const km = await routeKm(lat, lon);
+      if (km > 15) {
+        info = null;
+        show(`Địa chỉ cách tiệm khoảng <strong>${km.toFixed(1)} km</strong>, ngoài khu vực đưa đón. Vui lòng nhắn <a href="${ZALO_URL}" target="_blank" rel="noopener">Zalo</a> để lễ tân sắp xếp.`, true);
+        return null;
+      }
+      const fee = pickupFee(km);
+      info = { km, fee, address };
+      show(`${ic("pin")} Cách tiệm khoảng <strong>${km.toFixed(1)} km</strong> · Phí đưa đón: <strong>${fee ? money(fee) : "Miễn phí"}</strong> (mỗi chiều)`);
+      return info;
+    }
+    $("#pickup-calc").addEventListener("click", async (e) => {
+      const addr = form.pickup_address.value.trim();
+      if (addr.length < 5) return show("Nhập địa chỉ đón bé trước.", true);
+      try {
+        await withButton(e.currentTarget, "Đang tính…", async () => {
+          const g = await geocodeAddress(addr);
+          await calcFrom(g.lat, g.lon, addr);
+        });
+      } catch (err) {
+        show(esc(err.message), true);
+      }
+    });
+    $("#pickup-geo").addEventListener("click", (e) => {
+      if (!navigator.geolocation) return show("Trình duyệt không hỗ trợ lấy vị trí.", true);
+      const btn = e.currentTarget;
+      btn.disabled = true;
+      show("Đang lấy vị trí của bạn…");
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          try {
+            const { latitude: lat, longitude: lon } = pos.coords;
+            const address = await reverseGeocode(lat, lon);
+            form.pickup_address.value = address.slice(0, 120);
+            await calcFrom(lat, lon, form.pickup_address.value);
+          } catch (err) {
+            show(esc(err.message), true);
+          }
+          btn.disabled = false;
+        },
+        () => {
+          btn.disabled = false;
+          show("Không lấy được vị trí. Bạn hãy cho phép truy cập vị trí hoặc nhập địa chỉ.", true);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    });
+    // Trả về thông tin đưa đón khi gửi form (tự tính nếu khách chưa bấm "Tính phí").
+    return async () => {
+      if (!form.pickup.checked) return null;
+      const addr = form.pickup_address.value.trim();
+      if (addr.length < 5) throw new Error("Vui lòng nhập địa chỉ đón bé.");
+      if (info && info.address === addr) return info;
+      const g = await geocodeAddress(addr);
+      const r = await calcFrom(g.lat, g.lon, addr);
+      if (!r) throw new Error("Địa chỉ ngoài khu vực đưa đón, vui lòng nhắn Zalo.");
+      return r;
+    };
+  }
+
+  // ---------- Thời tiết TP.HCM (Open-Meteo, không cần khóa) ----------
+  const WEATHER_TEXT = (c) =>
+    c === 0 ? "Trời quang" : c <= 2 ? "Ít mây" : c === 3 ? "Nhiều mây" : c <= 48 ? "Sương mù" : c <= 57 ? "Mưa phùn" : c <= 67 ? "Có mưa" : c <= 82 ? "Mưa rào" : "Có dông";
+  async function initWeather() {
+    const box = $("#weather");
+    if (!box) return;
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${STORE.lat}&longitude=${STORE.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,precipitation&daily=uv_index_max,precipitation_probability_max&timezone=Asia%2FHo_Chi_Minh&forecast_days=1`;
+      const res = await fetch(url);
+      if (!res.ok) return;
+      const w = await res.json();
+      const c = w.current;
+      const uv = w.daily.uv_index_max[0];
+      const rain = w.daily.precipitation_probability_max[0];
+      const code = Number(c.weather_code);
+      let tip;
+      if (c.precipitation > 0 || code >= 51) tip = "Trời mưa: lau khô lông và bàn chân bé sau khi ra ngoài. Xe đưa đón của Momo có áo mưa cho bé.";
+      else if (c.apparent_temperature >= 35) tip = 'Nắng nóng: dắt bé đi dạo trước 9:00 hoặc sau 17:00, luôn mang theo nước. <a href="bai-viet.html?slug=giu-be-mat-me-mua-nang-nong">Xem mẹo giữ bé mát mẻ</a>';
+      else if (uv >= 8) tip = "Chỉ số UV cao: tránh cho bé ra nắng gắt buổi trưa, nhất là bé lông trắng, lông ngắn.";
+      else if (rain >= 60) tip = "Chiều nay dễ có mưa: nên đặt lịch spa buổi sáng hoặc chọn đưa đón tận nhà.";
+      else tip = "Thời tiết dễ chịu, rất hợp để dắt bé đi dạo.";
+      box.innerHTML = `
+        <div class="weather-now"><span class="weather-temp">${Math.round(c.temperature_2m)}°C</span>
+          <span><strong>Sài Gòn hôm nay · ${WEATHER_TEXT(code)}</strong><small>Cảm giác như ${Math.round(c.apparent_temperature)}°C · Độ ẩm ${c.relative_humidity_2m}% · UV ${Math.round(uv)} · Khả năng mưa ${rain}%</small></span></div>
+        <p class="weather-tip">${ic("paw")} ${tip}</p>`;
+      box.hidden = false;
+    } catch {
+      /* Không có thời tiết thì ẩn khung, không ảnh hưởng trang */
+    }
+  }
+
+  // Âm báo ngắn cho trang Quản trị khi có lịch mới
+  function ding() {
+    try {
+      const a = new (window.AudioContext || window.webkitAudioContext)();
+      const o = a.createOscillator();
+      const g = a.createGain();
+      o.frequency.value = 880;
+      g.gain.setValueAtTime(0.15, a.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + 0.5);
+      o.connect(g).connect(a.destination);
+      o.start();
+      o.stop(a.currentTime + 0.5);
+    } catch {}
+  }
+
   // ---------- Cẩm nang (data/articles.json) ----------
   let articlesCache = null;
   async function getArticles() {
     if (!articlesCache) {
-      const res = await fetch("data/articles.json?v=20261128h");
+      const res = await fetch("data/articles.json?v=20261128j");
       if (!res.ok) throw new Error("Không tải được bài viết.");
       articlesCache = (await res.json()).sort((a, b) => b.date.localeCompare(a.date));
     }
@@ -269,6 +496,7 @@
 
   // ---------- Trang chủ ----------
   async function initHome() {
+    initWeather();
     const services = await DB.getServices();
     $("#featured-services").innerHTML = services.filter((s) => s.is_featured).slice(0, 4).map(serviceCard).join("");
     const latest = $("#latest-articles");
@@ -383,6 +611,8 @@
     // Form đặt lịch (INSERT bookings)
     const form = $("#booking-form");
     if (form) {
+    const cap = (await DB.hasSession()) ? { token: () => null, reset() {} } : mountCaptcha(form);
+    const getPickup = setupPickup(form);
     form.booking_date.min = todayISO();
     form.booking_date.value = todayISO();
     form.booking_time.innerHTML = timeOptions("09:00");
@@ -398,6 +628,16 @@
       e.preventDefault();
       if (!form.reportValidity()) return;
       if (form.booking_date.value < todayISO()) return toast("Ngày hẹn không được ở trong quá khứ.", true);
+      let pickup = null;
+      let captchaToken = null;
+      try {
+        pickup = await getPickup();
+        captchaToken = (await DB.hasSession()) ? null : cap.token();
+      } catch (err) {
+        return toast(err.message, true);
+      }
+      const noteParts = [form.note.value.trim()];
+      if (pickup) noteParts.push(`Đưa đón: ${pickup.address} (~${pickup.km.toFixed(1)} km, phí ${pickup.fee ? money(pickup.fee) : "miễn phí"}/chiều)`);
       const booking = {
         service_id: service.id,
         owner_name: form.owner_name.value.trim(),
@@ -407,11 +647,21 @@
         pet_weight: Number(form.pet_weight.value),
         booking_date: form.booking_date.value,
         booking_time: form.booking_time.value,
-        note: form.note.value.trim() || null,
+        note: noteParts.filter(Boolean).join(" | ").slice(0, 300) || null,
       };
       try {
-        await withButton(form.querySelector("button[type=submit]"), "Đang đặt lịch…", () => DB.createBooking(booking));
+        const saved = await withButton(form.querySelector("button[type=submit]"), "Đang đặt lịch…", () => DB.createBooking(booking, captchaToken));
         toast(`Đã đặt lịch cho bé ${booking.pet_name} lúc ${booking.booking_time} ngày ${dateVN(booking.booking_date)}.`);
+        const auth = await DB.getAuth();
+        const done = $("#booking-done");
+        done.innerHTML = `
+          <h3>${ic("check")} Đã nhận lịch hẹn của bé ${esc(booking.pet_name)}</h3>
+          <p>${esc(service.name)} · ${booking.booking_time} ngày ${dateVN(booking.booking_date)}${pickup ? ` · Đưa đón ${pickup.fee ? money(pickup.fee) : "miễn phí"}/chiều` : ""}. Lễ tân sẽ xác nhận qua Zalo trong 30 phút.</p>
+          <p class="muted">Thêm lịch hẹn vào điện thoại để không quên:</p>
+          ${calendarLinks({ ...booking, id: saved && saved.id }, service.name)}
+          ${auth.loggedIn ? "" : `<p class="muted" style="margin-top:14px"><a href="register.html">Tạo tài khoản</a> để xem lịch trên mọi thiết bị và viết đánh giá sau khi dùng dịch vụ.</p>`}`;
+        done.hidden = false;
+        done.scrollIntoView({ behavior: "smooth", block: "nearest" });
         form.pet_name.value = "";
         form.pet_weight.value = "";
         form.note.value = "";
@@ -419,6 +669,7 @@
       } catch (err) {
         toast(err.message, true);
       }
+      cap.reset();
     });
 
     }
@@ -432,37 +683,82 @@
           ? reviews
               .map(
                 (r) => `<div class="review">
-                  <div class="review-head"><strong>${esc(r.author_name)}</strong><span class="star-text" aria-label="${Number(r.rating)} trên 5 sao">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</span></div>
+                  <div class="review-head"><strong>${esc(r.author_name)}</strong>${r.booking_id ? `<span class="verified">${ic("check")} Đã sử dụng dịch vụ</span>` : ""}<span class="star-text" aria-label="${Number(r.rating)} trên 5 sao">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</span></div>
                   <p>${esc(r.comment)}</p>
+                  ${r.photo_url ? `<a href="${esc(r.photo_url)}" target="_blank" rel="noopener"><img class="review-photo" src="${esc(r.photo_url)}" alt="Ảnh bé của ${esc(r.author_name)}" loading="lazy"></a>` : ""}
                 </div>`
               )
               .join("")
-          : `<p class="muted">Chưa có đánh giá nào cho gói này. Hãy là người đầu tiên.</p>`;
+          : `<p class="muted">Chưa có đánh giá nào cho gói này.</p>`;
       } catch (err) {
         reviewList.innerHTML = `<p class="notice error">${esc(err.message)}</p>`;
       }
     }
     loadReviews();
 
+    // Chỉ khách có lịch hẹn "Hoàn thành" của gói này mới thấy form (database cũng kiểm tra lại).
     const reviewForm = $("#review-form");
-    if (reviewForm) reviewForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!reviewForm.reportValidity()) return;
-      const review = {
-        service_id: service.id,
-        author_name: reviewForm.author_name.value.trim(),
-        rating: Number(reviewForm.rating.value),
-        comment: reviewForm.comment.value.trim(),
-      };
-      try {
-        await withButton(reviewForm.querySelector("button[type=submit]"), "Đang gửi…", () => DB.addReview(review));
-        toast("Cảm ơn bạn đã đánh giá.");
-        reviewForm.reset();
-        loadReviews();
-      } catch (err) {
-        toast(err.message, true);
+    const gate = $("#review-gate");
+    async function setupReviewForm() {
+      if (!reviewForm || !gate) return;
+      reviewForm.hidden = true;
+      const auth = await DB.getAuth();
+      if (!auth.loggedIn) {
+        gate.innerHTML = `<p class="notice" style="margin-top:20px">${ic("lock")} Đánh giá dành cho khách đã sử dụng dịch vụ. <a href="login.html">Đăng nhập</a> để đánh giá sau khi Momo hoàn thành dịch vụ cho bé.</p>`;
+        return;
       }
-    });
+      const list = await DB.getReviewableBookings(service.id);
+      if (!list.length) {
+        gate.innerHTML = `<p class="muted" style="margin-top:20px">${ic("star")} Bạn có thể đánh giá gói này sau khi Momo hoàn thành dịch vụ cho bé (lịch hẹn ở trạng thái "Hoàn thành").</p>`;
+        return;
+      }
+      const want = Number(new URLSearchParams(location.search).get("review"));
+      reviewForm.booking_id.innerHTML = list
+        .map((b) => `<option value="${Number(b.id)}"${b.id === want ? " selected" : ""}>Bé ${esc(b.pet_name)} · ${dateVN(b.booking_date)}</option>`)
+        .join("");
+      if (!reviewForm.author_name.value) {
+        const pr = await DB.getProfile().catch(() => null);
+        if (pr && pr.full_name) reviewForm.author_name.value = pr.full_name;
+      }
+      gate.innerHTML = "";
+      reviewForm.hidden = false;
+      if (want && location.hash === "#danh-gia") reviewForm.scrollIntoView({ behavior: "smooth" });
+    }
+    setupReviewForm().catch(() => {});
+
+    if (reviewForm) {
+      const preview = $("#photo-preview");
+      reviewForm.photo.addEventListener("change", () => {
+        const f = reviewForm.photo.files[0];
+        preview.hidden = !f;
+        if (f) preview.src = URL.createObjectURL(f);
+      });
+      reviewForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!reviewForm.reportValidity()) return;
+        try {
+          await withButton(reviewForm.querySelector("button[type=submit]"), "Đang gửi…", async () => {
+            const file = reviewForm.photo.files[0];
+            const photo_url = file ? await DB.uploadReviewPhoto(file) : null;
+            await DB.addReview({
+              service_id: service.id,
+              booking_id: Number(reviewForm.booking_id.value),
+              author_name: reviewForm.author_name.value.trim(),
+              rating: Number(reviewForm.rating.value),
+              comment: reviewForm.comment.value.trim(),
+              photo_url,
+            });
+          });
+          toast("Cảm ơn bạn đã đánh giá.");
+          reviewForm.reset();
+          preview.hidden = true;
+          loadReviews();
+          setupReviewForm();
+        } catch (err) {
+          toast(err.message, true);
+        }
+      });
+    }
   }
 
   // ---------- Lịch hẹn của tôi: xem, sửa (UPDATE), hủy (DELETE) ----------
@@ -480,6 +776,7 @@
       }
     });
     const list = $("#booking-list");
+    let canReview = new Set();
 
     const bookingCard = (b) => {
       const s = b.services || {};
@@ -503,8 +800,15 @@
         </div>
         ${b.note ? `<p class="muted">Ghi chú: ${esc(b.note)}</p>` : ""}
         <div class="booking-actions">
-          <button type="button" class="btn btn-small btn-outline" data-action="edit">Sửa lịch</button>
+          ${
+            b.status === "done"
+              ? canReview.has(b.id)
+                ? `<a class="btn btn-small btn-brand" href="service.html?id=${Number(s.id)}&review=${Number(b.id)}#danh-gia">${ic("star")} Đánh giá dịch vụ</a>`
+                : `<span class="muted">${ic("check")} Đã hoàn thành, cảm ơn bạn</span>`
+              : `<button type="button" class="btn btn-small btn-outline" data-action="edit">Sửa lịch</button>
           <button type="button" class="btn btn-small btn-danger" data-action="delete">Hủy lịch</button>
+          ${b.status !== "cancelled" && !past ? calendarLinks(b, s.name || "Dịch vụ") : ""}`
+          }
         </div>
         <form hidden novalidate>
           <div class="form-grid">
@@ -523,7 +827,8 @@
 
     async function load() {
       try {
-        const bookings = await DB.getMyBookings();
+        const [bookings, reviewable] = await Promise.all([DB.getMyBookings(), DB.getReviewableBookings().catch(() => [])]);
+        canReview = new Set(reviewable.map((b) => b.id));
         list.innerHTML = bookings.length
           ? bookings.map(bookingCard).join("")
           : `<div class="panel empty">
@@ -590,17 +895,19 @@
     if (wantsAdmin()) authNotice(`${ic("shield")} Đăng nhập bằng tài khoản quản trị viên để vào trang Quản trị.`);
     if ((await DB.getAuth()).loggedIn) return afterLogin();
     const f = $("#login-form");
+    const cap = mountCaptcha(f);
     f.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!f.reportValidity()) return;
       try {
         await withButton(f.querySelector('button[type="submit"]'), "Đang đăng nhập…", () =>
-          DB.signIn(f.email.value.trim(), f.password.value)
+          DB.signIn(f.email.value.trim(), f.password.value, cap.token())
         );
         if (wantsAdmin() && !(await DB.isAdmin())) toast("Tài khoản này không có quyền quản trị.", true);
         await afterLogin();
       } catch (err) {
         authNotice(esc(err.message), true);
+        cap.reset();
       }
     });
   }
@@ -610,6 +917,7 @@
     showDbNotice();
     if ((await DB.getAuth()).loggedIn) return afterLogin();
     const f = $("#register-form");
+    const cap = mountCaptcha(f);
     f.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!f.reportValidity()) return;
@@ -621,12 +929,14 @@
             password: f.password.value,
             full_name: f.full_name.value.trim(),
             phone: f.phone.value.trim(),
+            captchaToken: cap.token(),
           })
         );
         toast("Tạo tài khoản thành công.");
         location.replace("account.html");
       } catch (err) {
         authNotice(esc(err.message), true);
+        cap.reset();
       }
     });
   }
@@ -635,18 +945,20 @@
   async function initForgot() {
     showDbNotice();
     const f = $("#forgot-form");
+    const cap = mountCaptcha(f);
     f.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!f.reportValidity()) return;
       const email = f.email.value.trim();
       try {
-        await withButton(f.querySelector('button[type="submit"]'), "Đang gửi…", () => DB.sendPasswordReset(email));
+        await withButton(f.querySelector('button[type="submit"]'), "Đang gửi…", () => DB.sendPasswordReset(email, cap.token()));
         authNotice("");
         f.hidden = true;
         $("#forgot-email").textContent = email;
         $("#forgot-done").hidden = false;
       } catch (err) {
         authNotice(esc(err.message), true);
+        cap.reset();
       }
     });
   }
@@ -1057,6 +1369,20 @@
         [bookings, services, reviews] = await Promise.all([DB.adminGetBookings(), DB.getServices(true), DB.adminGetReviews()]);
         renderStats();
         views[tab]();
+        // Realtime: lịch mới / thay đổi hiện ngay, không cần tải lại trang
+        const tabsEl = root.querySelector(".tabs");
+        if (tabsEl && !root.querySelector(".live")) tabsEl.insertAdjacentHTML("beforebegin", `<p class="live"><span class="live-dot"></span> Đang cập nhật trực tiếp</p>`);
+        DB.subscribeBookings(async (p) => {
+          try {
+            bookings = await DB.adminGetBookings();
+            renderStats();
+            if (tab === "bookings") views.bookings();
+            if (p.eventType === "INSERT" && p.new) {
+              toast(`Lịch hẹn mới: bé ${p.new.pet_name} lúc ${String(p.new.booking_time).slice(0, 5)} ngày ${dateVN(p.new.booking_date)}`);
+              ding();
+            }
+          } catch {}
+        });
       } catch (err) {
         panel.innerHTML = `<p class="notice error">${esc(err.message)}</p>`;
       }

@@ -72,13 +72,33 @@
   }
 
   // Có phiên đăng nhập rồi thì dùng, chưa có thì tạo phiên khách ẩn danh để RLS biết dữ liệu thuộc về ai.
-  async function ensureUser() {
+  // captchaToken: mã Cloudflare Turnstile (bắt buộc khi Supabase bật Attack Protection > CAPTCHA).
+  async function ensureUser(captchaToken) {
     requireDb();
     const user = await currentUser();
     if (user) return user;
-    const { data, error } = await sb.auth.signInAnonymously();
+    const { data, error } = await sb.auth.signInAnonymously(captchaToken ? { options: { captchaToken } } : undefined);
     if (error) throw authError(error);
     return data.user;
+  }
+
+  // Thu nhỏ ảnh bằng canvas, xuất JPEG.
+  function shrinkImage(file, max) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        const k = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * k);
+        c.height = Math.round(img.height * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob((b) => (b ? resolve(b) : reject(new Error("Không đọc được ảnh."))), "image/jpeg", 0.85);
+      };
+      img.onerror = () => reject(new Error("Không đọc được ảnh."));
+      img.src = url;
+    });
   }
 
   const DB = {
@@ -100,7 +120,7 @@
 
     // Đăng ký. Nếu khách đang có phiên ẩn danh (đã đặt lịch), nâng cấp chính phiên đó thành tài khoản
     // để giữ nguyên các lịch hẹn cũ.
-    async signUp({ email, password, full_name, phone }) {
+    async signUp({ email, password, full_name, phone, captchaToken }) {
       requireDb();
       const user = await currentUser();
       if (user && user.is_anonymous) {
@@ -111,16 +131,16 @@
           throw new Error("Đã ghi nhận email. Hãy mở email xác nhận của Supabase, sau đó đăng nhập để đặt mật khẩu.");
         }
       } else {
-        const { data, error } = await sb.auth.signUp({ email, password });
+        const { data, error } = await sb.auth.signUp({ email, password, options: captchaToken ? { captchaToken } : {} });
         if (error) throw authError(error);
         if (!data.session) throw new Error("Đăng ký thành công. Hãy mở email xác nhận rồi đăng nhập.");
       }
       await DB.saveProfile({ full_name, phone });
     },
 
-    async signIn(email, password) {
+    async signIn(email, password, captchaToken) {
       requireDb();
-      const { error } = await sb.auth.signInWithPassword({ email, password });
+      const { error } = await sb.auth.signInWithPassword({ email, password, options: captchaToken ? { captchaToken } : {} });
       if (error) throw authError(error);
     },
 
@@ -129,10 +149,10 @@
     },
 
     // Gửi email chứa liên kết đặt lại mật khẩu. Liên kết mở reset-password.html.
-    async sendPasswordReset(email) {
+    async sendPasswordReset(email, captchaToken) {
       requireDb();
       const redirectTo = new URL("reset-password.html", location.href).href;
-      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo });
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo, captchaToken });
       if (error) throw authError(error);
     },
 
@@ -193,8 +213,13 @@
     // ================= LỊCH HẸN CỦA KHÁCH =================
 
     // INSERT bookings
-    async createBooking(booking) {
-      await ensureUser();
+    // Đã có phiên (khách ẩn danh hoặc tài khoản) thì không cần captcha.
+    async hasSession() {
+      return Boolean(await currentUser());
+    },
+
+    async createBooking(booking, captchaToken) {
+      await ensureUser(captchaToken);
       const { data, error } = await sb.from("bookings").insert(booking).select().single();
       if (error) throw new Error("Không đặt được lịch: " + error.message);
       return data;
@@ -248,20 +273,55 @@
 
     async getReviews(serviceId) {
       if (!sb) return [];
-      const { data, error } = await sb
-        .from("reviews")
-        .select("id, author_name, rating, comment, created_at")
-        .eq("service_id", serviceId)
-        .order("created_at", { ascending: false });
+      const q = (cols) => sb.from("reviews").select(cols).eq("service_id", serviceId).order("created_at", { ascending: false });
+      let { data, error } = await q("id, author_name, rating, comment, created_at, booking_id, photo_url");
+      // Chưa chạy supabase/features_v2.sql (chưa có cột mới) thì đọc các cột cũ
+      if (error && /column/i.test(error.message)) ({ data, error } = await q("id, author_name, rating, comment, created_at"));
       if (error) throw new Error("Không tải được đánh giá: " + error.message);
       return data;
     },
 
-    // INSERT reviews
+    // Lịch hẹn đã hoàn thành của tài khoản đang đăng nhập mà chưa đánh giá (lọc theo gói nếu có serviceId).
+    async getReviewableBookings(serviceId) {
+      const auth = await DB.getAuth();
+      if (!auth.loggedIn) return [];
+      let q = sb
+        .from("bookings")
+        .select("id, service_id, pet_name, booking_date")
+        .eq("user_id", auth.user.id)
+        .eq("status", "done")
+        .order("booking_date", { ascending: false });
+      if (serviceId) q = q.eq("service_id", serviceId);
+      const { data, error } = await q;
+      if (error || !data.length) return [];
+      const { data: done } = await sb.from("reviews").select("booking_id").in("booking_id", data.map((b) => b.id));
+      const reviewed = new Set((done || []).map((r) => r.booking_id));
+      return data.filter((b) => !reviewed.has(b.id));
+    },
+
+    // Tải ảnh bé lên Storage (bucket review-photos/<user_id>/...). Ảnh được thu nhỏ còn tối đa 1200px.
+    async uploadReviewPhoto(file) {
+      const auth = await DB.getAuth();
+      if (!auth.loggedIn) throw new Error("Cần đăng nhập để tải ảnh.");
+      if (!/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error("Chỉ nhận ảnh JPG, PNG hoặc WebP.");
+      const blob = await shrinkImage(file, 1200);
+      if (blob.size > 2 * 1024 * 1024) throw new Error("Ảnh quá lớn (tối đa 2 MB).");
+      const path = `${auth.user.id}/${Date.now()}.jpg`;
+      const { error } = await sb.storage.from("review-photos").upload(path, blob, { contentType: "image/jpeg", upsert: false });
+      if (error) throw new Error("Không tải được ảnh: " + error.message);
+      return sb.storage.from("review-photos").getPublicUrl(path).data.publicUrl;
+    },
+
+    // INSERT reviews (database chỉ nhận khi booking_id là lịch đã hoàn thành của chính khách)
     async addReview(review) {
-      await ensureUser();
+      const auth = await DB.getAuth();
+      if (!auth.loggedIn) throw new Error("Cần đăng nhập để đánh giá.");
       const { error } = await sb.from("reviews").insert(review);
-      if (error) throw new Error("Không gửi được đánh giá: " + error.message);
+      if (error) {
+        if (/duplicate|unique/i.test(error.message)) throw new Error("Lịch hẹn này đã được đánh giá.");
+        if (/row-level security/i.test(error.message)) throw new Error("Chỉ khách đã hoàn thành dịch vụ mới được đánh giá.");
+        throw new Error("Không gửi được đánh giá: " + error.message);
+      }
     },
 
     // ================= QUẢN TRỊ =================
@@ -312,12 +372,21 @@
 
     async adminGetReviews() {
       requireDb();
-      const { data, error } = await sb
-        .from("reviews")
-        .select("id, author_name, rating, comment, created_at, services(name)")
-        .order("created_at", { ascending: false });
+      const q = (cols) => sb.from("reviews").select(cols).order("created_at", { ascending: false });
+      let { data, error } = await q("id, author_name, rating, comment, created_at, booking_id, photo_url, services(name)");
+      if (error && /column/i.test(error.message)) ({ data, error } = await q("id, author_name, rating, comment, created_at, services(name)"));
       if (error) throw new Error("Không tải được đánh giá: " + error.message);
       return data;
+    },
+
+    // Realtime: gọi callback mỗi khi bảng bookings có thay đổi (RLS: admin thấy mọi lịch).
+    subscribeBookings(callback) {
+      if (!sb) return () => {};
+      const ch = sb
+        .channel("admin-bookings")
+        .on("postgres_changes", { event: "*", schema: "public", table: "bookings" }, (payload) => callback(payload))
+        .subscribe();
+      return () => sb.removeChannel(ch);
     },
 
     // DELETE reviews (chỉ admin)

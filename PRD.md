@@ -70,6 +70,14 @@ Mọi trang có chung header và footer, trong đó có đủ link tới các tr
 | F20 | Dịch vụ tại nhà: Tắm & vệ sinh tại nhà, Cắt tỉa tại nhà (nhóm "Tại nhà") | select / insert | `services`, `bookings` |
 | F21 | Cẩm nang: 6 bài viết, lọc theo chủ đề, trang chi tiết bài viết | — | `data/articles.json` |
 | F23 | Menu sổ xuống: "Về chúng tôi", "Dịch vụ & Giá" (3 cột + thẻ ưu đãi), "Cẩm nang" (theo chủ đề); link lọc sẵn `services.html?nhom=…`, `cam-nang.html?chu-de=…`; điện thoại dạng gập mở | — | — |
+| F24 | Đánh giá chỉ dành cho khách có tài khoản email và lịch hẹn gói đó ở trạng thái "Hoàn thành"; mỗi lịch một đánh giá; nhãn "Đã sử dụng dịch vụ"; kiểm tra bằng RLS trong database | **insert** | `reviews`, `bookings` |
+| F25 | Ảnh bé trong đánh giá (thu nhỏ 1200px, tối đa 2 MB) | **insert** (Storage) | bucket `review-photos` |
+| F26 | Báo lịch hẹn mới vào Telegram của tiệm (Database Webhook + Edge Function `notify-booking`) | — | `bookings` |
+| F27 | Trang Quản trị cập nhật trực tiếp (Supabase Realtime), âm báo khi có lịch mới | select | `bookings` |
+| F28 | Tính phí đưa đón theo quãng đường (Geolocation, OpenStreetMap Nominatim, OSRM): miễn phí 3 km, sau đó 10.000đ/km, ngoài 15 km mời nhắn Zalo | — | ghi vào `bookings.note` |
+| F29 | Thời tiết TP.HCM ở Trang chủ kèm lời khuyên chăm sóc (Open-Meteo) | — | — |
+| F30 | Nút "Thêm vào lịch" (Google Calendar, file .ics) sau khi đặt lịch và ở trang Lịch hẹn | — | — |
+| F31 | Chống spam bằng Cloudflare Turnstile cho đặt lịch, đăng nhập, đăng ký, quên mật khẩu (qua CAPTCHA của Supabase Auth) | — | — |
 | F22 | Ưu đãi (khách mới, thẻ 10+1, lưu trú từ 5 đêm) và Cam kết chất lượng (quy trình xử lý phản hồi) | — | — |
 
 **Quy tắc vai trò**: tài khoản quản trị không dùng form đặt lịch và form đánh giá dành cho khách (hai form được thay bằng thông báo và link sang trang Quản trị). Admin đặt lịch hộ khách trong tab "Tạo lịch hẹn" của trang Quản trị.

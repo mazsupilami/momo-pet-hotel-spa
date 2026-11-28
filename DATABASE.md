@@ -55,6 +55,8 @@ Mã tạo bảng nằm ở `supabase/schema.sql`. Dữ liệu dịch vụ gốc 
 Hàm `is_admin()` trả về `true` nếu người đang đăng nhập có trong bảng này.
 
 ### `reviews` — đánh giá
+
+Cột thêm ở `features_v2.sql`: `booking_id` (lịch hẹn đã hoàn thành, mỗi lịch một đánh giá), `photo_url` (ảnh trong bucket `review-photos`).
 | Cột | Kiểu | Ghi chú |
 |---|---|---|
 | id | bigint | Khóa chính, tự tăng |
@@ -121,5 +123,17 @@ Hàm `is_admin()` trả về `true` nếu người đang đăng nhập có trong
     - Tên secret phải đúng chính xác `GEMINI_API_KEY` (viết hoa, gạch dưới).
     - Trong function `chat`: tắt **Verify JWT** (website gửi khóa publishable, không phải JWT). Function chỉ nhận yêu cầu từ link GitHub Pages và localhost:8000.
     - Chưa làm bước này thì chatbot vẫn chạy bằng luật từ khóa.
+
+11. **Nâng cấp lần 2**: chạy `supabase/features_v2.sql` (luật đánh giá, cột `booking_id` và `photo_url` của `reviews`, bucket ảnh `review-photos`, Realtime cho `bookings`).
+12. **Báo lịch mới qua Telegram**:
+    - Telegram: nhắn @BotFather lệnh `/newbot`, đặt tên, nhận mã bot (token).
+    - Nhắn một tin bất kỳ cho bot vừa tạo, rồi mở `https://api.telegram.org/bot<token>/getUpdates`, chép số `"chat":{"id": ...}`.
+    - Supabase > Edge Functions > Secrets: thêm `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `WEBHOOK_SECRET` (chuỗi tự đặt).
+    - Deploy function `notify-booking` (dán `supabase/functions/notify-booking/index.ts`), tắt **Verify JWT**.
+    - Database > Webhooks > Create: bảng `bookings`, sự kiện Insert, loại Supabase Edge Functions, chọn `notify-booking`, thêm HTTP header `x-webhook-secret` = giá trị `WEBHOOK_SECRET`.
+13. **Chống spam (Cloudflare Turnstile)**:
+    - Cloudflare > Turnstile > Add site: tên miền `mazsupilami.github.io` và `localhost`, chế độ Managed.
+    - Chép **Site key** vào `TURNSTILE_SITE_KEY` trong `assets/js/config.js` và deploy website trước.
+    - Sau đó Supabase > Authentication > Attack Protection: bật CAPTCHA, chọn Turnstile, dán **Secret key**.
 
 **Không đưa mật khẩu database lên GitHub.** Mật khẩu chỉ dùng để đăng nhập Supabase, website không cần đến. File ghi chú chứa mật khẩu để ngoài folder dự án và đã được liệt kê trong `.gitignore`.

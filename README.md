@@ -43,6 +43,8 @@ supabase/update_images.sql  Đổi hình dịch vụ sang ảnh thật
 supabase/auth_admin.sql     Tài khoản khách, quản trị viên, trạng thái lịch hẹn
 supabase/add_home_services.sql  Thêm 2 gói dịch vụ tại nhà
 supabase/functions/chat/  Edge Function chatbot AI (Google Gemini)
+supabase/functions/notify-booking/  Edge Function báo lịch mới qua Telegram
+supabase/features_v2.sql  Luật đánh giá, ảnh đánh giá, Realtime
 tools/gen_pages.py          Sinh 14 trang HTML từ một mẫu header/footer chung
 docs/screenshots/           Ảnh chụp màn hình dùng trong BAOCAO.md
 ```

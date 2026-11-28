@@ -19,7 +19,7 @@ YOUTUBE_VIDEO = "BGgRwsH_8vE"  # video giới thiệu Momo trên kênh YouTube c
 MAP_Q = "177+T%C3%B4n+Th%E1%BA%A5t+Thuy%E1%BA%BFt,+Kh%C3%A1nh+H%E1%BB%99i,+H%E1%BB%93+Ch%C3%AD+Minh"
 
 
-ICON_V = "20261128h"
+ICON_V = "20261128j"
 
 
 def ic(name):
@@ -39,7 +39,7 @@ def head(title, desc):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261128h">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261128j">
 </head>"""
 
 
@@ -181,10 +181,10 @@ FOOTER = f"""
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script src="assets/js/config.js?v=20261128h"></script>
-  <script src="assets/js/db.js?v=20261128h"></script>
-  <script src="assets/js/app.js?v=20261128h"></script>
-  <script src="assets/js/chatbot.js?v=20261128h"></script>
+  <script src="assets/js/config.js?v=20261128j"></script>
+  <script src="assets/js/db.js?v=20261128j"></script>
+  <script src="assets/js/app.js?v=20261128j"></script>
+  <script src="assets/js/chatbot.js?v=20261128j"></script>
 </body>
 </html>
 """
@@ -233,7 +233,7 @@ ADMIN_HEADER = f"""
   </header>
 """
 
-SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):].replace('  <script src="assets/js/chatbot.js?v=20261128h"></script>\n', '')
+SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):].replace('  <script src="assets/js/chatbot.js?v=20261128j"></script>\n', '')
 ADMIN_FOOTER = """
   <footer class="admin-footer">
     <div class="container">© 2026 Momo Pet Hotel &amp; Spa · Trang quản trị nội bộ · <a href="index.html">Về website</a></div>
@@ -283,6 +283,7 @@ page("index.html", "home", "Khách sạn & Spa thú cưng tại Khánh Hội, TP
           <div class="stat"><span class="ico">{ic('users')}</span><div><strong>12</strong><span>chuyên viên chăm sóc</span></div></div>
           <div class="stat"><span class="ico">{ic('heart')}</span><div><strong>6 năm</strong><span>đồng hành cùng các bé</span></div></div>
         </div>
+        <div class="weather" id="weather" hidden aria-live="polite"></div>
       </div>
     </section>
 
@@ -686,25 +687,42 @@ page("service.html", "service", "Chi tiết dịch vụ",
               <div class="field"><label for="pet_weight">Cân nặng (kg)</label><input id="pet_weight" name="pet_weight" type="number" required min="0.1" max="99" step="0.1" placeholder="4.5"></div>
               <div class="field"><label for="booking_date">Ngày hẹn</label><input id="booking_date" name="booking_date" type="date" required></div>
               <div class="field full"><label for="booking_time">Giờ hẹn</label><select id="booking_time" name="booking_time" required></select></div>
-              <div class="field full"><label for="note">Ghi chú (không bắt buộc)</label><textarea id="note" name="note" maxlength="300" placeholder="Ví dụ: bé sợ tiếng máy sấy"></textarea></div>
+              <div class="field full"><label for="note">Ghi chú (không bắt buộc)</label><textarea id="note" name="note" maxlength="200" placeholder="Ví dụ: bé sợ tiếng máy sấy"></textarea></div>
+              <div class="field full pickup">
+                <label class="check"><input type="checkbox" name="pickup" id="pickup"> Đưa đón tận nhà <small class="muted">(miễn phí 3 km đầu, sau đó 10.000đ/km)</small></label>
+                <div class="pickup-box" id="pickup-box" hidden>
+                  <div class="pickup-row">
+                    <input name="pickup_address" id="pickup_address" maxlength="120" placeholder="Số nhà, đường, phường. Ví dụ: 12 Hoàng Diệu, Khánh Hội" autocomplete="street-address">
+                    <button type="button" class="btn btn-small btn-outline" id="pickup-calc">{ic('pin')} Tính phí</button>
+                    <button type="button" class="btn btn-small btn-outline" id="pickup-geo">Dùng vị trí của tôi</button>
+                  </div>
+                  <p class="pickup-result muted" id="pickup-result">Nhập địa chỉ rồi bấm "Tính phí". Khoảng cách tính theo đường đi xe máy từ tiệm.</p>
+                </div>
+              </div>
             </div>
+            <div class="captcha" data-captcha hidden></div>
             <div class="form-actions">
               <button type="submit" class="btn">{ic('calendar')} Xác nhận đặt lịch</button>
               <a href="bookings.html" class="link-arrow">Lịch hẹn của tôi {ic('arrow')}</a>
             </div>
           </form>
+          <div class="booking-done" id="booking-done" hidden></div>
         </div>
 
-        <div class="panel">
+        <div class="panel" id="danh-gia">
           <span class="eyebrow">Đánh giá</span>
           <h2>Khách hàng nói gì về gói này</h2>
           <div id="review-list"><p class="muted">Đang tải đánh giá…</p></div>
-          <form id="review-form" novalidate style="margin-top:20px;padding-top:20px;border-top:1px solid var(--line)">
+          <div class="review-gate" id="review-gate"></div>
+          <form id="review-form" novalidate hidden style="margin-top:20px;padding-top:20px;border-top:1px solid var(--line)">
             <h3>Viết đánh giá</h3>
+            <p class="muted" style="margin-top:-6px">Chỉ khách đã hoàn thành dịch vụ mới đánh giá được. Đánh giá hiện nhãn "Đã sử dụng dịch vụ".</p>
             <div class="form-grid">
+              <div class="field full"><label for="booking_id">Lịch hẹn đã hoàn thành</label><select id="booking_id" name="booking_id" required></select></div>
               <div class="field"><label for="author_name">Tên của bạn</label><input id="author_name" name="author_name" required maxlength="60"></div>
               <div class="field"><label for="rating">Số sao</label><select id="rating" name="rating"><option value="5">5 sao</option><option value="4">4 sao</option><option value="3">3 sao</option><option value="2">2 sao</option><option value="1">1 sao</option></select></div>
               <div class="field full"><label for="comment">Nhận xét</label><textarea id="comment" name="comment" required maxlength="500"></textarea></div>
+              <div class="field full"><label for="photo">Ảnh của bé (không bắt buộc, JPG/PNG, tối đa 2 MB)</label><input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp"><img class="photo-preview" id="photo-preview" alt="Ảnh xem trước" hidden></div>
             </div>
             <div class="form-actions"><button type="submit" class="btn btn-outline">Gửi đánh giá</button></div>
           </form>
@@ -853,6 +871,7 @@ auth_page("login.html", "login", "Đăng nhập",
             <div class="field"><label for="li-email">Email</label><input id="li-email" name="email" type="email" required autocomplete="email"></div>
             {pw_field('li-pass', 'password', 'Mật khẩu', 'current-password')}
             <div class="auth-row"><a href="forgot-password.html">Quên mật khẩu?</a></div>
+<div class="captcha" data-captcha hidden></div>
             <button type="submit" class="btn btn-brand btn-block">Đăng nhập</button>
           </form>
           <p class="auth-switch">Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a></p>""")
@@ -868,6 +887,7 @@ auth_page("register.html", "register", "Đăng ký",
               {pw_field('su-pass', 'password', 'Mật khẩu', 'new-password', 'Ít nhất 6 ký tự.')}
               {pw_field('su-pass2', 'password2', 'Nhập lại mật khẩu', 'new-password')}
             </div>
+<div class="captcha" data-captcha hidden></div>
             <button type="submit" class="btn btn-block" style="margin-top:20px">Tạo tài khoản</button>
           </form>
           <p class="auth-switch">Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>""")
@@ -877,6 +897,7 @@ auth_page("forgot-password.html", "forgot", "Quên mật khẩu",
           "Quên mật khẩu?", "Nhập email đã đăng ký, chúng tôi sẽ gửi liên kết đặt lại mật khẩu.", f"""
           <form id="forgot-form" class="form-stack" novalidate>
             <div class="field"><label for="fg-email">Email</label><input id="fg-email" name="email" type="email" required autocomplete="email"></div>
+<div class="captcha" data-captcha hidden></div>
             <button type="submit" class="btn btn-brand btn-block">{ic('mail')} Gửi email khôi phục</button>
           </form>
           <div id="forgot-done" class="auth-done" hidden>

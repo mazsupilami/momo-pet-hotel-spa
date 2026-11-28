@@ -201,3 +201,23 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Sau khi người dùng deploy: Supabase tự đặt slug function là `bright-service` (đã thêm `CHAT_FUNCTION` vào `config.js`); secret lúc đầu lưu sai tên "Gemini API Key 3", người dùng đổi lại thành `GEMINI_API_KEY`.
 - Thử trực tiếp function: bé 15 kg tắm gội tính đúng 150.000đ × 1,3 = 195.000đ kèm ưu đãi; câu lạc đề (làm thơ bóng đá) bị từ chối lịch sự; hội thoại nhiều lượt gửi mèo 6 đêm Deluxe tính đúng 1.680.000đ, giảm 10% còn 1.512.000đ (AI tự sửa giá sai trong câu trước theo database). Yêu cầu từ trang lạ bị chặn (403).
 - Thử trên GitHub Pages: hỏi phòng VIP, chatbot trả lời bằng AI kèm link tới trang Phòng VIP có camera.
+
+## Prompt 18 — Đặt lịch không cần tài khoản và quyền viết đánh giá (28/11/2026)
+
+**Prompt**: Với dịch vụ spa, khách sạn thú cưng có nên cho đặt lịch không cần tài khoản? Khách chưa đăng nhập, chưa từng dùng dịch vụ cũng viết được đánh giá, có hợp lý không? Đề xuất hướng giải quyết.
+
+**Kết quả**: Giữ đặt lịch không cần tài khoản (giống thói quen đặt qua điện thoại/Zalo; số điện thoại bắt buộc, lịch luôn chờ lễ tân xác nhận). Đánh giá thì không hợp lý: database cho mọi phiên, kể cả ẩn danh, gửi đánh giá. Đề xuất chỉ cho tài khoản email có lịch "Hoàn thành" của gói đó, mỗi lịch một đánh giá, kiểm tra bằng RLS.
+
+## Prompt 19 — Luật đánh giá và tích hợp API (28/11/2026)
+
+**Prompt**: Làm theo đề xuất về đánh giá, sau đó làm Telegram, Realtime, tính phí đưa đón, thời tiết, nút thêm vào lịch, ảnh bé trong đánh giá, chống spam form đặt lịch.
+
+**Kết quả**:
+- `supabase/features_v2.sql`: hàm `can_review`, luật RLS mới cho `reviews`, cột `booking_id` (unique) và `photo_url`; lịch "Hoàn thành" khách không sửa/xóa được; bucket `review-photos` (2 MB, chỉ ảnh, mỗi khách một thư mục); thêm `bookings` vào Realtime.
+- Trang chi tiết dịch vụ: ô đánh giá theo từng trường hợp (chưa đăng nhập, chưa có lịch hoàn thành, có lịch để đánh giá), chọn lịch hẹn, tải ảnh bé; nhãn "Đã sử dụng dịch vụ". Trang Lịch hẹn: lịch hoàn thành có nút "Đánh giá dịch vụ".
+- Telegram: `supabase/functions/notify-booking/index.ts`, gọi từ Database Webhook, xác thực bằng header bí mật.
+- Realtime: trang Quản trị tự tải lại danh sách và thống kê khi có thay đổi, âm báo và thông báo khi có lịch mới.
+- Đưa đón: ô "Đưa đón tận nhà", nhập địa chỉ hoặc dùng vị trí; thử: địa chỉ cách 1,9 km miễn phí, địa chỉ Thủ Đức 16,4 km báo ngoài khu vực. Thông tin đưa đón ghi vào ghi chú lịch hẹn.
+- Thời tiết: dải thời tiết dưới số liệu Trang chủ (thử: 26°C, mưa rào, lời khuyên lau khô cho bé).
+- Thêm vào lịch: Google Calendar và .ics (đã kiểm tra 9:30 giờ VN = 02:30 UTC) sau khi đặt lịch và trên trang Lịch hẹn.
+- Chống spam: ô Turnstile tự hiện khi điền `TURNSTILE_SITE_KEY`, token gửi kèm khi tạo phiên khách, đăng nhập, đăng ký, quên mật khẩu.

@@ -47,6 +47,8 @@ Website có 14 trang. Tất cả các trang khách dùng chung header (menu) và
 | 15 | Thêm mạng xã hội vào thanh dọc, kiểm tra tài khoản khách thử, ghi tài khoản chấm bài, đánh giá menu sổ xuống, chatbot AI bằng Google Gemini | Thanh dọc 6 nút; SQL kiểm tra tài khoản khách; file tài khoản test cho giáo viên; đánh giá menu sổ xuống và hạn mức miễn phí Gemini |
 | 16 | Làm menu sổ xuống như petservicehcm.com | Menu sổ xuống cho Về chúng tôi, Dịch vụ & Giá, Cẩm nang; lọc sẵn theo nhóm/chủ đề; gập mở trên điện thoại |
 | 17 | Làm chatbot AI bằng Google Gemini | Edge Function `chat` gọi Gemini (gói miễn phí), khóa API giữ trên Supabase, tự quay về chatbot từ khóa khi AI lỗi |
+| 18 | Đặt lịch không cần tài khoản có hợp lý? Ai cũng viết đánh giá được có hợp lý? | Giữ đặt lịch không cần tài khoản; đánh giá chỉ cho khách đã hoàn thành dịch vụ |
+| 19 | Làm luật đánh giá và các API: Telegram, Realtime, phí đưa đón, thời tiết, thêm vào lịch, ảnh đánh giá, chống spam | Xem mục 3.5b |
 
 | Trang chủ | Về chúng tôi |
 |---|---|
@@ -124,6 +126,17 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 - **Cẩm nang** (học từ mục Tin tức của cherrypetcoffee.com): 6 bài viết, lọc theo chủ đề, trang chi tiết có bài liên quan; 3 bài mới nhất hiện ở Trang chủ; chatbot trả lời câu hỏi về cẩm nang, ưu đãi, dịch vụ tại nhà.
 - **Menu sổ xuống** (học từ petservicehcm.com): "Về chúng tôi", "Dịch vụ & Giá" (Spa & Grooming, Khách sạn & Tại nhà, Bảng giá, thẻ ưu đãi khách mới), "Cẩm nang" theo chủ đề. Mỗi mục con dẫn thẳng tới đúng phần trang hoặc danh sách đã lọc sẵn; trên điện thoại gập mở trong menu ☰; dùng được bằng bàn phím (Tab, Esc).
 - **Pop-up ưu đãi khách mới** ở trang chủ (sau 3 giây, mỗi phiên một lần), **dàn thú cưng ló đầu trên thanh đỏ** (rê chuột thì bé nhô lên và hiện giống, tính cách), hiệu ứng **rê chuột** trên thẻ, icon, menu, logo và hiệu ứng **hiện dần khi cuộn**, nút **lên đầu trang**.
+
+### 3.5b. Tích hợp API (nâng cấp lần 2)
+
+- **Đánh giá có xác thực**: chỉ khách có tài khoản và lịch hẹn đã "Hoàn thành" mới đánh giá được, mỗi lịch một lần, nhãn "Đã sử dụng dịch vụ". Luật nằm trong database (RLS), không lách được bằng cách gọi API trực tiếp. Lịch đã hoàn thành không sửa, không xóa được.
+- **Ảnh bé trong đánh giá**: Supabase Storage, ảnh thu nhỏ trên trình duyệt trước khi tải lên.
+- **Telegram Bot API**: khách đặt lịch, điện thoại của tiệm nhận tin ngay (Database Webhook gọi Edge Function `notify-booking`).
+- **Supabase Realtime**: trang Quản trị tự hiện lịch mới, có âm báo và dấu "Đang cập nhật trực tiếp".
+- **Tính phí đưa đón theo khoảng cách**: Geolocation của trình duyệt, OpenStreetMap Nominatim (địa chỉ sang tọa độ), OSRM (quãng đường xe chạy).
+- **Thời tiết Sài Gòn**: Open-Meteo, kèm lời khuyên chăm sóc bé theo nhiệt độ, mưa, UV.
+- **Thêm vào lịch**: Google Calendar và file .ics có nhắc trước 2 tiếng.
+- **Chống spam**: Cloudflare Turnstile qua CAPTCHA của Supabase Auth cho đặt lịch, đăng nhập, đăng ký, quên mật khẩu.
 
 ### 3.6. Nhúng
 
