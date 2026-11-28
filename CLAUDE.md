@@ -25,6 +25,7 @@ Website thương hiệu hư cấu **Momo Pet Hotel & Spa** (khách sạn và spa
 - Footer chỉ ghi "© 2026 Momo Pet Hotel & Spa", không ghi nguồn ảnh hay chữ "bài thi".
 - Liên hệ: Zalo `https://zalo.me/0968198406`, Messenger `https://m.me/61597136690392` (hằng số `ZALO`, `MESSENGER` trong `tools/gen_pages.py`).
 - Số điện thoại luôn là link `tel:`; không tự đổi sang Zalo. Thanh dọc gồm Zalo, Messenger, Gọi, vạch ngăn, Facebook, Instagram, YouTube (điện thoại chỉ hiện 3 nút đầu). Thanh trên cùng không đặt mạng xã hội.
+- Menu chính có 3 mục sổ xuống (Về chúng tôi, Dịch vụ & Giá, Cẩm nang) trong mẫu `HEADER` của `tools/gen_pages.py`. Link con trỏ tới id của section (`#cau-chuyen`, `#co-so-vat-chat`, `#doi-ngu`, `#cam-ket`, `#bang-gia`, `#cua-hang`, `#danh-sach`, `#bang-gia-can-nang`, `#uu-dai`, `#chinh-sach`) hoặc tham số lọc `?nhom=`, `?chu-de=`; đổi id thì sửa cả menu.
 - Bài cẩm nang nằm trong `data/articles.json` (slug, title, category, date, image, excerpt, content). Thêm bài mới thì thêm vào file này, không tạo trang HTML mới.
 - Icon dùng `assets/img/icons.svg?v=…#tên`; khi thêm icon mới vào sprite, tăng số `?v=` trong `ic()` của `tools/gen_pages.py`, `app.js`, `chatbot.js`.
 - Chatbot nằm ở `assets/js/chatbot.js`, trả lời theo từ khóa và đọc giá qua `DB.getServices()`; không gắn vào trang Quản trị.

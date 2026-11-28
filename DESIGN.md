@@ -63,6 +63,7 @@ Chiều rộng nội dung tối đa 1200px, lề hai bên 20px. Lưới dịch v
 | `.booking` | Thẻ lịch hẹn: ảnh dịch vụ, trạng thái, thông tin, nút sửa và hủy |
 | `.btn-zalo` | Nút xanh Zalo (#0068FF) |
 | `.parade`, `.peek`, `.peek-tip` | Dàn thú cưng ló đầu trên thanh đỏ ở Trang chủ. Rê chuột (hoặc Tab) bé nhô lên và hiện chú thích giống, tính cách. Điện thoại hiện 5 bé |
+| `.nav-link`, `.nav-item.has-menu`, `.sub-toggle`, `.mega` (`.mega-1/2/3`, `.mega-col`, `.mega-title`, `.mega-card`) | Menu sổ xuống. Máy tính: rê chuột hoặc bấm mũi tên, Esc để đóng, chọn mục thì tự đóng. Điện thoại: bấm mũi tên để gập mở trong menu ☰ |
 | `.promo-card`, `.promo-tag` | Thẻ ưu đãi viền nét đứt, nhãn cam (-20%, 10+1, -10%) |
 | `.article-card`, `.article-wrap`, `.article-side`, `.related` | Thẻ bài cẩm nang, bố cục bài viết 2 cột (nội dung + cột tư vấn, bài liên quan) |
 | `.promo` | Pop-up ưu đãi (trang chủ, mỗi phiên một lần, sau 6 giây) |

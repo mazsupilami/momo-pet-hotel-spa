@@ -19,7 +19,7 @@ YOUTUBE_VIDEO = "BGgRwsH_8vE"  # video giới thiệu Momo trên kênh YouTube c
 MAP_Q = "177+T%C3%B4n+Th%E1%BA%A5t+Thuy%E1%BA%BFt,+Kh%C3%A1nh+H%E1%BB%99i,+H%E1%BB%93+Ch%C3%AD+Minh"
 
 
-ICON_V = "20261128e"
+ICON_V = "20261128f"
 
 
 def ic(name):
@@ -39,7 +39,7 @@ def head(title, desc):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261128e">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261128f">
 </head>"""
 
 
@@ -58,12 +58,53 @@ HEADER = f"""
     <div class="container nav-wrap">
       <a href="index.html" class="brand"><img src="assets/img/logo.svg" alt="Momo Pet Hotel &amp; Spa - Trang chủ" width="174" height="48"></a>
       <nav class="nav" id="nav" aria-label="Menu chính">
-        <a href="index.html" data-nav="home">Trang chủ</a>
-        <a href="about.html" data-nav="about">Về chúng tôi</a>
-        <a href="services.html" data-nav="services">Dịch vụ &amp; Giá</a>
-        <a href="cam-nang.html" data-nav="news">Cẩm nang</a>
-        <a href="bookings.html" data-nav="bookings">Lịch hẹn<span class="badge" id="booking-count" hidden>0</span></a>
-        <a href="contact.html" data-nav="contact">Liên hệ</a>
+        <a class="nav-link" href="index.html" data-nav="home">Trang chủ</a>
+        <div class="nav-item has-menu">
+          <a class="nav-link" href="about.html" data-nav="about">Về chúng tôi</a><button type="button" class="sub-toggle" aria-expanded="false" aria-label="Mở menu Về chúng tôi"><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="mega mega-2">
+            <div class="mega-col">
+              <span class="mega-title">Momo Pet Hotel &amp; Spa</span>
+              <a href="about.html#cau-chuyen"><strong>Câu chuyện Momo</strong><small>Từ chú chó Momo đến tiệm thú cưng</small></a><a href="about.html#co-so-vat-chat"><strong>Cơ sở vật chất</strong><small>Phòng spa, phòng nghỉ, sân chơi</small></a><a href="about.html#doi-ngu"><strong>Đội ngũ</strong><small>Thợ grooming, nhân viên chăm sóc</small></a>
+            </div>
+            <div class="mega-col">
+              <span class="mega-title">Uy tín &amp; minh bạch</span>
+              <a href="about.html#cam-ket"><strong>Cam kết chất lượng</strong><small>An toàn, ảnh trước/sau, phản hồi 30 phút</small></a><a href="about.html#bang-gia"><strong>Bảng giá niêm yết</strong><small>Giá công khai từ database</small></a><a href="about.html#cua-hang"><strong>Ghé thăm cửa hàng</strong><small>177 Tôn Thất Thuyết, Khánh Hội</small></a>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item has-menu">
+          <a class="nav-link" href="services.html" data-nav="services">Dịch vụ &amp; Giá</a><button type="button" class="sub-toggle" aria-expanded="false" aria-label="Mở menu Dịch vụ"><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="mega mega-3">
+            <div class="mega-col">
+              <span class="mega-title">Spa &amp; Grooming</span>
+              <a href="service.html?id=1"><strong>Tắm gội &amp; sấy thơm</strong></a><a href="service.html?id=2"><strong>Cắt tỉa tạo kiểu</strong></a><a href="service.html?id=3"><strong>Spa thư giãn toàn thân</strong></a><a href="service.html?id=8"><strong>Combo Tắm và Cắt tỉa</strong></a>
+            </div>
+            <div class="mega-col">
+              <span class="mega-title">Khách sạn &amp; Tại nhà</span>
+              <a href="services.html?nhom=Kh%C3%A1ch%20s%E1%BA%A1n#danh-sach"><strong>Khách sạn thú cưng</strong><small>Phòng Tiêu chuẩn, Deluxe, VIP</small></a><a href="service.html?id=9"><strong>Trông giữ ban ngày</strong></a><a href="services.html?nhom=T%E1%BA%A1i%20nh%C3%A0#danh-sach"><strong>Chăm sóc tại nhà</strong><small>Tắm, cắt tỉa tận nơi</small></a>
+            </div>
+            <div class="mega-col">
+              <span class="mega-title">Bảng giá</span>
+              <a href="services.html#danh-sach"><strong>Tất cả dịch vụ</strong></a><a href="services.html#bang-gia-can-nang"><strong>Giá theo cân nặng</strong></a><a href="services.html#uu-dai"><strong>Ưu đãi</strong></a><a href="services.html#chinh-sach"><strong>Chính sách</strong></a>
+            </div>
+            <div class="mega-card">
+              <span class="promo-tag">-20%</span>
+              <strong>Khách mới đến Momo</strong>
+              <p>Giảm 20% Combo Tắm và Cắt tỉa cho lần đầu, tặng nơ hoặc khăn cổ.</p>
+              <a class="btn btn-small" href="service.html?id=8#dat-lich">Đặt Combo</a>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item has-menu">
+          <a class="nav-link" href="cam-nang.html" data-nav="news">Cẩm nang</a><button type="button" class="sub-toggle" aria-expanded="false" aria-label="Mở menu Cẩm nang"><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="mega mega-1">
+            <div class="mega-col">
+              <a href="cam-nang.html?chu-de=Ch%C4%83m%20s%C3%B3c"><strong>Chăm sóc</strong><small>Tắm, cắt móng tại nhà</small></a><a href="cam-nang.html?chu-de=Grooming"><strong>Grooming</strong><small>Khi nào cần cắt tỉa</small></a><a href="cam-nang.html?chu-de=Kh%C3%A1ch%20s%E1%BA%A1n"><strong>Khách sạn</strong><small>Chuẩn bị khi gửi bé</small></a><a href="cam-nang.html?chu-de=S%E1%BB%A9c%20kh%E1%BB%8Fe"><strong>Sức khỏe</strong><small>Mùa nóng, say nắng</small></a><a href="cam-nang.html"><strong>Tất cả bài viết</strong></a>
+            </div>
+          </div>
+        </div>
+        <a class="nav-link" href="bookings.html" data-nav="bookings">Lịch hẹn<span class="badge" id="booking-count" hidden>0</span></a>
+        <a class="nav-link" href="contact.html" data-nav="contact">Liên hệ</a>
       </nav>
       <div class="header-actions">
         <a class="account-link" href="login.html" data-nav="account" id="account-link">{ic('user')}<span id="account-label">Đăng nhập</span></a>
@@ -140,10 +181,10 @@ FOOTER = f"""
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script src="assets/js/config.js?v=20261128e"></script>
-  <script src="assets/js/db.js?v=20261128e"></script>
-  <script src="assets/js/app.js?v=20261128e"></script>
-  <script src="assets/js/chatbot.js?v=20261128e"></script>
+  <script src="assets/js/config.js?v=20261128f"></script>
+  <script src="assets/js/db.js?v=20261128f"></script>
+  <script src="assets/js/app.js?v=20261128f"></script>
+  <script src="assets/js/chatbot.js?v=20261128f"></script>
 </body>
 </html>
 """
@@ -192,7 +233,7 @@ ADMIN_HEADER = f"""
   </header>
 """
 
-SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):].replace('  <script src="assets/js/chatbot.js?v=20261128e"></script>\n', '')
+SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):].replace('  <script src="assets/js/chatbot.js?v=20261128f"></script>\n', '')
 ADMIN_FOOTER = """
   <footer class="admin-footer">
     <div class="container">© 2026 Momo Pet Hotel &amp; Spa · Trang quản trị nội bộ · <a href="index.html">Về website</a></div>
@@ -407,7 +448,7 @@ page("about.html", "about", "Về chúng tôi",
      "Câu chuyện, cơ sở vật chất, đội ngũ và bảng giá của Momo Pet Hotel & Spa tại Phường Khánh Hội, TP.HCM.",
      page_hero("momo-sea.jpg", "Về chúng tôi", "Về Momo Pet Hotel &amp; Spa",
                "Bắt đầu từ một chú chó tên Momo, chúng tôi xây dựng nơi mà chính mình cũng yên tâm gửi gắm thú cưng.") + f"""
-    <section class="section">
+    <section class="section" id="cau-chuyen">
       <div class="container split wide-left">
         <div>
           <span class="eyebrow">Câu chuyện thương hiệu</span>
@@ -439,7 +480,7 @@ page("about.html", "about", "Về chúng tôi",
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="co-so-vat-chat">
       <div class="container">
         <div class="section-head">
           <span class="eyebrow">Cơ sở vật chất</span>
@@ -459,7 +500,7 @@ page("about.html", "about", "Về chúng tôi",
       </div>
     </section>
 
-    <section class="section bg-soft">
+    <section class="section bg-soft" id="doi-ngu">
       <div class="container split">
         <img class="photo wide" src="assets/img/photos/team.jpg" alt="Hai chuyên viên mặc đồng phục xanh đang bế và chăm sóc một chú chó" loading="lazy">
         <div>
@@ -543,7 +584,7 @@ page("about.html", "about", "Về chúng tôi",
       </div>
     </section>
 
-    <section class="section bg-sand">
+    <section class="section bg-sand" id="cua-hang">
       <div class="container split">
         <div>
           <span class="eyebrow">Ghé thăm cửa hàng</span>
@@ -565,7 +606,7 @@ page("services.html", "services", "Dịch vụ & Bảng giá",
      "Các gói spa, khách sạn và combo chăm sóc chó mèo tại Momo Pet Hotel & Spa, Khánh Hội.",
      page_hero("room-deluxe.jpg", "Dịch vụ &amp; Bảng giá", "Dịch vụ &amp; Bảng giá",
                "Spa, khách sạn, combo và dịch vụ tại nhà cho chó mèo. Chọn một gói để xem chi tiết và đặt lịch trực tuyến.") + f"""
-    <section class="section">
+    <section class="section" id="danh-sach">
       <div class="container">
         <div class="filters" id="filters" role="group" aria-label="Lọc theo nhóm dịch vụ"></div>
         <div class="grid grid-3" id="service-list"><p class="loading">Đang tải dịch vụ…</p></div>
@@ -603,7 +644,7 @@ page("services.html", "services", "Dịch vụ & Bảng giá",
       </div>
     </section>
 
-    <section class="section bg-soft">
+    <section class="section bg-soft" id="chinh-sach">
       <div class="container">
         <div class="section-head">
           <span class="eyebrow">Chính sách</span>

@@ -45,6 +45,7 @@ Website có 14 trang. Tất cả các trang khách dùng chung header (menu) và
 | 13 | Cẩm nang | `cam-nang.html` | 6 bài viết chăm sóc thú cưng, lọc theo chủ đề |
 | 14 | Bài viết | `bai-viet.html?slug=…` | Nội dung bài cẩm nang, bài liên quan, nút tư vấn Zalo |
 | 15 | Thêm mạng xã hội vào thanh dọc, kiểm tra tài khoản khách thử, ghi tài khoản chấm bài, đánh giá menu sổ xuống, chatbot AI bằng Google Gemini | Thanh dọc 6 nút; SQL kiểm tra tài khoản khách; file tài khoản test cho giáo viên; đánh giá menu sổ xuống và hạn mức miễn phí Gemini |
+| 16 | Làm menu sổ xuống như petservicehcm.com | Menu sổ xuống cho Về chúng tôi, Dịch vụ & Giá, Cẩm nang; lọc sẵn theo nhóm/chủ đề; gập mở trên điện thoại |
 
 | Trang chủ | Về chúng tôi |
 |---|---|
@@ -120,6 +121,7 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 - **Đưa đón tận nhà** (miễn phí 3 km), mục **lưu ý trước khi đặt lịch**, hỏi đáp mới.
 - **Dịch vụ tại nhà** (Tắm & vệ sinh tại nhà, Cắt tỉa tại nhà), **Ưu đãi** (khách mới -20%, thẻ 10+1, lưu trú từ 5 đêm -10%), **Cam kết chất lượng** (6 cam kết, quy trình xử lý phản hồi 3 bước, bảng tình huống và cách hỗ trợ). Học từ petservicehcm.com.
 - **Cẩm nang** (học từ mục Tin tức của cherrypetcoffee.com): 6 bài viết, lọc theo chủ đề, trang chi tiết có bài liên quan; 3 bài mới nhất hiện ở Trang chủ; chatbot trả lời câu hỏi về cẩm nang, ưu đãi, dịch vụ tại nhà.
+- **Menu sổ xuống** (học từ petservicehcm.com): "Về chúng tôi", "Dịch vụ & Giá" (Spa & Grooming, Khách sạn & Tại nhà, Bảng giá, thẻ ưu đãi khách mới), "Cẩm nang" theo chủ đề. Mỗi mục con dẫn thẳng tới đúng phần trang hoặc danh sách đã lọc sẵn; trên điện thoại gập mở trong menu ☰; dùng được bằng bàn phím (Tab, Esc).
 - **Pop-up ưu đãi khách mới** ở trang chủ (sau 3 giây, mỗi phiên một lần), **dàn thú cưng ló đầu trên thanh đỏ** (rê chuột thì bé nhô lên và hiện giống, tính cách), hiệu ứng **rê chuột** trên thẻ, icon, menu, logo và hiệu ứng **hiện dần khi cuộn**, nút **lên đầu trang**.
 
 ### 3.6. Nhúng

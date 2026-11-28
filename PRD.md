@@ -69,6 +69,7 @@ Mọi trang có chung header và footer, trong đó có đủ link tới các tr
 | F19 | Pop-up ưu đãi khách mới (sau 3 giây, mỗi phiên một lần), dàn thú cưng ló đầu trên thanh đỏ, hiệu ứng rê chuột và hiện dần khi cuộn | — | — |
 | F20 | Dịch vụ tại nhà: Tắm & vệ sinh tại nhà, Cắt tỉa tại nhà (nhóm "Tại nhà") | select / insert | `services`, `bookings` |
 | F21 | Cẩm nang: 6 bài viết, lọc theo chủ đề, trang chi tiết bài viết | — | `data/articles.json` |
+| F23 | Menu sổ xuống: "Về chúng tôi", "Dịch vụ & Giá" (3 cột + thẻ ưu đãi), "Cẩm nang" (theo chủ đề); link lọc sẵn `services.html?nhom=…`, `cam-nang.html?chu-de=…`; điện thoại dạng gập mở | — | — |
 | F22 | Ưu đãi (khách mới, thẻ 10+1, lưu trú từ 5 đêm) và Cam kết chất lượng (quy trình xử lý phản hồi) | — | — |
 
 **Quy tắc vai trò**: tài khoản quản trị không dùng form đặt lịch và form đánh giá dành cho khách (hai form được thay bằng thông báo và link sang trang Quản trị). Admin đặt lịch hộ khách trong tab "Tạo lịch hẹn" của trang Quản trị.

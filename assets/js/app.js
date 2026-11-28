@@ -6,7 +6,7 @@
   // ---------- Tiện ích ----------
   const esc = (v) =>
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128e#${name}"/></svg>`;
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128f#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
   // Phụ thu theo cân nặng: dưới 10 kg giá niêm yết, 10–20 kg +30%, trên 20 kg +60%
   const WEIGHT_TIERS = [1, 1.3, 1.6];
@@ -152,13 +152,59 @@
       toggle.setAttribute("aria-expanded", String(open));
       toggle.textContent = open ? "✕" : "☰";
     });
+
+    // Menu sổ xuống: rê chuột (CSS) hoặc bấm mũi tên; Esc, bấm ra ngoài hay chọn mục thì đóng.
+    const items = [...nav.querySelectorAll(".has-menu")];
+    const closeAll = (except) =>
+      items.forEach((it) => {
+        if (it === except) return;
+        it.classList.remove("open");
+        it.querySelector(".sub-toggle").setAttribute("aria-expanded", "false");
+      });
+    items.forEach((it) => {
+      const btn = it.querySelector(".sub-toggle");
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        it.classList.remove("closed");
+        const open = !it.classList.contains("open");
+        closeAll(it);
+        it.classList.toggle("open", open);
+        btn.setAttribute("aria-expanded", String(open));
+      });
+      it.addEventListener("mouseleave", () => it.classList.remove("closed"));
+      it.addEventListener("focusout", (e) => {
+        if (!it.contains(e.relatedTarget)) it.classList.remove("closed");
+      });
+      it.querySelectorAll(".mega a").forEach((a) =>
+        a.addEventListener("click", () => {
+          closeAll();
+          it.classList.add("closed");
+          a.blur();
+          nav.classList.remove("open");
+          toggle.setAttribute("aria-expanded", "false");
+          toggle.textContent = "☰";
+        })
+      );
+    });
+    document.addEventListener("click", (e) => {
+      if (!nav.contains(e.target)) closeAll();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      const open = items.find((it) => it.classList.contains("open") || it.contains(document.activeElement));
+      closeAll();
+      if (open) {
+        open.classList.add("closed");
+        open.querySelector(".nav-link").focus();
+      }
+    });
   }
 
   // ---------- Cẩm nang (data/articles.json) ----------
   let articlesCache = null;
   async function getArticles() {
     if (!articlesCache) {
-      const res = await fetch("data/articles.json?v=20261128e");
+      const res = await fetch("data/articles.json?v=20261128f");
       if (!res.ok) throw new Error("Không tải được bài viết.");
       articlesCache = (await res.json()).sort((a, b) => b.date.localeCompare(a.date));
     }
@@ -190,7 +236,8 @@
       const b = e.target.closest("button[data-cat]");
       if (b) render(b.dataset.cat);
     });
-    render("Tất cả");
+    const wanted = new URLSearchParams(location.search).get("chu-de");
+    render(cats.includes(wanted) ? wanted : "Tất cả");
   }
 
   async function initArticle() {
@@ -262,7 +309,8 @@
       const btn = e.target.closest("button[data-cat]");
       if (btn) render(btn.dataset.cat);
     });
-    render("Tất cả");
+    const wanted = new URLSearchParams(location.search).get("nhom");
+    render(categories.includes(wanted) ? wanted : "Tất cả");
 
     const wt = $("#weight-table");
     if (wt) {

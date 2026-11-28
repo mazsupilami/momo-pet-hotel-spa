@@ -177,3 +177,14 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - File `tai-khoan-test.md` (ngoài repo) ghi link website, cách đăng nhập, tài khoản khách và ô để người dùng tự điền mật khẩu admin mới (Claude không ghi mật khẩu admin).
 - Menu sổ xuống: làm được với HTML/CSS hiện có, đề xuất cho "Dịch vụ & Giá" và "Về chúng tôi", dạng gập mở trên điện thoại.
 - Chatbot Gemini: Google AI Studio có hạn mức miễn phí, không cần thẻ (theo các báo cáo tháng 10–11/2026: Flash-Lite khoảng 500 lượt/ngày, Flash khoảng 20 lượt/ngày; Google chỉ hiện số chính xác trong AI Studio). Khóa API phải để trong Supabase Edge Function; khi hết lượt thì quay về chatbot theo từ khóa hiện có.
+
+## Prompt 16 — Menu sổ xuống (28/11/2026)
+
+**Prompt**: Làm menu sổ xuống (người dùng chọn sau khi được đánh giá ở Prompt 15).
+
+**Kết quả**:
+- "Về chúng tôi": Câu chuyện Momo, Cơ sở vật chất, Đội ngũ, Cam kết chất lượng, Bảng giá niêm yết, Ghé thăm cửa hàng (thêm id cho từng phần của trang).
+- "Dịch vụ & Giá": 3 cột Spa & Grooming, Khách sạn & Tại nhà, Bảng giá, cùng thẻ ưu đãi khách mới -20%. "Khách sạn thú cưng" và "Chăm sóc tại nhà" mở trang Dịch vụ đã lọc sẵn (`?nhom=`).
+- "Cẩm nang": 4 chủ đề, mở trang Cẩm nang đã lọc sẵn (`?chu-de=`).
+- Máy tính: rê chuột hoặc bấm mũi tên; Esc, bấm ra ngoài hoặc chọn mục thì đóng. Điện thoại: gập mở trong menu ☰, ẩn thanh liên hệ khi menu đang mở.
+- Đã thử trên máy: lọc Khách sạn hiện 3 phòng, lọc Sức khỏe hiện 1 bài, menu điện thoại không cuộn ngang, không có lỗi console.
