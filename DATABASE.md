@@ -136,7 +136,7 @@ Cột thêm ở `features_v2.sql`: `booking_id` (lịch hẹn đã hoàn thành,
 13. **Chống spam (Cloudflare Turnstile)**:
     - Cloudflare > Turnstile > Add site: tên miền `mazsupilami.github.io` và `localhost`, chế độ Managed.
     - Chép **Site key** vào `TURNSTILE_SITE_KEY` trong `assets/js/config.js` và deploy website trước.
-    - Sau đó Supabase > Authentication > Attack Protection: bật CAPTCHA, chọn Turnstile, dán **Secret key**.
+    - Sau đó Supabase > Authentication > Attack Protection: bật CAPTCHA, chọn Turnstile, dán **Secret key**. (Đã bật ngày 29/11/2026.)
 
 14. **Lưu trú nhiều ngày**: chạy `supabase/stay_dates.sql`. Chưa chạy thì website vẫn đặt được lịch, ngày trả bé được ghi vào ghi chú.
 

@@ -28,6 +28,7 @@
     if (/signups not allowed|signup.*disabled/i.test(m)) return new Error("Hiện chưa mở đăng ký tài khoản mới.");
     if (/email.*(rate|security purposes)|for security purposes/i.test(m)) return new Error("Bạn vừa yêu cầu gửi email. Vui lòng đợi ít phút rồi thử lại.");
     if (/rate limit/i.test(m)) return new Error("Bạn thao tác quá nhanh, vui lòng thử lại sau ít phút.");
+    if (/captcha/i.test(m)) return new Error('Xác minh "Tôi không phải robot" chưa hợp lệ hoặc đã hết hạn. Vui lòng tích lại ô xác minh rồi thử lại.');
     if (/anonymous sign-ins are disabled/i.test(m)) return new Error("Không tạo được phiên khách. Hãy bật Anonymous sign-ins trong Supabase.");
     return new Error(m || "Có lỗi khi xác thực tài khoản.");
   }

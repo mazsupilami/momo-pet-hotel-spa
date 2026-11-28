@@ -189,6 +189,7 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 | Phiên khách gọi hàm danh sách khách hàng | Gọi `admin_list_customers` khi không phải admin | Bị chặn |
 | Khách gửi lịch kèm trạng thái "Đã xác nhận", tự đổi trạng thái | Gọi thẳng database bằng phiên khách | Lịch lưu thành "Chờ xác nhận"; đổi trạng thái bị chặn |
 | Khách ẩn danh gửi đánh giá | Gọi hàm gửi đánh giá | Bị chặn |
+| Chống spam (Turnstile) | Tạo phiên khách không có mã / mã giả; khách mới bấm đặt lịch khi chưa tích ô | Supabase từ chối; website báo cần tích ô xác minh |
 
 ### 3.9. Hướng phát triển
 

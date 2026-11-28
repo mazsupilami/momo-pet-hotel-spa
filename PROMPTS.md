@@ -266,3 +266,4 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 **Prompt**: Không thấy nút "Add site" trong Cloudflare Turnstile; nhờ tạo giúp.
 
 **Kết quả**: Cloudflare đổi tên nút thành "Add widget manually". Claude tạo widget "Momo Pet Hotel & Spa" (tên miền `mazsupilami.github.io`, `localhost`, chế độ Managed, tắt pre-clearance), điền Site key (khóa công khai) vào `TURNSTILE_SITE_KEY` trong `config.js`. Ô "Xác minh bạn là con người" hiện ở trang Đăng nhập, Đăng ký, Quên mật khẩu và form đặt lịch (khi chưa có phiên). Secret key do người dùng tự dán vào Supabase > Authentication > Attack Protection.
+- Sau khi người dùng bật CAPTCHA trong Supabase: tạo phiên khách không có mã bị từ chối (`captcha_failed: no captcha_token found`), mã giả bị từ chối (`invalid-input-response`). Khách mới mở form đặt lịch thấy ô xác minh; bấm đặt khi chưa tích bị chặn, không tạo phiên. Thêm câu báo lỗi tiếng Việt khi mã xác minh không hợp lệ hoặc hết hạn.
