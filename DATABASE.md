@@ -130,7 +130,7 @@ Cột thêm ở `features_v2.sql`: `booking_id` (lịch hẹn đã hoàn thành,
     - Nhắn một tin bất kỳ cho bot vừa tạo, rồi mở `https://api.telegram.org/bot<token>/getUpdates`, chép số `"chat":{"id": ...}`.
     - Supabase > Edge Functions > Secrets: thêm `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `WEBHOOK_SECRET` (chuỗi tự đặt).
     - Deploy function `notify-booking` (dán `supabase/functions/notify-booking/index.ts`), tắt **Verify JWT**.
-    - Database > Webhooks > Create: bảng `bookings`, sự kiện Insert, loại Supabase Edge Functions, chọn `notify-booking`, thêm HTTP header `x-webhook-secret` = giá trị `WEBHOOK_SECRET`.
+    - Tạo webhook bằng SQL: mở `supabase/booking_webhook.sql`, trong SQL Editor thay `DAN_WEBHOOK_SECRET_VAO_DAY` bằng giá trị `WEBHOOK_SECRET`, Run. File dùng `pg_net` gọi function và lưu chuỗi bí mật trong Supabase Vault. (Cách khác: Integrations > Database Webhooks trên giao diện.)
 13. **Chống spam (Cloudflare Turnstile)**:
     - Cloudflare > Turnstile > Add site: tên miền `mazsupilami.github.io` và `localhost`, chế độ Managed.
     - Chép **Site key** vào `TURNSTILE_SITE_KEY` trong `assets/js/config.js` và deploy website trước.
