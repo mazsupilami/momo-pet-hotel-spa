@@ -19,7 +19,7 @@ YOUTUBE_VIDEO = "BGgRwsH_8vE"  # video giới thiệu Momo trên kênh YouTube c
 MAP_Q = "177+T%C3%B4n+Th%E1%BA%A5t+Thuy%E1%BA%BFt,+Kh%C3%A1nh+H%E1%BB%99i,+H%E1%BB%93+Ch%C3%AD+Minh"
 
 
-ICON_V = "20261128j"
+ICON_V = "20261128l"
 
 
 def ic(name):
@@ -39,7 +39,7 @@ def head(title, desc):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261128j">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261128l">
 </head>"""
 
 
@@ -181,10 +181,10 @@ FOOTER = f"""
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script src="assets/js/config.js?v=20261128j"></script>
-  <script src="assets/js/db.js?v=20261128j"></script>
-  <script src="assets/js/app.js?v=20261128j"></script>
-  <script src="assets/js/chatbot.js?v=20261128j"></script>
+  <script src="assets/js/config.js?v=20261128l"></script>
+  <script src="assets/js/db.js?v=20261128l"></script>
+  <script src="assets/js/app.js?v=20261128l"></script>
+  <script src="assets/js/chatbot.js?v=20261128l"></script>
 </body>
 </html>
 """
@@ -233,7 +233,7 @@ ADMIN_HEADER = f"""
   </header>
 """
 
-SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):].replace('  <script src="assets/js/chatbot.js?v=20261128j"></script>\n', '')
+SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):].replace('  <script src="assets/js/chatbot.js?v=20261128l"></script>\n', '')
 ADMIN_FOOTER = """
   <footer class="admin-footer">
     <div class="container">© 2026 Momo Pet Hotel &amp; Spa · Trang quản trị nội bộ · <a href="index.html">Về website</a></div>
@@ -494,9 +494,9 @@ page("about.html", "about", "Về chúng tôi",
           <a class="svc-card" href="service.html?id=9"><div class="svc-media"><img src="assets/img/photos/svc-daycare.jpg" alt="Nhóm chó vui chơi trong sân có rào" loading="lazy"><span class="svc-tag">Vui chơi</span></div><div class="svc-body"><h3>Sân chơi 60 m²</h3><p>Chia khu cho chó nhỏ, chó lớn và mèo, luôn có người giám sát.</p></div></a>
         </div>
         <div class="grid grid-3" style="margin-top:24px">
-          <div class="info-card"><span class="ico">{ic('camera')}</span><h3>Camera 24/7</h3><p>Camera ở khu chung và từng phòng VIP, xem trực tiếp qua điện thoại.</p></div>
-          <div class="info-card"><span class="ico">{ic('leaf')}</span><h3>Bếp riêng</h3><p>Chuẩn bị bữa ăn theo khẩu phần chủ nuôi gửi, có tủ lạnh cho đồ tươi.</p></div>
-          <div class="info-card"><span class="ico">{ic('shield')}</span><h3>Góc y tế</h3><p>Tủ sơ cứu và liên kết với phòng khám thú y gần tiệm.</p></div>
+          <a class="svc-card" href="service.html?id=7"><div class="svc-media"><img src="assets/img/photos/fac-camera.jpg" alt="Camera giám sát gắn ở góc tường khu lưu trú" loading="lazy"><span class="svc-tag">An ninh</span></div><div class="svc-body"><h3>Camera 24/7</h3><p>Camera ở khu chung và từng phòng VIP, xem trực tiếp qua điện thoại.</p></div></a>
+          <div class="svc-card"><div class="svc-media"><img src="assets/img/photos/fac-kitchen.jpg" alt="Chú chó đang ăn trong bát inox sạch" loading="lazy"><span class="svc-tag">Dinh dưỡng</span></div><div class="svc-body"><h3>Bếp riêng</h3><p>Chuẩn bị bữa ăn theo khẩu phần chủ nuôi gửi, có tủ lạnh cho đồ tươi, bát inox tiệt trùng sau mỗi bữa.</p></div></div>
+          <div class="svc-card"><div class="svc-media"><img src="assets/img/photos/fac-medical.jpg" alt="Nhân viên đeo găng kiểm tra răng miệng cho chú chó" loading="lazy"><span class="svc-tag">Y tế</span></div><div class="svc-body"><h3>Góc y tế</h3><p>Kiểm tra sức khỏe trước dịch vụ, tủ sơ cứu và liên kết với phòng khám thú y gần tiệm.</p></div></div>
         </div>
       </div>
     </section>
@@ -513,6 +513,15 @@ page("about.html", "about", "Về chúng tôi",
             <li>{ic('check')} 6 nhân viên chăm sóc, luôn có người trực đêm</li>
             <li>{ic('check')} 2 lễ tân tư vấn và xác nhận lịch qua Zalo</li>
           </ul>
+        </div>
+      </div>
+      <div class="container">
+        <h3 class="staff-title">Những người chăm sóc bé nhà bạn</h3>
+        <div class="staff-grid">
+          <article class="staff-card"><img src="assets/img/photos/staff/linh.jpg" alt="Nguyễn Thùy Linh, Quản lý cửa hàng" loading="lazy"><div><h3>Nguyễn Thùy Linh</h3><span class="staff-role">Quản lý cửa hàng</span><p>8 năm chăm sóc thú cưng, chịu trách nhiệm quy trình an toàn và xử lý phản hồi của khách.</p></div></article>
+          <article class="staff-card"><img src="assets/img/photos/staff/khang.jpg" alt="Trần Minh Khang, Trưởng nhóm grooming" loading="lazy"><div><h3>Trần Minh Khang</h3><span class="staff-role">Trưởng nhóm grooming</span><p>Chứng chỉ grooming chuyên nghiệp, giỏi tạo kiểu Poodle, Phốc sóc và các bé lông dài.</p></div></article>
+          <article class="staff-card"><img src="assets/img/photos/staff/thao.jpg" alt="Lê Phương Thảo, Chăm sóc lưu trú" loading="lazy"><div><h3>Lê Phương Thảo</h3><span class="staff-role">Chăm sóc lưu trú</span><p>Phụ trách khu khách sạn và ca trực đêm, gửi ảnh cập nhật cho chủ nuôi mỗi tối.</p></div></article>
+          <article class="staff-card"><img src="assets/img/photos/staff/minh.jpg" alt="Phạm Quốc Minh, Lễ tân và tư vấn" loading="lazy"><div><h3>Phạm Quốc Minh</h3><span class="staff-role">Lễ tân và tư vấn</span><p>Tư vấn chọn gói, xác nhận lịch hẹn qua Zalo và sắp xếp đưa đón tận nhà.</p></div></article>
         </div>
       </div>
     </section>

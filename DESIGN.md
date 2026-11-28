@@ -88,7 +88,7 @@ Có sẵn: `phone`, `pin`, `clock`, `mail`, `check`, `star`, `shield`, `camera`,
 
 ## 8. Ảnh
 
-Ảnh chụp thật trong `assets/img/photos/`, định dạng JPG, rộng tối đa 1400px. Nguồn: Unsplash và Pexels, giấy phép cho phép dùng miễn phí, không bắt buộc ghi nguồn. **Ảnh thật của chú chó Momo chỉ dùng ở trang Về chúng tôi** (ảnh đầu trang `momo-sea.jpg`, ảnh câu chuyện `momo-portrait.jpg`) để khớp với logo; các trang khác dùng ảnh dịch vụ. Dàn thú cưng dùng ảnh chân dung nền sáng trong `photos/parade/`. Mọi ảnh có `alt` tiếng Việt.
+Ảnh chụp thật trong `assets/img/photos/`, định dạng JPG, rộng tối đa 1400px. Nguồn: Unsplash và Pexels, giấy phép cho phép dùng miễn phí, không bắt buộc ghi nguồn. **Ảnh thật của chú chó Momo chỉ dùng ở trang Về chúng tôi** (ảnh đầu trang `momo-sea.jpg`, ảnh câu chuyện `momo-portrait.jpg`) để khớp với logo; các trang khác dùng ảnh dịch vụ. Dàn thú cưng dùng ảnh chân dung nền sáng trong `photos/parade/`. Mọi ảnh có `alt` tiếng Việt. Ảnh cơ sở vật chất `fac-camera.jpg`, `fac-kitchen.jpg`, `fac-medical.jpg`; ảnh nhân viên (ảnh minh họa Unsplash, tên hư cấu) trong `photos/staff/`. Thẻ đội ngũ dùng `.staff-grid` / `.staff-card`.
 
 | Ảnh | Dùng cho |
 |---|---|

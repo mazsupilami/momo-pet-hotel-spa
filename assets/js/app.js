@@ -6,7 +6,7 @@
   // ---------- Tiện ích ----------
   const esc = (v) =>
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128j#${name}"/></svg>`;
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128l#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
   // Phụ thu theo cân nặng: dưới 10 kg giá niêm yết, 10–20 kg +30%, trên 20 kg +60%
   const WEIGHT_TIERS = [1, 1.3, 1.6];
@@ -431,7 +431,7 @@
   let articlesCache = null;
   async function getArticles() {
     if (!articlesCache) {
-      const res = await fetch("data/articles.json?v=20261128j");
+      const res = await fetch("data/articles.json?v=20261128l");
       if (!res.ok) throw new Error("Không tải được bài viết.");
       articlesCache = (await res.json()).sort((a, b) => b.date.localeCompare(a.date));
     }
@@ -1506,9 +1506,25 @@
     article: initArticle,
     admin: initAdmin,
   };
-  Promise.resolve(inits[page] ? inits[page]() : null).catch((err) => {
-    console.error(err);
-    toast(err.message || "Có lỗi xảy ra khi tải trang.", true);
-  });
+  // Link có #mục (ví dụ services.html#uu-dai): nội dung tải từ database làm trang dài ra sau khi trình duyệt
+  // đã cuộn, nên cuộn lại đúng mục sau khi trang tải xong dữ liệu.
+  const scrollToHash = () => {
+    if (!location.hash || location.hash.length < 2) return;
+    let el = null;
+    try {
+      el = document.querySelector(decodeURIComponent(location.hash));
+    } catch {}
+    if (el) el.scrollIntoView({ block: "start", behavior: "instant" });
+  };
+  Promise.resolve(inits[page] ? inits[page]() : null)
+    .catch((err) => {
+      console.error(err);
+      toast(err.message || "Có lỗi xảy ra khi tải trang.", true);
+    })
+    .finally(() => {
+      scrollToHash();
+      // Ảnh lazy-load có thể làm lệch thêm một chút: kiểm tra lại sau khi tải xong
+      window.addEventListener("load", scrollToHash, { once: true });
+    });
   if (page !== "bookings") refreshBookingCount();
 })();

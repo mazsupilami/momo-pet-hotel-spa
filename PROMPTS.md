@@ -222,3 +222,13 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Thêm vào lịch: Google Calendar và .ics (đã kiểm tra 9:30 giờ VN = 02:30 UTC) sau khi đặt lịch và trên trang Lịch hẹn.
 - Chống spam: ô Turnstile tự hiện khi điền `TURNSTILE_SITE_KEY`, token gửi kèm khi tạo phiên khách, đăng nhập, đăng ký, quên mật khẩu.
 - Webhook: giao diện Database > Webhooks không còn ở chỗ cũ, thay bằng `supabase/booking_webhook.sql` (trigger `pg_net`, chuỗi bí mật lưu trong Vault). Thử: đặt lịch "Test Telegram", log function `notify-booking` ghi POST 200 (Telegram nhận tin), sau đó hủy lịch thử.
+
+## Prompt 20 — Link Ưu đãi, ảnh cơ sở vật chất, ảnh nhân viên, thanh tìm kiếm (28/11/2026)
+
+**Prompt**: Ở Trang chủ bấm "Ưu đãi" ở footer chưa tới đúng phần ưu đãi. Camera, Bếp riêng, Góc y tế chưa có hình. Thêm ảnh nhân viên ở phần đội ngũ để tăng uy tín (tham khảo theanimaldoctors.org). Có nên thêm thanh tìm kiếm trên cùng như petmart.vn?
+
+**Kết quả**:
+- Nguyên nhân: danh sách dịch vụ và bảng giá tải từ database sau khi trình duyệt đã cuộn tới `#uu-dai`, nội dung dài ra làm lệch vị trí. Sửa: sau khi trang tải xong dữ liệu, `app.js` cuộn lại đúng mục; thêm `scroll-padding-top` để tiêu đề không bị header che. Thử: `services.html#uu-dai` và `about.html#doi-ngu` đều dừng đúng đầu mục.
+- Cơ sở vật chất: 3 thẻ Camera 24/7, Bếp riêng, Góc y tế đổi sang thẻ có ảnh giống hàng trên (ảnh Unsplash).
+- Đội ngũ: thêm 4 thẻ nhân viên có ảnh, tên, vai trò, mô tả (Quản lý, Trưởng nhóm grooming, Chăm sóc lưu trú, Lễ tân). Tên hư cấu, ảnh minh họa.
+- Thanh tìm kiếm: đánh giá là chưa cần thanh lớn như petmart.vn (trang bán hàng hàng nghìn sản phẩm); Momo chỉ có 11 dịch vụ và 6 bài viết, menu sổ xuống và chatbot đã đủ. Phương án gọn hơn nếu muốn: biểu tượng kính lúp mở ô tìm nhanh dịch vụ và bài cẩm nang.

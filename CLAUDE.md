@@ -29,6 +29,7 @@ Website thương hiệu hư cấu **Momo Pet Hotel & Spa** (khách sạn và spa
 - Đánh giá: chỉ tài khoản email có lịch `done` của gói đó (hàm `can_review` + RLS trong `supabase/features_v2.sql`). Không nới luật này ở giao diện.
 - Khóa bí mật (Gemini, Telegram, Turnstile secret, WEBHOOK_SECRET) chỉ đặt trong Supabase. `config.js` chỉ chứa khóa công khai (publishable, Turnstile site key).
 - API ngoài gọi từ trình duyệt: Open-Meteo (thời tiết), Nominatim + OSRM (đưa đón), Turnstile. Chỉ gửi địa chỉ khách nhập, không gửi tên hay số điện thoại.
+- Link tới mục trong trang (`#uu-dai`, `#doi-ngu`…): `app.js` tự cuộn lại đúng mục sau khi dữ liệu tải xong; header dính được chừa bằng `scroll-padding-top`.
 - Bài cẩm nang nằm trong `data/articles.json` (slug, title, category, date, image, excerpt, content). Thêm bài mới thì thêm vào file này, không tạo trang HTML mới.
 - Icon dùng `assets/img/icons.svg?v=…#tên`; khi thêm icon mới vào sprite, tăng số `?v=` trong `ic()` của `tools/gen_pages.py`, `app.js`, `chatbot.js`.
 - Chatbot nằm ở `assets/js/chatbot.js`: câu gõ tự do gửi tới Edge Function `supabase/functions/chat/index.ts` (Gemini), nút câu hỏi nhanh và trường hợp AI lỗi dùng luật từ khóa, giá đọc qua `DB.getServices()`; không gắn vào trang Quản trị. Khóa Gemini chỉ đặt trong Supabase Secrets (`GEMINI_API_KEY`), không bao giờ ghi vào file. Câu trả lời của AI phải qua `aiHtml()` (escape, chỉ cho link nội bộ và Zalo). Sửa thông tin cửa hàng thì sửa cả `systemPrompt()` trong function.

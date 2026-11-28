@@ -49,6 +49,7 @@ Website có 14 trang. Tất cả các trang khách dùng chung header (menu) và
 | 17 | Làm chatbot AI bằng Google Gemini | Edge Function `chat` gọi Gemini (gói miễn phí), khóa API giữ trên Supabase, tự quay về chatbot từ khóa khi AI lỗi |
 | 18 | Đặt lịch không cần tài khoản có hợp lý? Ai cũng viết đánh giá được có hợp lý? | Giữ đặt lịch không cần tài khoản; đánh giá chỉ cho khách đã hoàn thành dịch vụ |
 | 19 | Làm luật đánh giá và các API: Telegram, Realtime, phí đưa đón, thời tiết, thêm vào lịch, ảnh đánh giá, chống spam | Xem mục 3.5b |
+| 20 | Link Ưu đãi ở footer chưa tới đúng chỗ, cơ sở vật chất thiếu hình, thêm ảnh nhân viên, có nên thêm thanh tìm kiếm? | Sửa cuộn tới mục, 3 ảnh cơ sở vật chất, 4 thẻ nhân viên có ảnh; đánh giá thanh tìm kiếm |
 
 | Trang chủ | Về chúng tôi |
 |---|---|
