@@ -190,6 +190,11 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 | Khách gửi lịch kèm trạng thái "Đã xác nhận", tự đổi trạng thái | Gọi thẳng database bằng phiên khách | Lịch lưu thành "Chờ xác nhận"; đổi trạng thái bị chặn |
 | Khách ẩn danh gửi đánh giá | Gọi hàm gửi đánh giá | Bị chặn |
 | Chống spam (Turnstile) | Tạo phiên khách không có mã / mã giả; khách mới bấm đặt lịch khi chưa tích ô | Supabase từ chối; website báo cần tích ô xác minh |
+| Quản trị: vai trò, cập nhật trực tiếp | Mở trang Quản trị trên website thật | Hiện "Quản trị viên", "Đang cập nhật trực tiếp"; lịch mới bật thông báo qua Realtime |
+| Quản trị: tạo và sửa lịch lưu trú | Tạo Deluxe 2 đêm, sửa giờ, cân nặng, ngày trả thành 3 đêm | Đạt, không nhân đôi dòng |
+| Quản trị: doanh thu theo số đêm | Xác nhận rồi hủy lịch 3 đêm bé 8 kg | Doanh thu +840.000đ rồi trở lại; đạt |
+| Quản trị: sửa số điện thoại khách | Tab Khách hàng | **Lỗi quyền (upsert), đã sửa**; thử lại đạt và trả về số cũ |
+| Quản trị: xóa lịch | Xóa lịch thử | Đạt |
 
 ### 3.9. Hướng phát triển
 

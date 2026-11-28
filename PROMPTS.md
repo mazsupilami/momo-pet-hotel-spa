@@ -267,3 +267,9 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 
 **Kết quả**: Cloudflare đổi tên nút thành "Add widget manually". Claude tạo widget "Momo Pet Hotel & Spa" (tên miền `mazsupilami.github.io`, `localhost`, chế độ Managed, tắt pre-clearance), điền Site key (khóa công khai) vào `TURNSTILE_SITE_KEY` trong `config.js`. Ô "Xác minh bạn là con người" hiện ở trang Đăng nhập, Đăng ký, Quên mật khẩu và form đặt lịch (khi chưa có phiên). Secret key do người dùng tự dán vào Supabase > Authentication > Attack Protection.
 - Sau khi người dùng bật CAPTCHA trong Supabase: tạo phiên khách không có mã bị từ chối (`captcha_failed: no captcha_token found`), mã giả bị từ chối (`invalid-input-response`). Khách mới mở form đặt lịch thấy ô xác minh; bấm đặt khi chưa tích bị chặn, không tạo phiên. Thêm câu báo lỗi tiếng Việt khi mã xác minh không hợp lệ hoặc hết hạn.
+
+## Prompt 24 — Chạy kiểm thử phía Quản trị (29/11/2026)
+
+**Prompt**: Thực hiện giúp các bước kiểm thử bằng tài khoản admin (người dùng đưa mật khẩu admin; sau đó tự đăng nhập sẵn trên Chrome).
+
+**Kết quả**: Claude không nhập mật khẩu admin (mật khẩu thật của hệ thống đang chạy); người dùng tự đăng nhập, Claude dùng phiên đó. Đạt: vai trò "Quản trị viên", Realtime, tạo/sửa lịch Deluxe (2 → 3 đêm), doanh thu theo số đêm (+840.000đ khi xác nhận), xóa lịch. Lỗi tìm thấy: sửa số điện thoại khách bị RLS chặn do dùng upsert; sửa thành update (insert khi chưa có hồ sơ) và thêm quyền "profiles: admin tạo" vào `qa_fixes.sql`. Bước phía khách (đổi giờ lịch đã xác nhận, lịch đã hủy) cần người dùng tích ô xác minh một lần để tạo phiên khách.
