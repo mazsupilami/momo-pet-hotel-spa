@@ -1,5 +1,7 @@
-// Chatbot tư vấn Momo: trả lời tự động theo từ khóa, giá lấy trực tiếp từ database (DB.getServices).
-// Không cần máy chủ hay khóa API nên chạy được trên GitHub Pages. Câu hỏi ngoài phạm vi được chuyển sang Zalo.
+// Chatbot tư vấn Momo.
+// - Câu gõ tự do: gửi tới Supabase Edge Function "chat" (Google Gemini, khóa API giữ bí mật trên Supabase).
+// - Nút câu hỏi nhanh, hoặc khi AI lỗi/hết lượt miễn phí: trả lời theo từ khóa, giá đọc từ database (DB.getServices).
+// Câu hỏi ngoài phạm vi được chuyển sang Zalo.
 (function () {
   if (document.body.dataset.page === "admin") return;
 
@@ -7,10 +9,60 @@
   const PHONE = "0968 198 406";
   const ADDR = "177 Tôn Thất Thuyết, Phường Khánh Hội, TP. Hồ Chí Minh";
   const STORE_KEY = "momo-chat-v1";
+  const AI_KEY = "momo-chat-ai-v1";
+  const CFG = window.APP_CONFIG || {};
+  const AI_URL = CFG.SUPABASE_URL ? `${CFG.SUPABASE_URL}/functions/v1/chat` : "";
+  let aiOn = Boolean(AI_URL);
+  let aiTurns = [];
+  try {
+    aiTurns = JSON.parse(sessionStorage.getItem(AI_KEY) || "[]");
+  } catch {}
+
+  // Gọi chatbot AI. Trả về chuỗi trả lời, hoặc null nếu AI không dùng được (chưa cài, lỗi, hết lượt).
+  async function askAI(text) {
+    if (!aiOn) return null;
+    const turns = [...aiTurns, { role: "user", text: text.slice(0, 500) }].slice(-8);
+    try {
+      const res = await fetch(AI_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: CFG.SUPABASE_ANON_KEY || "" },
+        body: JSON.stringify({ messages: turns }),
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!res.ok) {
+        // Chưa deploy (404), chưa có khóa (503) hoặc bị chặn (403): tắt AI cho phiên này.
+        if ([401, 403, 404, 503].includes(res.status)) aiOn = false;
+        return null;
+      }
+      const reply = String((await res.json()).reply || "").trim();
+      if (!reply) return null;
+      aiTurns = [...turns, { role: "model", text: reply.slice(0, 1500) }].slice(-8);
+      try {
+        sessionStorage.setItem(AI_KEY, JSON.stringify(aiTurns));
+      } catch {}
+      return reply;
+    } catch {
+      return null;
+    }
+  }
+
+  // Đổi câu trả lời của AI (văn bản thuần) sang HTML an toàn: escape trước,
+  // chỉ cho **đậm**, xuống dòng, gạch đầu dòng và link tới trang nội bộ hoặc Zalo.
+  const SAFE_LINK = /^(service\.html\?id=\d+|services\.html|bookings\.html|contact\.html|about\.html|cam-nang\.html|bai-viet\.html\?slug=[a-z0-9-]+)(#[a-z-]+)?$|^https:\/\/zalo\.me\/0968198406$/;
+  function aiHtml(text) {
+    let h = esc(text);
+    h = h.replace(/\[([^\]]{1,80})\]\(([^)\s]{1,120})\)/g, (m, label, url) => {
+      const u = url.replace(/&amp;/g, "&");
+      return SAFE_LINK.test(u) ? `<a href="${esc(u)}"${u.startsWith("http") ? ' target="_blank" rel="noopener"' : ""}>${label}</a>` : label;
+    });
+    h = h.replace(/\*\*([^*]{1,200})\*\*/g, "<strong>$1</strong>");
+    h = h.replace(/^\s*[-*•]\s+/gm, "• ");
+    return h.replace(/\n/g, "<br>");
+  }
 
   const esc = (v) =>
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128f#${name}"/></svg>`;
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128g#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
   // Bỏ dấu tiếng Việt để so khớp từ khóa: "Cắt tỉa" -> "cat tia"
   const norm = (t) =>
@@ -125,7 +177,7 @@
     <section class="cb-panel" id="cb-panel" role="dialog" aria-label="Trợ lý tư vấn Momo" hidden>
       <header class="cb-head">
         <img src="assets/img/logo-mark.svg" alt="" width="40" height="40">
-        <div><strong>Trợ lý Momo</strong><span>Trả lời tự động · Lễ tân trực 8:00 – 20:00</span></div>
+        <div><strong>Trợ lý Momo</strong><span>Trợ lý AI · Lễ tân trực 8:00 – 20:00</span></div>
         <button type="button" class="cb-close" aria-label="Đóng khung chat">${ic("close")}</button>
       </header>
       <div class="cb-body" id="cb-body" aria-live="polite"></div>
@@ -187,7 +239,7 @@
     wrap.classList.remove("open");
   }
 
-  async function ask(text) {
+  async function ask(text, fromChip = false) {
     const q = text.trim();
     if (!q) return;
     addMsg("user", esc(q));
@@ -196,13 +248,19 @@
     typing.innerHTML = "<span></span><span></span><span></span>";
     body.appendChild(typing);
     body.scrollTop = body.scrollHeight;
-    let reply;
-    try {
-      reply = await answer(q);
-    } catch {
-      reply = null;
+    let reply = null;
+    if (!fromChip) {
+      const ai = await askAI(q);
+      if (ai) reply = aiHtml(ai);
     }
-    await new Promise((r) => setTimeout(r, 450));
+    if (!reply) {
+      try {
+        reply = await answer(q);
+      } catch {
+        reply = null;
+      }
+      await new Promise((r) => setTimeout(r, 450));
+    }
     typing.remove();
     addMsg(
       "bot",
@@ -218,7 +276,7 @@
   });
   wrap.querySelector("#cb-chips").addEventListener("click", (e) => {
     const b = e.target.closest("button");
-    if (b) ask(b.textContent);
+    if (b) ask(b.textContent, true);
   });
   wrap.querySelector("#cb-form").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -228,5 +286,5 @@
   });
 
   // Cho phép kiểm thử: window.MomoBot.answer("giá cắt tỉa")
-  window.MomoBot = { answer, open, close };
+  window.MomoBot = { answer, askAI, aiHtml, open, close };
 })();

@@ -188,3 +188,13 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - "Cẩm nang": 4 chủ đề, mở trang Cẩm nang đã lọc sẵn (`?chu-de=`).
 - Máy tính: rê chuột hoặc bấm mũi tên; Esc, bấm ra ngoài hoặc chọn mục thì đóng. Điện thoại: gập mở trong menu ☰, ẩn thanh liên hệ khi menu đang mở.
 - Đã thử trên máy: lọc Khách sạn hiện 3 phòng, lọc Sức khỏe hiện 1 bài, menu điện thoại không cuộn ngang, không có lỗi console.
+
+## Prompt 17 — Chatbot AI bằng Google Gemini (28/11/2026)
+
+**Prompt**: Làm chatbot Gemini (sau khi đánh giá hạn mức miễn phí ở Prompt 15).
+
+**Kết quả**:
+- `supabase/functions/chat/index.ts`: Edge Function nhận tối đa 8 lượt hội thoại (mỗi tin ≤ 500 ký tự), ghép hướng dẫn hệ thống (thông tin cửa hàng, chính sách, ưu đãi, bảng giá đọc từ bảng `services`) rồi gọi Gemini API. Chỉ nhận yêu cầu từ link GitHub Pages và localhost. Mô hình mặc định `gemini-flash-lite-latest` (tên gọi chung luôn trỏ tới bản Flash-Lite mới, hạn mức miễn phí cao nhất), đổi được qua secret `GEMINI_MODEL`.
+- Khóa API đặt trong Supabase Secrets `GEMINI_API_KEY`, không nằm trong code hay GitHub.
+- `chatbot.js`: câu gõ tự do gửi cho AI; nút câu hỏi nhanh trả lời theo từ khóa để tiết kiệm lượt; AI lỗi, hết lượt hoặc chưa cài thì tự quay về chatbot từ khóa. Câu trả lời AI qua `aiHtml()`: escape HTML, chỉ giữ chữ đậm, xuống dòng, link nội bộ và Zalo.
+- Đã thử khi chưa deploy function: chatbot quay về trả lời theo từ khóa; bộ lọc chặn link `javascript:` và thẻ `<img onerror>`.

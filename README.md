@@ -42,6 +42,7 @@ supabase/schema.sql  Mã tạo bảng và quy tắc bảo mật
 supabase/update_images.sql  Đổi hình dịch vụ sang ảnh thật
 supabase/auth_admin.sql     Tài khoản khách, quản trị viên, trạng thái lịch hẹn
 supabase/add_home_services.sql  Thêm 2 gói dịch vụ tại nhà
+supabase/functions/chat/  Edge Function chatbot AI (Google Gemini)
 tools/gen_pages.py          Sinh 14 trang HTML từ một mẫu header/footer chung
 docs/screenshots/           Ảnh chụp màn hình dùng trong BAOCAO.md
 ```

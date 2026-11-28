@@ -114,4 +114,11 @@ Hàm `is_admin()` trả về `true` nếu người đang đăng nhập có trong
 9. **Khôi phục mật khẩu**: Authentication > URL Configuration. Đặt **Site URL** là địa chỉ website (khi chạy máy là `http://localhost:8000`, khi deploy là link GitHub Pages). Ở **Redirect URLs** thêm `http://localhost:8000/**` và link GitHub Pages kèm `/**`. Nếu thiếu, liên kết trong email sẽ mở sai địa chỉ.
    - Supabase gói miễn phí dùng máy chủ email mặc định: chỉ gửi tới email của thành viên trong project và giới hạn vài email mỗi giờ. Muốn gửi cho khách bất kỳ cần cấu hình SMTP riêng (Authentication > Emails > SMTP Settings).
 
+10. **Chatbot AI (tùy chọn)**:
+    - Lấy khóa ở Google AI Studio (aistudio.google.com) > Get API key > Create API key. Không bật thanh toán để giữ ở gói miễn phí.
+    - Supabase > Edge Functions > Secrets: thêm `GEMINI_API_KEY` (tùy chọn `GEMINI_MODEL`, mặc định `gemini-flash-lite-latest`).
+    - Edge Functions > Deploy a new function > Via Editor: tên `chat`, dán nội dung `supabase/functions/chat/index.ts`, Deploy.
+    - Trong function `chat`: tắt **Verify JWT** (website gửi khóa publishable, không phải JWT). Function chỉ nhận yêu cầu từ link GitHub Pages và localhost:8000.
+    - Chưa làm bước này thì chatbot vẫn chạy bằng luật từ khóa.
+
 **Không đưa mật khẩu database lên GitHub.** Mật khẩu chỉ dùng để đăng nhập Supabase, website không cần đến. File ghi chú chứa mật khẩu để ngoài folder dự án và đã được liệt kê trong `.gitignore`.

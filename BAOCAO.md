@@ -46,6 +46,7 @@ Website có 14 trang. Tất cả các trang khách dùng chung header (menu) và
 | 14 | Bài viết | `bai-viet.html?slug=…` | Nội dung bài cẩm nang, bài liên quan, nút tư vấn Zalo |
 | 15 | Thêm mạng xã hội vào thanh dọc, kiểm tra tài khoản khách thử, ghi tài khoản chấm bài, đánh giá menu sổ xuống, chatbot AI bằng Google Gemini | Thanh dọc 6 nút; SQL kiểm tra tài khoản khách; file tài khoản test cho giáo viên; đánh giá menu sổ xuống và hạn mức miễn phí Gemini |
 | 16 | Làm menu sổ xuống như petservicehcm.com | Menu sổ xuống cho Về chúng tôi, Dịch vụ & Giá, Cẩm nang; lọc sẵn theo nhóm/chủ đề; gập mở trên điện thoại |
+| 17 | Làm chatbot AI bằng Google Gemini | Edge Function `chat` gọi Gemini (gói miễn phí), khóa API giữ trên Supabase, tự quay về chatbot từ khóa khi AI lỗi |
 
 | Trang chủ | Về chúng tôi |
 |---|---|
@@ -113,7 +114,7 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 - **Thanh liên hệ dọc** bên trái: Zalo, Messenger, Gọi, rồi Facebook, Instagram, YouTube (điện thoại chỉ hiện 3 nút đầu). Thanh trên cùng chỉ có địa chỉ, giờ mở cửa, hotline. Bản trước lặp mạng xã hội ở cả thanh ngang và thanh dọc, nhiều số điện thoại cùng mở Zalo; đã gom lại để mỗi kênh chỉ xuất hiện một lần.
 - **Bấm số điện thoại** luôn là gọi; nhắn Zalo dùng nút Zalo riêng (thanh dọc, trang Liên hệ, chi tiết dịch vụ, chatbot).
 - **Chatbot "Trợ lý Momo"** (`assets/js/chatbot.js`): khung chat góc phải dưới, có nút câu hỏi nhanh. Trả lời tự động theo từ khóa tiếng Việt (có hoặc không dấu): bảng giá và giá từng gói (đọc trực tiếp từ bảng `services` trên Supabase), cách đặt/đổi/hủy lịch, giờ mở cửa, địa chỉ, khách sạn, đưa đón, phụ thu cân nặng, tiêm phòng, nhận mèo. Câu ngoài phạm vi được chuyển sang Zalo của lễ tân. Chatbot chạy hoàn toàn trên trình duyệt nên dùng được trên GitHub Pages, không tốn phí.
-- **Hướng nâng cấp chatbot AI**: có thể dùng mô hình ngôn ngữ (ví dụ Claude) qua một Supabase Edge Function để giữ bí mật khóa API; cần khóa API và chi phí theo lượt dùng nên chưa làm trong bài này.
+- **Chatbot AI bằng Google Gemini** (`supabase/functions/chat/index.ts`): câu khách gõ tự do được gửi tới một Supabase Edge Function, function gọi Gemini API (gói miễn phí của Google AI Studio, không cần thẻ) kèm thông tin cửa hàng và bảng giá đọc từ database. Khóa API chỉ nằm trong Secrets của Supabase, không có trong code hay GitHub. Nút câu hỏi nhanh vẫn trả lời theo từ khóa để tiết kiệm lượt. Khi AI lỗi, hết lượt miễn phí trong ngày hoặc chưa cài, chatbot tự quay về trả lời theo từ khóa. Câu trả lời của AI được lọc an toàn: chỉ giữ chữ đậm, xuống dòng và link tới trang nội bộ hoặc Zalo.
 
 ### 3.5. Học hỏi từ website tham khảo
 

@@ -28,7 +28,7 @@ Website thương hiệu hư cấu **Momo Pet Hotel & Spa** (khách sạn và spa
 - Menu chính có 3 mục sổ xuống (Về chúng tôi, Dịch vụ & Giá, Cẩm nang) trong mẫu `HEADER` của `tools/gen_pages.py`. Link con trỏ tới id của section (`#cau-chuyen`, `#co-so-vat-chat`, `#doi-ngu`, `#cam-ket`, `#bang-gia`, `#cua-hang`, `#danh-sach`, `#bang-gia-can-nang`, `#uu-dai`, `#chinh-sach`) hoặc tham số lọc `?nhom=`, `?chu-de=`; đổi id thì sửa cả menu.
 - Bài cẩm nang nằm trong `data/articles.json` (slug, title, category, date, image, excerpt, content). Thêm bài mới thì thêm vào file này, không tạo trang HTML mới.
 - Icon dùng `assets/img/icons.svg?v=…#tên`; khi thêm icon mới vào sprite, tăng số `?v=` trong `ic()` của `tools/gen_pages.py`, `app.js`, `chatbot.js`.
-- Chatbot nằm ở `assets/js/chatbot.js`, trả lời theo từ khóa và đọc giá qua `DB.getServices()`; không gắn vào trang Quản trị.
+- Chatbot nằm ở `assets/js/chatbot.js`: câu gõ tự do gửi tới Edge Function `supabase/functions/chat/index.ts` (Gemini), nút câu hỏi nhanh và trường hợp AI lỗi dùng luật từ khóa, giá đọc qua `DB.getServices()`; không gắn vào trang Quản trị. Khóa Gemini chỉ đặt trong Supabase Secrets (`GEMINI_API_KEY`), không bao giờ ghi vào file. Câu trả lời của AI phải qua `aiHtml()` (escape, chỉ cho link nội bộ và Zalo). Sửa thông tin cửa hàng thì sửa cả `systemPrompt()` trong function.
 - Ảnh dịch vụ, cơ sở vật chất, khách hàng là ảnh thật trong `assets/img/photos/` (xem `DESIGN.md` mục 7). Không thay bằng icon hay hình vẽ.
 - Không đưa mật khẩu database hay khóa secret vào bất kỳ file nào trong folder này.
 - Mọi truy vấn database đi qua `assets/js/db.js`.
