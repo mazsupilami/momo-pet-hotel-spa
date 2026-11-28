@@ -12,6 +12,8 @@ PHONE, PHONE_TEL = "0968 198 406", "0968198406"
 EMAIL = "xinchao@momopet.example"
 FACEBOOK = "https://www.facebook.com/profile.php?id=61597136690392"  # Facebook Page của Momo
 INSTAGRAM = "https://www.instagram.com/momo_suteki/"
+ZALO = "https://zalo.me/" + "0968198406"
+MESSENGER = "https://m.me/61597136690392"
 YOUTUBE = "https://www.youtube.com/@MomoPetHotelSpa"
 YOUTUBE_VIDEO = "BGgRwsH_8vE"  # video giới thiệu Momo trên kênh YouTube của shop
 MAP_Q = "177+T%C3%B4n+Th%E1%BA%A5t+Thuy%E1%BA%BFt,+Kh%C3%A1nh+H%E1%BB%99i,+H%E1%BB%93+Ch%C3%AD+Minh"
@@ -34,7 +36,7 @@ def head(title, desc):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261125c">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261128b">
 </head>"""
 
 
@@ -45,6 +47,7 @@ HEADER = f"""
         <span>{ic('pin')} {ADDR}</span>
         <span>{ic('clock')} 8:00 – 20:00, tất cả các ngày</span>
         <a href="tel:{PHONE_TEL}">{ic('phone')} {PHONE}</a>
+        <a href="{ZALO}" target="_blank" rel="noopener" class="topbar-zalo">{ic('zalo')} Chat Zalo</a>
       </div>
       <div class="topbar-social">
         <a href="{FACEBOOK}" target="_blank" rel="noopener" aria-label="Facebook">{ic('facebook')}</a>
@@ -119,19 +122,27 @@ FOOTER = f"""
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 Momo Pet Hotel &amp; Spa. Thương hiệu hư cấu cho bài thi cuối khóa AI Vibe Coding.</span>
-        <span>Ảnh: Unsplash, Pexels</span>
+        <span>© 2026 Momo Pet Hotel &amp; Spa</span>
       </div>
     </div>
   </footer>
 
-  <a class="fab" href="tel:{PHONE_TEL}" aria-label="Gọi hotline {PHONE}">{ic('phone')}</a>
+  <div class="social-rail" aria-label="Kênh liên hệ của Momo">
+    <a class="sr-zalo" href="{ZALO}" target="_blank" rel="noopener" aria-label="Chat Zalo"><span class="cf-label">Chat Zalo</span>{ic('zalo')}</a>
+    <a class="sr-messenger" href="{MESSENGER}" target="_blank" rel="noopener" aria-label="Messenger"><span class="cf-label">Messenger</span>{ic('messenger')}</a>
+    <a class="sr-facebook" href="{FACEBOOK}" target="_blank" rel="noopener" aria-label="Facebook"><span class="cf-label">Facebook</span>{ic('facebook')}</a>
+    <a class="sr-instagram" href="{INSTAGRAM}" target="_blank" rel="noopener" aria-label="Instagram"><span class="cf-label">Instagram</span>{ic('instagram')}</a>
+    <a class="sr-youtube" href="{YOUTUBE}" target="_blank" rel="noopener" aria-label="YouTube"><span class="cf-label">YouTube</span>{ic('youtube')}</a>
+  </div>
+  <a class="call-pill" href="tel:{PHONE_TEL}" aria-label="Gọi hotline {PHONE}"><span class="call-ico">{ic('phone')}</span><span class="call-text">{PHONE}</span></a>
+  <button type="button" class="to-top" aria-label="Lên đầu trang" hidden>{ic('arrow')}</button>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script src="assets/js/config.js?v=20261125c"></script>
-  <script src="assets/js/db.js?v=20261125c"></script>
-  <script src="assets/js/app.js?v=20261125c"></script>
+  <script src="assets/js/config.js?v=20261128b"></script>
+  <script src="assets/js/db.js?v=20261128b"></script>
+  <script src="assets/js/app.js?v=20261128b"></script>
+  <script src="assets/js/chatbot.js?v=20261128b"></script>
 </body>
 </html>
 """
@@ -159,7 +170,7 @@ CTA = f"""
           </div>
           <div class="cta-actions">
             <a href="services.html" class="btn btn-light">{ic('calendar')} Đặt lịch trực tuyến</a>
-            <a href="tel:{PHONE_TEL}" class="btn btn-ghost-light">{ic('phone')} {PHONE}</a>
+            <a href="{ZALO}" target="_blank" rel="noopener" class="btn btn-ghost-light">{ic('zalo')} Chat Zalo</a>
           </div>
         </div>
       </div>
@@ -180,7 +191,7 @@ ADMIN_HEADER = f"""
   </header>
 """
 
-SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):]
+SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):].replace('  <script src="assets/js/chatbot.js?v=20261128b"></script>\n', '')
 ADMIN_FOOTER = """
   <footer class="admin-footer">
     <div class="container">© 2026 Momo Pet Hotel &amp; Spa · Trang quản trị nội bộ · <a href="index.html">Về website</a></div>
@@ -330,6 +341,17 @@ page("index.html", "home", "Khách sạn & Spa thú cưng tại Khánh Hội, TP
       </div>
     </section>
 
+    <section class="section pack" aria-label="Đàn boss nhà Momo">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Đàn boss nhà Momo</span>
+          <h2>Hơn 2.000 bé đã ghé Momo</h2>
+          <p>Rê chuột vào để các bé đứng yên cho bạn ngắm nhé!</p>
+        </div>
+      </div>
+      <div class="marquee"><div class="marquee-track"><figure class="pet-chip"><img src="assets/img/photos/pet-corgi.jpg" alt="Bé Gạo, Corgi" loading="lazy"><figcaption><strong>Gạo</strong><span>Corgi</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/pet-cat.jpg" alt="Bé Mun, Mèo mướp" loading="lazy"><figcaption><strong>Mun</strong><span>Mèo mướp</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/pet-shihtzu.jpg" alt="Bé Bông, Shih Tzu" loading="lazy"><figcaption><strong>Bông</strong><span>Shih Tzu</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/golden-portrait.jpg" alt="Bé Vàng, Golden" loading="lazy"><figcaption><strong>Vàng</strong><span>Golden</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/pet-ribbon.jpg" alt="Bé Na, Mèo mướp" loading="lazy"><figcaption><strong>Na</strong><span>Mèo mướp</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/pet-run.jpg" alt="Bé Mochi, Poodle" loading="lazy"><figcaption><strong>Mochi</strong><span>Poodle</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/owner-woman.jpg" alt="Bé Socola, Labrador" loading="lazy"><figcaption><strong>Socola</strong><span>Labrador</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/svc-groom.jpg" alt="Bé Kem, Poodle" loading="lazy"><figcaption><strong>Kem</strong><span>Poodle</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/room-deluxe.jpg" alt="Bé Bơ, Dachshund" loading="lazy"><figcaption><strong>Bơ</strong><span>Dachshund</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/room-standard.jpg" alt="Bé Cam, Mèo cam" loading="lazy"><figcaption><strong>Cam</strong><span>Mèo cam</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/pet-corgi.jpg" alt="Bé Gạo, Corgi" loading="lazy" aria-hidden="true"><figcaption><strong>Gạo</strong><span>Corgi</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/pet-cat.jpg" alt="Bé Mun, Mèo mướp" loading="lazy" aria-hidden="true"><figcaption><strong>Mun</strong><span>Mèo mướp</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/pet-shihtzu.jpg" alt="Bé Bông, Shih Tzu" loading="lazy" aria-hidden="true"><figcaption><strong>Bông</strong><span>Shih Tzu</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/golden-portrait.jpg" alt="Bé Vàng, Golden" loading="lazy" aria-hidden="true"><figcaption><strong>Vàng</strong><span>Golden</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/pet-ribbon.jpg" alt="Bé Na, Mèo mướp" loading="lazy" aria-hidden="true"><figcaption><strong>Na</strong><span>Mèo mướp</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/pet-run.jpg" alt="Bé Mochi, Poodle" loading="lazy" aria-hidden="true"><figcaption><strong>Mochi</strong><span>Poodle</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/owner-woman.jpg" alt="Bé Socola, Labrador" loading="lazy" aria-hidden="true"><figcaption><strong>Socola</strong><span>Labrador</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/svc-groom.jpg" alt="Bé Kem, Poodle" loading="lazy" aria-hidden="true"><figcaption><strong>Kem</strong><span>Poodle</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/room-deluxe.jpg" alt="Bé Bơ, Dachshund" loading="lazy" aria-hidden="true"><figcaption><strong>Bơ</strong><span>Dachshund</span></figcaption></figure><figure class="pet-chip"><img src="assets/img/photos/room-standard.jpg" alt="Bé Cam, Mèo cam" loading="lazy" aria-hidden="true"><figcaption><strong>Cam</strong><span>Mèo cam</span></figcaption></figure></div></div>
+    </section>
+
     <section class="section bg-sand">
       <div class="container">
         <div class="section-head">
@@ -343,7 +365,7 @@ page("index.html", "home", "Khách sạn & Spa thú cưng tại Khánh Hội, TP
           <figure><img src="assets/img/photos/pet-cat.jpg" alt="Mèo mướp ngồi trên sàn gỗ" loading="lazy"><figcaption>Mun<small>Mèo mướp, 4 tuổi</small></figcaption></figure>
           <figure><img src="assets/img/photos/pet-shihtzu.jpg" alt="Chú chó nhỏ đeo khăn cổ xanh" loading="lazy"><figcaption>Bông<small>Vừa cắt tỉa xong</small></figcaption></figure>
           <figure><img src="assets/img/photos/pet-ribbon.jpg" alt="Mèo mướp thắt nơ hồng" loading="lazy"><figcaption>Na<small>Khách quen phòng Deluxe</small></figcaption></figure>
-          <figure class="wide"><img src="assets/img/photos/momo-beach.jpg" alt="Momo nằm trên bãi biển" loading="lazy" style="object-position:50% 72%"><figcaption>Momo<small>Linh vật và “quản lý” của tiệm</small></figcaption></figure>
+          <figure class="wide"><img src="assets/img/photos/owner-woman.jpg" alt="Chủ nuôi ôm chú chó Labrador nâu" loading="lazy" style="object-position:50% 40%"><figcaption>Socola<small>Labrador, khách quen gói Combo</small></figcaption></figure>
         </div>
       </div>
     </section>
@@ -357,7 +379,8 @@ page("index.html", "home", "Khách sạn & Spa thú cưng tại Khánh Hội, TP
         <div class="faq">
           <details open><summary>Bé cần chuẩn bị gì khi đến Momo?</summary><p>Mang theo sổ tiêm phòng (đã tiêm phòng dại và vắc-xin 5 bệnh hoặc 4 bệnh với mèo). Với gói lưu trú, bạn nên mang thức ăn quen thuộc của bé để tránh rối loạn tiêu hóa.</p></details>
           <details><summary>Tôi có thể đổi hoặc hủy lịch không?</summary><p>Có. Vào trang <a href="bookings.html">Lịch hẹn của tôi</a> để đổi ngày giờ, cập nhật cân nặng hoặc hủy lịch. Vui lòng thay đổi trước giờ hẹn ít nhất 2 tiếng.</p></details>
-          <details><summary>Giá có thay đổi theo cân nặng không?</summary><p>Giá niêm yết áp dụng cho bé dưới 10 kg. Bé từ 10 kg trở lên phụ thu 30%, lễ tân sẽ báo trước khi xác nhận lịch.</p></details>
+          <details><summary>Giá có thay đổi theo cân nặng không?</summary><p>Giá niêm yết áp dụng cho bé dưới 10 kg. Bé 10–20 kg phụ thu 30%, trên 20 kg phụ thu 60%. Xem <a href="services.html#bang-gia-can-nang">bảng giá theo cân nặng</a>.</p></details>
+          <details><summary>Momo có đưa đón bé tận nhà không?</summary><p>Có. Miễn phí đưa đón trong bán kính 3 km quanh tiệm, xa hơn tính 10.000đ/km. Ghi chú địa chỉ khi đặt lịch hoặc nhắn <a href="{ZALO}" target="_blank" rel="noopener">Zalo</a> để lễ tân sắp xếp.</p></details>
           <details><summary>Bé ở khách sạn có được dắt đi dạo không?</summary><p>Có. Tất cả hạng phòng đều được dắt đi dạo hoặc chơi ở sân ít nhất 2 lần mỗi ngày, có nhân viên giám sát.</p></details>
           <details><summary>Momo có nhận chăm sóc mèo không?</summary><p>Có. Momo có khu riêng cho mèo, tách biệt với khu chó để các bé không bị căng thẳng.</p></details>
         </div>
@@ -368,7 +391,7 @@ page("index.html", "home", "Khách sạn & Spa thú cưng tại Khánh Hội, TP
 # ======================================================== Về chúng tôi
 page("about.html", "about", "Về chúng tôi",
      "Câu chuyện, cơ sở vật chất, đội ngũ và bảng giá của Momo Pet Hotel & Spa tại Phường Khánh Hội, TP.HCM.",
-     page_hero("momo-sea.jpg", "Về chúng tôi", "Về Momo Pet Hotel &amp; Spa",
+     page_hero("owner-hug.jpg", "Về chúng tôi", "Về Momo Pet Hotel &amp; Spa",
                "Bắt đầu từ một chú chó tên Momo, chúng tôi xây dựng nơi mà chính mình cũng yên tâm gửi gắm thú cưng.") + f"""
     <section class="section">
       <div class="container split wide-left">
@@ -385,8 +408,7 @@ page("about.html", "about", "Về chúng tôi",
           </ul>
         </div>
         <figure style="margin:0">
-          <img class="photo tall" src="assets/img/photos/momo-portrait.jpg" alt="Momo, chú chó đen vện vàng lè lưỡi bên bờ biển" loading="lazy">
-          <figcaption class="muted center" style="margin-top:10px">Momo ngoài đời: gương mặt trên logo của tiệm.</figcaption>
+          <img class="photo tall" src="assets/img/photos/golden-portrait.jpg" alt="Chú chó Golden Retriever lông vàng mượt sau buổi spa" loading="lazy">
         </figure>
       </div>
     </section>
@@ -497,15 +519,32 @@ page("services.html", "services", "Dịch vụ & Bảng giá",
       </div>
     </section>
 
+    <section class="section" id="bang-gia-can-nang" style="padding-top:0">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Bảng giá theo cân nặng</span>
+          <h2>Giá cụ thể cho từng bé</h2>
+          <p>Giá được tính tự động từ bảng giá trong cơ sở dữ liệu. Chưa chắc cân nặng của bé? Nhắn <a href="{ZALO}" target="_blank" rel="noopener">Zalo</a> để được báo giá miễn phí.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Gói dịch vụ</th><th class="num">Dưới 10 kg</th><th class="num">10 – 20 kg</th><th class="num">Trên 20 kg</th></tr></thead>
+            <tbody id="weight-table"><tr><td colspan="4" class="loading">Đang tải bảng giá…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <section class="section bg-soft">
       <div class="container">
         <div class="section-head">
           <span class="eyebrow">Chính sách</span>
           <h2>Lưu ý trước khi đặt lịch</h2>
         </div>
-        <div class="grid grid-3">
+        <div class="grid grid-4">
           <div class="info-card"><span class="ico">{ic('shield')}</span><h3>Sổ tiêm phòng</h3><p>Bé cần tiêm phòng dại và vắc-xin cơ bản. Mang theo sổ khi đến tiệm.</p></div>
-          <div class="info-card"><span class="ico">{ic('paw')}</span><h3>Phụ thu theo cân nặng</h3><p>Giá niêm yết cho bé dưới 10 kg. Bé từ 10 kg trở lên phụ thu 30%.</p></div>
+          <div class="info-card"><span class="ico">{ic('paw')}</span><h3>Phụ thu theo cân nặng</h3><p>Giá niêm yết cho bé dưới 10 kg. Bé 10–20 kg phụ thu 30%, trên 20 kg phụ thu 60%.</p></div>
+          <div class="info-card"><span class="ico">{ic('home')}</span><h3>Đưa đón tận nhà</h3><p>Miễn phí trong bán kính 3 km, xa hơn 10.000đ/km. Ghi địa chỉ vào ô ghi chú khi đặt lịch.</p></div>
           <div class="info-card"><span class="ico">{ic('calendar')}</span><h3>Đổi và hủy lịch</h3><p>Miễn phí khi thay đổi trước giờ hẹn 2 tiếng, ngay trên trang <a href="bookings.html">Lịch hẹn của tôi</a>.</p></div>
         </div>
       </div>
@@ -596,7 +635,7 @@ page("contact.html", "contact", "Liên hệ",
         <div class="grid grid-4">
           <div class="info-card"><span class="ico">{ic('pin')}</span><h3>Địa chỉ</h3><p>{ADDR}</p></div>
           <div class="info-card"><span class="ico">{ic('phone')}</span><h3>Hotline</h3><p><a href="tel:{PHONE_TEL}">{PHONE}</a><br>Tư vấn và đặt lịch</p></div>
-          <div class="info-card"><span class="ico">{ic('mail')}</span><h3>Email</h3><p><a href="mailto:{EMAIL}">{EMAIL}</a><br>Phản hồi trong 24 giờ</p></div>
+          <div class="info-card"><span class="ico">{ic('zalo')}</span><h3>Zalo &amp; Messenger</h3><p><a href="{ZALO}" target="_blank" rel="noopener">Chat Zalo {PHONE}</a><br><a href="{MESSENGER}" target="_blank" rel="noopener">Nhắn Messenger</a></p></div>
           <div class="info-card"><span class="ico">{ic('clock')}</span><h3>Giờ mở cửa</h3><p>8:00 – 20:00 mỗi ngày<br>Khách sạn trực 24/7</p></div>
         </div>
       </div>
@@ -615,6 +654,7 @@ page("contact.html", "contact", "Liên hệ",
           </ul>
           <div class="detail-actions">
             <a class="btn btn-brand" href="https://www.google.com/maps/dir/?api=1&amp;destination={MAP_Q}" target="_blank" rel="noopener">{ic('pin')} Chỉ đường</a>
+            <a class="btn btn-zalo" href="{ZALO}" target="_blank" rel="noopener">{ic('zalo')} Chat Zalo</a>
             <a class="btn btn-outline" href="tel:{PHONE_TEL}">{ic('phone')} Gọi ngay</a>
           </div>
         </div>
@@ -629,7 +669,7 @@ page("contact.html", "contact", "Liên hệ",
 # ======================================================== Tài khoản khách hàng
 page("account.html", "account", "Tài khoản của tôi",
      "Đăng nhập, đăng ký và cập nhật thông tin tài khoản khách hàng Momo Pet Hotel & Spa.",
-     page_hero("momo-beach.jpg", "Tài khoản", "Tài khoản của tôi",
+     page_hero("owner-woman.jpg", "Tài khoản", "Tài khoản của tôi",
                "Cập nhật họ tên, số điện thoại, đổi mật khẩu và xem lịch hẹn của bạn.") + f"""
     <section class="section">
       <div class="container">
@@ -667,7 +707,7 @@ def pw_field(fid, name, label, autocomplete, hint=""):
 
 
 AUTH_ASIDE = f"""
-        <aside class="auth-aside" style="background-image:url(assets/img/photos/momo-sea.jpg)">
+        <aside class="auth-aside" style="background-image:url(assets/img/photos/owner-hug.jpg)">
           <div class="auth-aside-body">
             <h2>Tài khoản Momo giúp bạn</h2>
             <ul class="checklist">

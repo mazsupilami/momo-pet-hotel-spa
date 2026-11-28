@@ -32,7 +32,7 @@ account.html       Tài khoản của tôi (hồ sơ, đổi mật khẩu)
 admin.html         Trang quản trị
 contact.html       Liên hệ, Google Map
 assets/css         Giao diện
-assets/js          config.js, db.js, app.js
+assets/js          config.js, db.js, app.js, chatbot.js
 assets/img         Logo, bộ icon (icons.svg) và ảnh (photos/)
 data/services.csv  Dữ liệu dịch vụ gốc
 supabase/schema.sql  Mã tạo bảng và quy tắc bảo mật

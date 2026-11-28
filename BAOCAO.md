@@ -22,7 +22,7 @@
 - **Logo**: được **tạo trước** khi dựng trang, vẽ bằng SVG theo dáng Momo thật (lông đen vện vàng, một tai dựng một tai cụp, lè lưỡi, vòng xích bạc). Mọi trang, favicon, Facebook, Instagram, YouTube đều dùng đúng logo này.
   - `assets/img/logo.svg` (nền sáng), `assets/img/logo-light.svg` (nền tối), `assets/img/logo-mark.svg` (favicon, ảnh đại diện mạng xã hội).
 - **Công nghệ**: HTML, CSS, JavaScript thuần (không framework); **Supabase** (PostgreSQL + Auth) làm database; **GitHub Pages** để deploy.
-- **Ảnh**: ảnh chụp thật từ Unsplash, Pexels (miễn phí bản quyền) và ảnh thật của chú chó Momo.
+- **Ảnh**: ảnh chụp thật từ Unsplash, Pexels (miễn phí bản quyền).
 
 ## 2. Các trang trong dự án
 
@@ -100,17 +100,30 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 - Trang Quản trị: thống kê (tổng lịch, chờ xác nhận, lịch hôm nay, doanh thu dự kiến), tìm kiếm và lọc lịch hẹn, đổi trạng thái, xóa; tạo lịch hộ khách gọi hotline; sửa giá dịch vụ; xóa đánh giá.
 - Phân vai rõ ràng: admin không dùng form đặt lịch và form đánh giá của khách (lịch sẽ gắn sai tài khoản, đánh giá phải là của khách). Thay vào đó admin thấy thông báo và nút sang trang Quản trị.
 
-### 3.4. Nhúng
+### 3.4. Liên hệ nhanh và chatbot
+
+- **Thanh mạng xã hội dọc** bên trái (Zalo, Messenger, Facebook, Instagram, YouTube), **nút gọi** góc trái dưới, nút **Chat Zalo** trên thanh trên cùng, trang Liên hệ, trang chi tiết dịch vụ và dải kêu gọi cuối trang. Học từ cherrypetcoffee.com và petservicehcm.com.
+- **Bấm số điện thoại**: trên điện thoại gọi trực tiếp; trên máy tính mở Zalo của shop.
+- **Chatbot "Trợ lý Momo"** (`assets/js/chatbot.js`): khung chat góc phải dưới, có nút câu hỏi nhanh. Trả lời tự động theo từ khóa tiếng Việt (có hoặc không dấu): bảng giá và giá từng gói (đọc trực tiếp từ bảng `services` trên Supabase), cách đặt/đổi/hủy lịch, giờ mở cửa, địa chỉ, khách sạn, đưa đón, phụ thu cân nặng, tiêm phòng, nhận mèo. Câu ngoài phạm vi được chuyển sang Zalo của lễ tân. Chatbot chạy hoàn toàn trên trình duyệt nên dùng được trên GitHub Pages, không tốn phí.
+- **Hướng nâng cấp chatbot AI**: có thể dùng mô hình ngôn ngữ (ví dụ Claude) qua một Supabase Edge Function để giữ bí mật khóa API; cần khóa API và chi phí theo lượt dùng nên chưa làm trong bài này.
+
+### 3.5. Học hỏi từ website tham khảo
+
+- **Bảng giá theo cân nặng** (dưới 10 kg, 10–20 kg, trên 20 kg) tính tự động từ database ở trang Dịch vụ.
+- **Đưa đón tận nhà** (miễn phí 3 km), mục **lưu ý trước khi đặt lịch**, hỏi đáp mới.
+- **Pop-up ưu đãi khách mới** ở trang chủ (mỗi phiên một lần), dải ảnh **"đàn boss"** chạy ngang dừng khi rê chuột, hiệu ứng **rê chuột** trên thẻ, icon, menu, logo và hiệu ứng **hiện dần khi cuộn**, nút **lên đầu trang**.
+
+### 3.6. Nhúng
 
 - **Video YouTube** ở Trang chủ (quy trình grooming) và ở trang Về chúng tôi (video giới thiệu của chính shop).
 - **Google Map** ở trang Liên hệ, trỏ đúng 177 Tôn Thất Thuyết, có nút Chỉ đường.
 
-### 3.5. Khác
+### 3.7. Khác
 
 - Giao diện đáp ứng điện thoại (menu ☰, lưới 1 cột), nút gọi hotline nổi.
 - Facebook Page, Instagram, kênh YouTube của shop với logo, ảnh bìa, bài đăng, video; website liên kết tới cả ba.
 
-### 3.6. Kết quả kiểm thử (25/11/2026)
+### 3.8. Kết quả kiểm thử
 
 | Kiểm thử | Kết quả |
 |---|---|
@@ -122,6 +135,8 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 | Admin đổi trạng thái, sửa giá, xóa lịch, xóa đánh giá | Đạt |
 | Gửi email khôi phục mật khẩu (Supabase ghi nhận `mail.send`) | Đạt |
 | 12 trang trên GitHub Pages trả về 200, không tràn ngang trên điện thoại | Đạt |
+| Chatbot trả lời 14 câu hỏi mẫu (giá, đặt lịch, giờ mở cửa, đưa đón, cân nặng, mèo, khách sạn…) | Đạt |
+| Máy tính bấm số điện thoại mở Zalo; điện thoại giữ gọi trực tiếp | Đạt |
 
 ## 4. Các file .md và chức năng
 
@@ -153,6 +168,7 @@ Chi tiết từng prompt ở **[PROMPTS.md](PROMPTS.md)**. Tóm tắt:
 | 10 | Hiện mật khẩu, tách Đăng nhập/Đăng ký, khôi phục mật khẩu | 4 trang xác thực mới, nút mắt, email khôi phục |
 | 11 | Instagram, YouTube, test toàn bộ, deploy | Test đạt, deploy GitHub Pages, Instagram 3 bài, YouTube ảnh bìa + video, báo cáo này |
 | 12 | Admin đăng nhập vẫn đặt lịch được, có đúng không? | Ẩn form đặt lịch/đánh giá với admin, thêm tab Tạo lịch hẹn hộ khách trong Quản trị |
+| 13 | Bỏ chữ ở footer, học 2 website thú cưng, bỏ ảnh Momo, liên hệ Zalo, chatbot; hiệu ứng rê chuột, pop-up, đàn chó | Footer gọn, ảnh dịch vụ, thanh mạng xã hội + Zalo, chatbot, bảng giá theo cân nặng, đưa đón, pop-up, dải ảnh chạy ngang, hiệu ứng |
 
 ## Đối chiếu tiêu chí chấm
 

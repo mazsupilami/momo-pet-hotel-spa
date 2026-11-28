@@ -61,6 +61,10 @@ Mọi trang có chung header và footer, trong đó có đủ link tới các tr
 | F13 | Khôi phục mật khẩu qua email | Supabase Auth | `auth.users` |
 | F14 | Nút mắt hiện/ẩn mật khẩu ở mọi ô mật khẩu | — | — |
 | F15 | Quản trị: tạo lịch hẹn hộ khách gọi hotline hoặc đến tiệm, chọn sẵn trạng thái | **insert** | `bookings` |
+| F16 | Chatbot tư vấn tự động: báo giá (đọc từ database), hướng dẫn đặt lịch, giờ mở cửa, địa chỉ, khách sạn, đưa đón, chuyển sang Zalo | select | `services` |
+| F17 | Liên hệ nhanh: thanh mạng xã hội dọc (Zalo, Messenger, Facebook, Instagram, YouTube), nút gọi; trên máy tính bấm số điện thoại mở Zalo | — | — |
+| F18 | Bảng giá theo cân nặng (dưới 10 kg, 10–20 kg +30%, trên 20 kg +60%) tính từ database | select | `services` |
+| F19 | Pop-up ưu đãi khách mới, dải ảnh "đàn boss" chạy ngang, hiệu ứng rê chuột và hiện dần khi cuộn | — | — |
 
 **Quy tắc vai trò**: tài khoản quản trị không dùng form đặt lịch và form đánh giá dành cho khách (hai form được thay bằng thông báo và link sang trang Quản trị). Admin đặt lịch hộ khách trong tab "Tạo lịch hẹn" của trang Quản trị.
 

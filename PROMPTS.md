@@ -139,3 +139,16 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Trang Quản trị có tab "Tạo lịch hẹn": chọn dịch vụ, thông tin khách và thú cưng, ngày giờ, trạng thái (mặc định Đã xác nhận). Mở thẳng bằng `admin.html#tao-lich`.
 - Trang Lịch hẹn của tôi nhắc admin xem toàn bộ lịch ở trang Quản trị; sửa link đăng nhập cho khách sang `login.html`.
 - Đã test trên máy: tạo lịch hộ khách thành công, đã xóa lịch thử.
+
+## Prompt 13 — Footer, học website tham khảo, Zalo, chatbot, hiệu ứng (28/11/2026)
+
+**Prompt**: Bỏ dòng "Thương hiệu hư cấu cho bài thi…" và "Ảnh: Unsplash, Pexels" ở footer. Tham khảo cherrypetcoffee.com/khach-san-thu-cung và petservicehcm.com về dịch vụ, giao diện, tính năng. Dùng ảnh từ internet thay cho ảnh của Momo để website chuyên nghiệp, thương mại hơn. Bấm số điện thoại chưa chuyển sang Zalo như các web trên. Xem xét thêm chatbot tư vấn. (Bổ sung giữa chừng: hai web trên có hiệu ứng khi rê chuột, pop-up, "dàn chó", thêm nếu phù hợp.)
+
+**Kết quả**:
+- Footer chỉ còn "© 2026 Momo Pet Hotel & Spa".
+- Thay 3 ảnh Momo bằng ảnh Unsplash (chủ ôm chó, Golden Retriever, chủ ôm Labrador) ở trang Về chúng tôi, Tài khoản, các trang đăng nhập, thư viện ảnh; xóa ảnh Momo khỏi project. Logo vẫn vẽ theo Momo.
+- Liên hệ: thanh mạng xã hội dọc bên trái (Zalo, Messenger, Facebook, Instagram, YouTube), nút gọi rung nhẹ, nút "Chat Zalo" ở thanh trên cùng, trang Liên hệ, chi tiết dịch vụ, dải kêu gọi. Trên máy tính bấm số điện thoại mở Zalo, trên điện thoại vẫn gọi.
+- Chatbot "Trợ lý Momo" (`assets/js/chatbot.js`): trả lời theo từ khóa, giá đọc từ Supabase, chuyển sang Zalo khi không hiểu; đã thử 14 câu hỏi mẫu. Đề xuất nâng cấp AI qua Supabase Edge Function (chưa làm vì cần khóa API, có chi phí).
+- Học từ web tham khảo: bảng giá theo cân nặng (tính từ database), đưa đón tận nhà, hỏi đáp và lưu ý mới.
+- Hiệu ứng: pop-up ưu đãi khách mới (trang chủ, mỗi phiên một lần), dải ảnh "đàn boss nhà Momo" chạy ngang dừng khi rê chuột, hiệu ứng rê chuột cho thẻ, icon, menu, logo, hiện dần khi cuộn, nút lên đầu trang.
+- Chụp lại ảnh màn hình cho báo cáo.

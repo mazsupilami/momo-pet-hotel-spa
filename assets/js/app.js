@@ -8,6 +8,10 @@
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
+  // Phụ thu theo cân nặng: dưới 10 kg giá niêm yết, 10–20 kg +30%, trên 20 kg +60%
+  const WEIGHT_TIERS = [1, 1.3, 1.6];
+  const roundK = (n) => Math.round(n / 1000) * 1000;
+  const ZALO_URL = "https://zalo.me/0968198406";
   const pad = (n) => String(n).padStart(2, "0");
   const todayISO = () => {
     const d = new Date();
@@ -191,6 +195,18 @@
       if (btn) render(btn.dataset.cat);
     });
     render("Tất cả");
+
+    const wt = $("#weight-table");
+    if (wt) {
+      wt.innerHTML = services
+        .map(
+          (s) => `<tr>
+            <td><a href="service.html?id=${Number(s.id)}">${esc(s.name)}</a> <span class="chip">${esc(s.category)}</span></td>
+            ${WEIGHT_TIERS.map((k) => `<td class="num"><span class="price">${money(roundK(s.price * k))}</span> <small class="muted">/ ${esc(s.unit)}</small></td>`).join("")}
+          </tr>`
+        )
+        .join("");
+    }
   }
 
   // ---------- Chi tiết dịch vụ + đặt lịch + đánh giá ----------
@@ -223,7 +239,7 @@
           <ul class="checklist">${includes.map((i) => `<li>${ic("check")} ${esc(i)}</li>`).join("")}</ul>
           <div class="detail-actions">
             <a href="#dat-lich" class="btn">${ic("calendar")} Đặt lịch gói này</a>
-            <a href="tel:0968198406" class="btn btn-outline">${ic("phone")} Gọi tư vấn</a>
+            <a href="${ZALO_URL}" target="_blank" rel="noopener" class="btn btn-zalo">${ic("zalo")} Tư vấn qua Zalo</a>
           </div>
           <div class="assure">
             <span>${ic("shield")} Kiểm tra sức khỏe trước dịch vụ</span>
@@ -933,8 +949,106 @@
     render().catch((err) => (root.innerHTML = `<p class="notice error">${esc(err.message)}</p>`));
   }
 
+  // ---------- Số điện thoại: điện thoại gọi trực tiếp, máy tính mở Zalo ----------
+  function initPhoneLinks() {
+    const canCall = matchMedia("(pointer: coarse)").matches;
+    if (canCall) return;
+    document.querySelectorAll('a[href^="tel:"]').forEach((a) => {
+      a.href = ZALO_URL;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.title = "Mở Zalo để chat với Momo";
+    });
+  }
+
+  // ---------- Hiệu ứng: hiện dần khi cuộn, nút lên đầu trang, pop-up ưu đãi ----------
+  function initEffects() {
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const targets = document.querySelectorAll(
+      ".section-head, .svc-card, .info-card, .step, .quote, .gallery figure, .feature-row, .stat, .timeline li, .collage, .split > .photo"
+    );
+    if (!reduce && "IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((en) => {
+            if (en.isIntersecting) {
+              en.target.classList.add("in");
+              io.unobserve(en.target);
+            }
+          }),
+        { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+      );
+      targets.forEach((el, i) => {
+        el.classList.add("reveal");
+        el.style.transitionDelay = `${(i % 4) * 70}ms`;
+        io.observe(el);
+      });
+      // Thẻ dịch vụ vẽ sau khi tải database: theo dõi thêm khi DOM thay đổi
+      new MutationObserver((muts) =>
+        muts.forEach((m) =>
+          m.addedNodes.forEach((n) => {
+            if (n.nodeType === 1 && n.matches(".svc-card")) {
+              n.classList.add("reveal");
+              io.observe(n);
+            }
+          })
+        )
+      ).observe(document.body, { childList: true, subtree: true });
+    }
+
+    const top = $(".to-top");
+    if (top) {
+      addEventListener("scroll", () => (top.hidden = scrollY < 600), { passive: true });
+      top.addEventListener("click", () => scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }));
+    }
+
+    // Pop-up ưu đãi: chỉ ở trang chủ, mỗi phiên một lần, sau 6 giây
+    if (page !== "home") return;
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem("momo-promo") === "1";
+    } catch {}
+    if (seen) return;
+    setTimeout(() => {
+      if (document.querySelector(".cb-panel:not([hidden])")) return;
+      const m = document.createElement("div");
+      m.className = "promo";
+      m.innerHTML = `
+        <div class="promo-box" role="dialog" aria-modal="true" aria-labelledby="promo-title">
+          <button type="button" class="promo-close" aria-label="Đóng">${ic("close")}</button>
+          <div class="promo-media"><img src="assets/img/photos/hero-spa.jpg" alt=""></div>
+          <div class="promo-body">
+            <span class="eyebrow">Ưu đãi khách mới</span>
+            <h2 id="promo-title">Giảm 20% Combo Tắm &amp; Cắt tỉa</h2>
+            <p class="muted">Dành cho bé lần đầu đến Momo. Tặng kèm nơ hoặc khăn cổ xinh xắn. Lễ tân áp dụng ưu đãi khi xác nhận lịch.</p>
+            <div class="detail-actions">
+              <a class="btn" href="service.html?id=8#dat-lich">${ic("calendar")} Đặt lịch ngay</a>
+              <a class="btn btn-zalo" href="${ZALO_URL}" target="_blank" rel="noopener">${ic("zalo")} Hỏi qua Zalo</a>
+            </div>
+          </div>
+        </div>`;
+      document.body.appendChild(m);
+      requestAnimationFrame(() => m.classList.add("show"));
+      const close = () => {
+        m.classList.remove("show");
+        setTimeout(() => m.remove(), 250);
+        document.removeEventListener("keydown", onKey);
+      };
+      const onKey = (e) => e.key === "Escape" && close();
+      document.addEventListener("keydown", onKey);
+      m.addEventListener("click", (e) => {
+        if (e.target === m || e.target.closest(".promo-close")) close();
+      });
+      try {
+        sessionStorage.setItem("momo-promo", "1");
+      } catch {}
+    }, 6000);
+  }
+
   // ---------- Khởi động ----------
   initHeader();
+  initPhoneLinks();
+  initEffects();
   refreshAccountLink();
   const inits = {
     home: initHome,

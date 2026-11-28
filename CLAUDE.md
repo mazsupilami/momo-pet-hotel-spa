@@ -21,7 +21,10 @@ Website thương hiệu hư cấu **Momo Pet Hotel & Spa** (khách sạn và spa
 - Mọi ô mật khẩu có nút mắt hiện/ẩn (`.pw-wrap` + `.pw-toggle`, dùng `pw_field()` trong `tools/gen_pages.py` hoặc `pwField()` trong `app.js`). Header và footer sinh từ cùng một mẫu, sửa một trang thì sửa tất cả.
 - Tài khoản admin không thấy form đặt lịch và form đánh giá của khách; admin tạo lịch hộ khách ở tab "Tạo lịch hẹn" (`admin.html#tao-lich`).
 - Khi đổi CSS hoặc JS, tăng số `?v=` trong thẻ `<link>`/`<script>` để trình duyệt không dùng bản cũ.
-- Chỉ dùng logo trong `assets/img/`. Không vẽ logo mới.
+- Chỉ dùng logo trong `assets/img/`. Không vẽ logo mới. Không dùng ảnh riêng của chú chó Momo trên website, chỉ dùng ảnh dịch vụ từ Unsplash/Pexels.
+- Footer chỉ ghi "© 2026 Momo Pet Hotel & Spa", không ghi nguồn ảnh hay chữ "bài thi".
+- Liên hệ: Zalo `https://zalo.me/0968198406`, Messenger `https://m.me/61597136690392` (hằng số `ZALO`, `MESSENGER` trong `tools/gen_pages.py`).
+- Chatbot nằm ở `assets/js/chatbot.js`, trả lời theo từ khóa và đọc giá qua `DB.getServices()`; không gắn vào trang Quản trị.
 - Ảnh dịch vụ, cơ sở vật chất, khách hàng là ảnh thật trong `assets/img/photos/` (xem `DESIGN.md` mục 7). Không thay bằng icon hay hình vẽ.
 - Không đưa mật khẩu database hay khóa secret vào bất kỳ file nào trong folder này.
 - Mọi truy vấn database đi qua `assets/js/db.js`.

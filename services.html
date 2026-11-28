@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261125c">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261128b">
 </head>
 <body data-page="services">
   <div class="topbar">
@@ -19,6 +19,7 @@
         <span><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#pin"/></svg> 177 Tôn Thất Thuyết, Phường Khánh Hội, TP. Hồ Chí Minh</span>
         <span><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#clock"/></svg> 8:00 – 20:00, tất cả các ngày</span>
         <a href="tel:0968198406"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#phone"/></svg> 0968 198 406</a>
+        <a href="https://zalo.me/0968198406" target="_blank" rel="noopener" class="topbar-zalo"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#zalo"/></svg> Chat Zalo</a>
       </div>
       <div class="topbar-social">
         <a href="https://www.facebook.com/profile.php?id=61597136690392" target="_blank" rel="noopener" aria-label="Facebook"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#facebook"/></svg></a>
@@ -62,15 +63,32 @@
       </div>
     </section>
 
+    <section class="section" id="bang-gia-can-nang" style="padding-top:0">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Bảng giá theo cân nặng</span>
+          <h2>Giá cụ thể cho từng bé</h2>
+          <p>Giá được tính tự động từ bảng giá trong cơ sở dữ liệu. Chưa chắc cân nặng của bé? Nhắn <a href="https://zalo.me/0968198406" target="_blank" rel="noopener">Zalo</a> để được báo giá miễn phí.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Gói dịch vụ</th><th class="num">Dưới 10 kg</th><th class="num">10 – 20 kg</th><th class="num">Trên 20 kg</th></tr></thead>
+            <tbody id="weight-table"><tr><td colspan="4" class="loading">Đang tải bảng giá…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <section class="section bg-soft">
       <div class="container">
         <div class="section-head">
           <span class="eyebrow">Chính sách</span>
           <h2>Lưu ý trước khi đặt lịch</h2>
         </div>
-        <div class="grid grid-3">
+        <div class="grid grid-4">
           <div class="info-card"><span class="ico"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#shield"/></svg></span><h3>Sổ tiêm phòng</h3><p>Bé cần tiêm phòng dại và vắc-xin cơ bản. Mang theo sổ khi đến tiệm.</p></div>
-          <div class="info-card"><span class="ico"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#paw"/></svg></span><h3>Phụ thu theo cân nặng</h3><p>Giá niêm yết cho bé dưới 10 kg. Bé từ 10 kg trở lên phụ thu 30%.</p></div>
+          <div class="info-card"><span class="ico"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#paw"/></svg></span><h3>Phụ thu theo cân nặng</h3><p>Giá niêm yết cho bé dưới 10 kg. Bé 10–20 kg phụ thu 30%, trên 20 kg phụ thu 60%.</p></div>
+          <div class="info-card"><span class="ico"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#home"/></svg></span><h3>Đưa đón tận nhà</h3><p>Miễn phí trong bán kính 3 km, xa hơn 10.000đ/km. Ghi địa chỉ vào ô ghi chú khi đặt lịch.</p></div>
           <div class="info-card"><span class="ico"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#calendar"/></svg></span><h3>Đổi và hủy lịch</h3><p>Miễn phí khi thay đổi trước giờ hẹn 2 tiếng, ngay trên trang <a href="bookings.html">Lịch hẹn của tôi</a>.</p></div>
         </div>
       </div>
@@ -85,7 +103,7 @@
           </div>
           <div class="cta-actions">
             <a href="services.html" class="btn btn-light"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#calendar"/></svg> Đặt lịch trực tuyến</a>
-            <a href="tel:0968198406" class="btn btn-ghost-light"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#phone"/></svg> 0968 198 406</a>
+            <a href="https://zalo.me/0968198406" target="_blank" rel="noopener" class="btn btn-ghost-light"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#zalo"/></svg> Chat Zalo</a>
           </div>
         </div>
       </div>
@@ -137,18 +155,26 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 Momo Pet Hotel &amp; Spa. Thương hiệu hư cấu cho bài thi cuối khóa AI Vibe Coding.</span>
-        <span>Ảnh: Unsplash, Pexels</span>
+        <span>© 2026 Momo Pet Hotel &amp; Spa</span>
       </div>
     </div>
   </footer>
 
-  <a class="fab" href="tel:0968198406" aria-label="Gọi hotline 0968 198 406"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#phone"/></svg></a>
+  <div class="social-rail" aria-label="Kênh liên hệ của Momo">
+    <a class="sr-zalo" href="https://zalo.me/0968198406" target="_blank" rel="noopener" aria-label="Chat Zalo"><span class="cf-label">Chat Zalo</span><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#zalo"/></svg></a>
+    <a class="sr-messenger" href="https://m.me/61597136690392" target="_blank" rel="noopener" aria-label="Messenger"><span class="cf-label">Messenger</span><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#messenger"/></svg></a>
+    <a class="sr-facebook" href="https://www.facebook.com/profile.php?id=61597136690392" target="_blank" rel="noopener" aria-label="Facebook"><span class="cf-label">Facebook</span><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#facebook"/></svg></a>
+    <a class="sr-instagram" href="https://www.instagram.com/momo_suteki/" target="_blank" rel="noopener" aria-label="Instagram"><span class="cf-label">Instagram</span><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#instagram"/></svg></a>
+    <a class="sr-youtube" href="https://www.youtube.com/@MomoPetHotelSpa" target="_blank" rel="noopener" aria-label="YouTube"><span class="cf-label">YouTube</span><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#youtube"/></svg></a>
+  </div>
+  <a class="call-pill" href="tel:0968198406" aria-label="Gọi hotline 0968 198 406"><span class="call-ico"><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#phone"/></svg></span><span class="call-text">0968 198 406</span></a>
+  <button type="button" class="to-top" aria-label="Lên đầu trang" hidden><svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#arrow"/></svg></button>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script src="assets/js/config.js?v=20261125c"></script>
-  <script src="assets/js/db.js?v=20261125c"></script>
-  <script src="assets/js/app.js?v=20261125c"></script>
+  <script src="assets/js/config.js?v=20261128b"></script>
+  <script src="assets/js/db.js?v=20261128b"></script>
+  <script src="assets/js/app.js?v=20261128b"></script>
+  <script src="assets/js/chatbot.js?v=20261128b"></script>
 </body>
 </html>

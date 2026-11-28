@@ -76,6 +76,7 @@ Hàm `is_admin()` trả về `true` nếu người đang đăng nhập có trong
 | Hủy lịch hẹn | **delete** `bookings` | `DB.deleteBooking` |
 | Gửi đánh giá | **insert** `reviews` | `DB.addReview` |
 | Xem đánh giá | select `reviews` | `DB.getReviews` |
+| Chatbot báo giá, bảng giá theo cân nặng | select `services` | `DB.getServices` |
 | Đăng ký, đăng nhập, đăng xuất | Supabase Auth | `DB.signUp`, `DB.signIn`, `DB.signOut` |
 | Sửa thông tin tài khoản | **insert / update** `profiles` | `DB.saveProfile` |
 | Đổi mật khẩu | Supabase Auth | `DB.changePassword` |

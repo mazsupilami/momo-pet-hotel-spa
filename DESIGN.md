@@ -40,7 +40,8 @@ Khai báo trong `:root` của `assets/css/style.css`. Không viết mã màu tr�
 3. **Đầu trang con** (`.page-hero`): ảnh nền phủ lớp màu `--ink`, đường dẫn (breadcrumb), tiêu đề, mô tả.
 4. **Dải kêu gọi** (`.cta-band`) cuối trang: nền xanh ngọc, nút đặt lịch và hotline.
 5. **Footer** 4 cột: giới thiệu + mạng xã hội, dịch vụ, liên kết trang, thông tin liên hệ.
-6. **Nút gọi nổi** (`.fab`) góc phải dưới.
+6. **Thanh mạng xã hội dọc** (`.social-rail`) bên trái: Zalo, Messenger, Facebook, Instagram, YouTube; **nút gọi** (`.call-pill`) góc trái dưới; **chatbot** (`.chatbot`) góc phải dưới; **nút lên đầu trang** (`.to-top`).
+7. Trên máy tính, link `tel:` tự đổi thành link Zalo (`initPhoneLinks()` trong `app.js`); trên điện thoại vẫn gọi trực tiếp.
 
 Chiều rộng nội dung tối đa 1200px, lề hai bên 20px. Lưới dịch vụ 4 cột (trang chủ) hoặc 3 cột (trang dịch vụ), 2 cột trên máy tính bảng, 1 cột trên điện thoại.
 
@@ -60,6 +61,11 @@ Chiều rộng nội dung tối đa 1200px, lề hai bên 20px. Lưới dịch v
 | `.info-card` | Thẻ thông tin có icon |
 | `.panel` | Khung form đặt lịch, đánh giá |
 | `.booking` | Thẻ lịch hẹn: ảnh dịch vụ, trạng thái, thông tin, nút sửa và hủy |
+| `.btn-zalo` | Nút xanh Zalo (#0068FF) |
+| `.pack`, `.marquee` | Dải ảnh "đàn boss" chạy ngang, dừng khi rê chuột, nền họa tiết dấu chân |
+| `.promo` | Pop-up ưu đãi (trang chủ, mỗi phiên một lần, sau 6 giây) |
+| `.reveal` | Hiện dần khi cuộn tới (IntersectionObserver); tắt khi người dùng chọn giảm chuyển động |
+| `.chatbot` | Khung chat trợ lý Momo (`assets/js/chatbot.js`) |
 
 ## 6. Icon
 
@@ -79,14 +85,14 @@ Có sẵn: `phone`, `pin`, `clock`, `mail`, `check`, `star`, `shield`, `camera`,
 
 ## 8. Ảnh
 
-Ảnh chụp thật trong `assets/img/photos/`, định dạng JPG, rộng tối đa 1400px. Nguồn: Unsplash và Pexels, giấy phép cho phép dùng miễn phí, không bắt buộc ghi nguồn (footer vẫn ghi để minh bạch). Mọi ảnh có `alt` tiếng Việt.
+Ảnh chụp thật trong `assets/img/photos/`, định dạng JPG, rộng tối đa 1400px. Nguồn: Unsplash và Pexels, giấy phép cho phép dùng miễn phí, không bắt buộc ghi nguồn. **Không dùng ảnh riêng của chú chó Momo trên website** (chỉ logo vẽ theo Momo) để website mang tính thương mại. Mọi ảnh có `alt` tiếng Việt.
 
 | Ảnh | Dùng cho |
 |---|---|
 | `hero-spa.jpg` | Banner trang chủ |
 | `svc-*.jpg`, `room-*.jpg` | Ảnh từng gói dịch vụ (cột `image_url` trong database) |
 | `staff-care.jpg`, `team.jpg` | Mục "Vì sao chọn Momo", "Đội ngũ" |
-| `momo-portrait.jpg`, `momo-sea.jpg`, `momo-beach.jpg` | Ảnh thật của Momo do chủ nuôi cung cấp: trang Về chúng tôi, Tài khoản, thư viện ảnh |
+| `owner-hug.jpg`, `owner-woman.jpg`, `golden-portrait.jpg` | Trang Về chúng tôi, Tài khoản, trang đăng nhập, thư viện ảnh |
 | `storefront.jpg` | Đầu trang và mục "Cửa hàng" ở trang Liên hệ |
 | `saigon-scooter.jpg` | Mục "Ghé thăm cửa hàng" ở trang Về chúng tôi |
 | `pet-*.jpg` | Đánh giá khách hàng, thư viện khách quen |
