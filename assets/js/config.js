@@ -5,5 +5,7 @@
 // KHÔNG BAO GIỜ đặt mật khẩu database hay khóa "secret" / "service_role" vào đây.
 window.APP_CONFIG = {
   SUPABASE_URL: "https://yxcuzeielhdmsqlydiak.supabase.co",
-  SUPABASE_ANON_KEY: "sb_publishable_8wT0tEfiHwHn0l6fefXL5g_QhGhw290"
+  SUPABASE_ANON_KEY: "sb_publishable_8wT0tEfiHwHn0l6fefXL5g_QhGhw290",
+  // Tên (slug) của Edge Function chatbot AI, xem ở Supabase > Edge Functions (cột URL).
+  CHAT_FUNCTION: "bright-service"
 };

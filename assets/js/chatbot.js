@@ -11,7 +11,7 @@
   const STORE_KEY = "momo-chat-v1";
   const AI_KEY = "momo-chat-ai-v1";
   const CFG = window.APP_CONFIG || {};
-  const AI_URL = CFG.SUPABASE_URL ? `${CFG.SUPABASE_URL}/functions/v1/chat` : "";
+  const AI_URL = CFG.SUPABASE_URL ? `${CFG.SUPABASE_URL}/functions/v1/${CFG.CHAT_FUNCTION || "chat"}` : "";
   let aiOn = Boolean(AI_URL);
   let aiTurns = [];
   try {
@@ -62,7 +62,7 @@
 
   const esc = (v) =>
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128g#${name}"/></svg>`;
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128h#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
   // Bỏ dấu tiếng Việt để so khớp từ khóa: "Cắt tỉa" -> "cat tia"
   const norm = (t) =>

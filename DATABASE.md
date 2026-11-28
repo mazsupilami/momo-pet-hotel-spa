@@ -117,7 +117,8 @@ Hàm `is_admin()` trả về `true` nếu người đang đăng nhập có trong
 10. **Chatbot AI (tùy chọn)**:
     - Lấy khóa ở Google AI Studio (aistudio.google.com) > Get API key > Create API key. Không bật thanh toán để giữ ở gói miễn phí.
     - Supabase > Edge Functions > Secrets: thêm `GEMINI_API_KEY` (tùy chọn `GEMINI_MODEL`, mặc định `gemini-flash-lite-latest`).
-    - Edge Functions > Deploy a new function > Via Editor: tên `chat`, dán nội dung `supabase/functions/chat/index.ts`, Deploy.
+    - Edge Functions > Deploy a new function > Via Editor: tên `chat`, dán nội dung `supabase/functions/chat/index.ts`, Deploy. Supabase có thể tự đặt địa chỉ (slug) khác tên, ví dụ `bright-service`: chép slug ở cột URL vào `CHAT_FUNCTION` trong `assets/js/config.js`.
+    - Tên secret phải đúng chính xác `GEMINI_API_KEY` (viết hoa, gạch dưới).
     - Trong function `chat`: tắt **Verify JWT** (website gửi khóa publishable, không phải JWT). Function chỉ nhận yêu cầu từ link GitHub Pages và localhost:8000.
     - Chưa làm bước này thì chatbot vẫn chạy bằng luật từ khóa.
 

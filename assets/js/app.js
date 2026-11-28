@@ -6,7 +6,7 @@
   // ---------- Tiện ích ----------
   const esc = (v) =>
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128g#${name}"/></svg>`;
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128h#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
   // Phụ thu theo cân nặng: dưới 10 kg giá niêm yết, 10–20 kg +30%, trên 20 kg +60%
   const WEIGHT_TIERS = [1, 1.3, 1.6];
@@ -204,7 +204,7 @@
   let articlesCache = null;
   async function getArticles() {
     if (!articlesCache) {
-      const res = await fetch("data/articles.json?v=20261128g");
+      const res = await fetch("data/articles.json?v=20261128h");
       if (!res.ok) throw new Error("Không tải được bài viết.");
       articlesCache = (await res.json()).sort((a, b) => b.date.localeCompare(a.date));
     }
