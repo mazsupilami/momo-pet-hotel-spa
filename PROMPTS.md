@@ -259,3 +259,4 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Vai trò: giữ một vai trò quản trị (tiệm nhỏ); đề xuất Chủ tiệm / Lễ tân / Thợ trong hướng phát triển.
 - Đưa đón: nút "Tìm địa chỉ" hiện tối đa 5 địa chỉ gợi ý trong TP.HCM để khách chọn, hiện tên địa chỉ đã chọn cùng khoảng cách; chỉnh tọa độ tiệm theo hẻm 177 Tôn Thất Thuyết. Thử: "92 Nguyễn Hữu Cảnh" ra Kova Center, Saigon Pearl…; đoạn Khu phố 17 cách 5,9 km, phí 30.000đ.
 - Turnstile: code đã sẵn, đang chờ Site key.
+- Sau khi người dùng chạy `qa_fixes.sql`: phiên khách gọi `admin_list_customers` bị chặn ("Chỉ quản trị viên được xem danh sách khách hàng"); lịch thử gửi kèm status "confirmed" vẫn lưu thành "pending"; khách tự đổi trạng thái bị chặn; khách đổi giờ lịch đang chờ thì được; khách hủy lịch đang chờ thì được; khách ẩn danh gửi đánh giá bị chặn. Cột `reviews.booking_id`, `photo_url`, `bookings.end_date`, `diet`, `medication` đều có trên database. Đã xóa lịch thử.

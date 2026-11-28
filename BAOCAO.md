@@ -186,6 +186,9 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 | Quản trị chỉ đổi trạng thái, không sửa được lịch | Đánh giá nghiệp vụ | **Đã bổ sung** sửa lịch trong bảng |
 | Quản trị không xem được khách đăng ký | Đánh giá nghiệp vụ | **Đã bổ sung** tab Khách hàng |
 | Trang Quản trị hiện email admin | Đánh giá bảo mật | **Đã sửa**: hiện vai trò "Quản trị viên" |
+| Phiên khách gọi hàm danh sách khách hàng | Gọi `admin_list_customers` khi không phải admin | Bị chặn |
+| Khách gửi lịch kèm trạng thái "Đã xác nhận", tự đổi trạng thái | Gọi thẳng database bằng phiên khách | Lịch lưu thành "Chờ xác nhận"; đổi trạng thái bị chặn |
+| Khách ẩn danh gửi đánh giá | Gọi hàm gửi đánh giá | Bị chặn |
 
 ### 3.9. Hướng phát triển
 
