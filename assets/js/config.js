@@ -12,6 +12,6 @@ window.APP_CONFIG = {
   // Chỉ bật CAPTCHA trong Supabase (Authentication > Attack Protection) SAU KHI đã điền khóa này.
   TURNSTILE_SITE_KEY: "",
   // Tọa độ tiệm để tính phí đưa đón (177 Tôn Thất Thuyết, Khánh Hội).
-  STORE_LAT: 10.7545,
-  STORE_LON: 106.7075
+  STORE_LAT: 10.7535,
+  STORE_LON: 106.7057
 };

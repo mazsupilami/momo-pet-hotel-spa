@@ -47,6 +47,7 @@ supabase/functions/notify-booking/  Edge Function báo lịch mới qua Telegram
 supabase/features_v2.sql  Luật đánh giá, ảnh đánh giá, Realtime
 supabase/booking_webhook.sql  Trigger gọi notify-booking khi có lịch mới
 supabase/stay_dates.sql   Ngày trả bé, chế độ ăn, thuốc cho lưu trú nhiều ngày
+supabase/qa_fixes.sql     Luật sửa/hủy lịch, danh sách khách hàng cho Quản trị
 tools/gen_pages.py          Sinh 14 trang HTML từ một mẫu header/footer chung
 docs/screenshots/           Ảnh chụp màn hình dùng trong BAOCAO.md
 ```

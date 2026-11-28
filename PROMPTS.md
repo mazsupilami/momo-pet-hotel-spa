@@ -246,3 +246,16 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Chưa chạy SQL thì lịch vẫn lưu được, thông tin ngày trả, ăn, thuốc được ghi vào ghi chú.
 - Không làm quản lý phòng trống (ghi vào hướng phát triển).
 - Sau khi người dùng chạy `stay_dates.sql` và deploy lại `notify-booking`: đặt thử Phòng Deluxe 01/12 → 07/12 (6 đêm), bé 15 kg. Trang Lịch hẹn hiện đúng khoảng ngày, chế độ ăn, thuốc (lưu ở cột riêng, không còn ghi vào ghi chú), tạm tính 1.966.000đ; Telegram nhận tin (log POST 200). Đã hủy lịch thử.
+
+## Prompt 22 — Logic Quản trị, vai trò, kiểm thử toàn bộ (29/11/2026)
+
+**Prompt**: Quản trị chỉ đổi trạng thái và xóa, chưa sửa được lịch; có nên cho quản trị xem, xóa, sửa tài khoản khách? Thanh quản trị hiện email, nên hiện email hay vai trò? Một admin hay nhiều vai trò? Tài khoản khách vẫn sửa được lịch đã hủy. Phần phí đưa đón chưa có địa chỉ gợi ý (ví dụ "92 Nguyễn Hữu Cảnh" tính ra 0,8 km). Đóng vai tester kiểm tra toàn bộ website. (Giữa chừng hỏi: Turnstile đã làm chưa?)
+
+**Kết quả**:
+- Kiểm thử: quét link/ảnh 14 trang, mở 17 trang ở khung điện thoại; không có link, ảnh hỏng hay tràn ngang. Tìm và sửa 5 lỗi logic (xem BAOCAO mục 3.8b).
+- `supabase/qa_fixes.sql`: khách không sửa lịch đã hủy/hoàn thành; đổi ngày giờ lịch đã xác nhận thì quay về "Chờ xác nhận"; khách chỉ hủy được lịch đang chờ/đã xác nhận; hàm `admin_list_customers()`; admin sửa được hồ sơ khách.
+- Trang Lịch hẹn: lịch đã hủy, đã qua ngày không còn nút sửa/hủy; cảnh báo khi đổi lịch đã xác nhận; chặn giờ đã qua; huy hiệu chỉ đếm lịch sắp tới.
+- Quản trị: nút sửa lịch ngay trong bảng; tab Khách hàng (tìm kiếm, sửa họ tên và số điện thoại, không xóa tài khoản trên web); thanh trên hiện "Quản trị viên" thay vì email.
+- Vai trò: giữ một vai trò quản trị (tiệm nhỏ); đề xuất Chủ tiệm / Lễ tân / Thợ trong hướng phát triển.
+- Đưa đón: nút "Tìm địa chỉ" hiện tối đa 5 địa chỉ gợi ý trong TP.HCM để khách chọn, hiện tên địa chỉ đã chọn cùng khoảng cách; chỉnh tọa độ tiệm theo hẻm 177 Tôn Thất Thuyết. Thử: "92 Nguyễn Hữu Cảnh" ra Kova Center, Saigon Pearl…; đoạn Khu phố 17 cách 5,9 km, phí 30.000đ.
+- Turnstile: code đã sẵn, đang chờ Site key.

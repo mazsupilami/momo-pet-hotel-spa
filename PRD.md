@@ -79,6 +79,10 @@ Mọi trang có chung header và footer, trong đó có đủ link tới các tr
 | F30 | Nút "Thêm vào lịch" (Google Calendar, file .ics) sau khi đặt lịch và ở trang Lịch hẹn | — | — |
 | F31 | Chống spam bằng Cloudflare Turnstile cho đặt lịch, đăng nhập, đăng ký, quên mật khẩu (qua CAPTCHA của Supabase Auth) | — | — |
 | F32 | Form đặt lịch đổi theo loại gói: khách sạn (ngày nhận, ngày trả, giờ nhận, chế độ ăn, thuốc), trông giữ (từ ngày đến ngày), spa (ngày, giờ); tạm tính tiền theo số đêm/ngày, cân nặng, giảm 10% từ 5 đêm; tối đa 30 ngày | **insert / update** | `bookings.end_date`, `diet`, `medication` |
+| F33 | Quản trị sửa thông tin lịch hẹn (ngày giờ, ngày trả, khách, thú cưng, cân nặng, ghi chú) ngay trong bảng | **update** | `bookings` |
+| F34 | Quản trị xem danh sách tài khoản khách (email, họ tên, số điện thoại, ngày tạo, số lịch), sửa họ tên và số điện thoại; không xóa tài khoản trên web | select / **update** | `auth.users` (qua hàm `admin_list_customers`), `profiles` |
+| F35 | Luật lịch hẹn của khách: không sửa lịch đã hủy, đã hoàn thành, đã qua ngày; đổi ngày giờ lịch đã xác nhận thì quay về "Chờ xác nhận"; không đặt giờ đã qua trong ngày | — | `bookings` |
+| F36 | Gợi ý địa chỉ đưa đón (tối đa 5 địa chỉ trong TP.HCM), hiện rõ địa chỉ đã chọn trước khi tính phí | — | — |
 | F22 | Ưu đãi (khách mới, thẻ 10+1, lưu trú từ 5 đêm) và Cam kết chất lượng (quy trình xử lý phản hồi) | — | — |
 
 **Quy tắc vai trò**: tài khoản quản trị không dùng form đặt lịch và form đánh giá dành cho khách (hai form được thay bằng thông báo và link sang trang Quản trị). Admin đặt lịch hộ khách trong tab "Tạo lịch hẹn" của trang Quản trị.

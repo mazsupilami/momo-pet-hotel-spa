@@ -46,8 +46,8 @@ begin
   if not public.is_admin() then
     if tg_op = 'INSERT' then
       new.status := 'pending';
-    elsif old.status = 'done' then
-      raise exception 'Lịch hẹn đã hoàn thành, không sửa được';
+    elsif old.status in ('done', 'cancelled') then
+      raise exception 'Lịch hẹn đã hoàn thành hoặc đã hủy, không sửa được';
     elsif new.status is distinct from old.status then
       raise exception 'Chỉ quản trị viên được đổi trạng thái lịch hẹn';
     end if;

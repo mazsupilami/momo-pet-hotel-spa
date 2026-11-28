@@ -6,7 +6,7 @@
   // ---------- Tiện ích ----------
   const esc = (v) =>
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128m#${name}"/></svg>`;
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261129a#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
   // Phụ thu theo cân nặng: dưới 10 kg giá niêm yết, 10–20 kg +30%, trên 20 kg +60%
   const WEIGHT_TIERS = [1, 1.3, 1.6];
@@ -202,6 +202,14 @@
 
 
 
+  // Giờ hẹn hôm nay đã qua (chừa 30 phút để tiệm chuẩn bị)
+  function isPastSlot(date, time) {
+    if (date !== todayISO()) return date < todayISO();
+    const [h, m] = String(time).split(":").map(Number);
+    const now = new Date();
+    return h * 60 + m < now.getHours() * 60 + now.getMinutes() + 30;
+  }
+
   // ---------- Lưu trú nhiều ngày ----------
   // Loại gói theo đơn vị giá: "stay" = khách sạn (theo đêm), "day" = trông giữ (theo ngày), "slot" = theo lần.
   const svcKind = (s) => {
@@ -235,7 +243,7 @@
 
   // ---------- Cấu hình chung ----------
   const CFG = window.APP_CONFIG || {};
-  const STORE = { lat: Number(CFG.STORE_LAT) || 10.7545, lon: Number(CFG.STORE_LON) || 106.7075 };
+  const STORE = { lat: Number(CFG.STORE_LAT) || 10.7535, lon: Number(CFG.STORE_LON) || 106.7057 };
   const STORE_ADDR = "177 Tôn Thất Thuyết, Phường Khánh Hội, TP. Hồ Chí Minh";
 
   // ---------- Captcha chống spam (Cloudflare Turnstile) ----------
@@ -318,18 +326,31 @@
 
   // ---------- Đưa đón: tính khoảng cách bằng OpenStreetMap (Nominatim + OSRM) ----------
   const pickupFee = (km) => (km <= 3 ? 0 : Math.ceil(km - 3) * 10000);
-  async function geocodeAddress(addr) {
-    // Thử lần lượt: đủ địa chỉ, bỏ số nhà, chỉ tên đường (tên phường mới có thể chưa có trên bản đồ)
+  // Rút gọn tên địa chỉ của OpenStreetMap: bỏ "Việt Nam", mã bưu chính, tên thành phố
+  const shortPlace = (name) =>
+    String(name)
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t && !/^(Việt Nam|\d{5,6}|Thành phố Hồ Chí Minh)$/.test(t))
+      .slice(0, 4)
+      .join(", ");
+  // Tìm tối đa 5 địa chỉ gợi ý trong TP.HCM (gọi khi khách bấm nút, không gọi theo từng phím gõ)
+  async function searchAddress(addr) {
     const noNumber = addr.replace(/^\s*[\d\/\-]+[a-zA-Z]?\s*/, "");
     const tries = [...new Set([addr, noNumber, noNumber.split(",")[0].trim()])].filter((q) => q.length >= 3);
     for (const q of tries) {
-      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=vn&accept-language=vi&viewbox=106.55,10.95,106.90,10.60&bounded=1&q=${encodeURIComponent(q + ", Thành phố Hồ Chí Minh")}`;
+      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=5&countrycodes=vn&accept-language=vi&viewbox=106.55,10.95,106.90,10.60&bounded=1&q=${encodeURIComponent(q)}`;
       const res = await fetch(url);
       if (!res.ok) continue;
-      const [hit] = await res.json();
-      if (hit) return { lat: Number(hit.lat), lon: Number(hit.lon), label: hit.display_name };
+      const list = await res.json();
+      if (list.length) {
+        const seen = new Set();
+        return list
+          .map((h) => ({ lat: Number(h.lat), lon: Number(h.lon), label: shortPlace(h.display_name) }))
+          .filter((c) => !seen.has(c.label) && seen.add(c.label));
+      }
     }
-    throw new Error("Không tìm thấy địa chỉ. Hãy ghi rõ tên đường và phường.");
+    return [];
   }
   async function reverseGeocode(lat, lon) {
     const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&accept-language=vi&lat=${lat}&lon=${lon}`);
@@ -355,8 +376,36 @@
       box.hidden = !form.pickup.checked;
       if (form.pickup.checked) form.pickup_address.focus();
     });
-    form.pickup_address.addEventListener("input", () => (info = null));
-    async function calcFrom(lat, lon, address) {
+    let candidates = [];
+    const listBox = document.createElement("div");
+    listBox.className = "pickup-list";
+    listBox.hidden = true;
+    out.before(listBox);
+    form.pickup_address.addEventListener("input", () => {
+      info = null;
+      candidates = [];
+      listBox.hidden = true;
+    });
+    function showCandidates(list) {
+      candidates = list;
+      listBox.innerHTML = `<p class="muted">Chọn đúng địa chỉ của bạn:</p>${list
+        .map((c, i) => `<button type="button" data-i="${i}">${ic("pin")} ${esc(c.label)}</button>`)
+        .join("")}`;
+      listBox.hidden = false;
+      show("Có nhiều địa chỉ trùng tên, vui lòng chọn một địa chỉ ở trên.");
+    }
+    listBox.addEventListener("click", async (e) => {
+      const b = e.target.closest("button[data-i]");
+      if (!b) return;
+      const c = candidates[Number(b.dataset.i)];
+      listBox.hidden = true;
+      try {
+        await calcFrom(c.lat, c.lon, form.pickup_address.value.trim(), c.label);
+      } catch (err) {
+        show(esc(err.message), true);
+      }
+    });
+    async function calcFrom(lat, lon, address, label) {
       const km = await routeKm(lat, lon);
       if (km > 15) {
         info = null;
@@ -364,17 +413,19 @@
         return null;
       }
       const fee = pickupFee(km);
-      info = { km, fee, address };
-      show(`${ic("pin")} Cách tiệm khoảng <strong>${km.toFixed(1)} km</strong> · Phí đưa đón: <strong>${fee ? money(fee) : "Miễn phí"}</strong> (mỗi chiều)`);
+      info = { km, fee, address, label: label || address };
+      show(`${ic("pin")} <span><strong>${esc(label || address)}</strong><br>Cách tiệm khoảng <strong>${km.toFixed(1).replace(".", ",")} km</strong> · Phí đưa đón: <strong>${fee ? money(fee) : "Miễn phí"}</strong> (mỗi chiều)</span>`);
       return info;
     }
     $("#pickup-calc").addEventListener("click", async (e) => {
       const addr = form.pickup_address.value.trim();
       if (addr.length < 5) return show("Nhập địa chỉ đón bé trước.", true);
       try {
-        await withButton(e.currentTarget, "Đang tính…", async () => {
-          const g = await geocodeAddress(addr);
-          await calcFrom(g.lat, g.lon, addr);
+        await withButton(e.currentTarget, "Đang tìm…", async () => {
+          const list = await searchAddress(addr);
+          if (!list.length) throw new Error("Không tìm thấy địa chỉ. Hãy ghi rõ số nhà, tên đường và phường.");
+          if (list.length === 1) await calcFrom(list[0].lat, list[0].lon, addr, list[0].label);
+          else showCandidates(list);
         });
       } catch (err) {
         show(esc(err.message), true);
@@ -391,7 +442,7 @@
             const { latitude: lat, longitude: lon } = pos.coords;
             const address = await reverseGeocode(lat, lon);
             form.pickup_address.value = address.slice(0, 120);
-            await calcFrom(lat, lon, form.pickup_address.value);
+            await calcFrom(lat, lon, form.pickup_address.value, form.pickup_address.value);
           } catch (err) {
             show(esc(err.message), true);
           }
@@ -410,8 +461,13 @@
       const addr = form.pickup_address.value.trim();
       if (addr.length < 5) throw new Error("Vui lòng nhập địa chỉ đón bé.");
       if (info && info.address === addr) return info;
-      const g = await geocodeAddress(addr);
-      const r = await calcFrom(g.lat, g.lon, addr);
+      const list = candidates.length ? candidates : await searchAddress(addr);
+      if (!list.length) throw new Error("Không tìm thấy địa chỉ đón bé. Hãy ghi rõ tên đường và phường.");
+      if (list.length > 1) {
+        showCandidates(list);
+        throw new Error("Vui lòng chọn đúng địa chỉ đón bé trong danh sách gợi ý.");
+      }
+      const r = await calcFrom(list[0].lat, list[0].lon, addr, list[0].label);
       if (!r) throw new Error("Địa chỉ ngoài khu vực đưa đón, vui lòng nhắn Zalo.");
       return r;
     };
@@ -467,7 +523,7 @@
   let articlesCache = null;
   async function getArticles() {
     if (!articlesCache) {
-      const res = await fetch("data/articles.json?v=20261128m");
+      const res = await fetch("data/articles.json?v=20261129a");
       if (!res.ok) throw new Error("Không tải được bài viết.");
       articlesCache = (await res.json()).sort((a, b) => b.date.localeCompare(a.date));
     }
@@ -702,6 +758,7 @@
       e.preventDefault();
       if (!form.reportValidity()) return;
       if (form.booking_date.value < todayISO()) return toast("Ngày hẹn không được ở trong quá khứ.", true);
+      if (isPastSlot(form.booking_date.value, form.booking_time.value)) return toast("Giờ hẹn hôm nay đã qua. Vui lòng chọn giờ muộn hơn hoặc ngày khác.", true);
       if (kind !== "slot") {
         const n = stayCount(kind, form.booking_date.value, form.end_date.value);
         if (n < 1) return toast(kind === "stay" ? "Ngày trả bé phải sau ngày nhận bé ít nhất 1 đêm." : "Ngày kết thúc không được trước ngày bắt đầu.", true);
@@ -716,7 +773,7 @@
         return toast(err.message, true);
       }
       const noteParts = [form.note.value.trim()];
-      if (pickup) noteParts.push(`Đưa đón: ${pickup.address} (~${pickup.km.toFixed(1)} km, phí ${pickup.fee ? money(pickup.fee) : "miễn phí"}/chiều)`);
+      if (pickup) noteParts.push(`Đưa đón: ${pickup.address}${pickup.label && pickup.label !== pickup.address ? ` (${pickup.label})` : ""}, ~${pickup.km.toFixed(1)} km, phí ${pickup.fee ? money(pickup.fee) : "miễn phí"}/chiều`);
       const booking = {
         service_id: service.id,
         owner_name: form.owner_name.value.trim(),
@@ -890,7 +947,11 @@
         <p class="muted">Tạm tính: <strong>${money(estimateBooking(s, b.pet_weight, b.booking_date, b.end_date).total)}</strong></p>
         <div class="booking-actions">
           ${
-            b.status === "done"
+            b.status === "cancelled"
+              ? `<span class="muted">Lịch đã hủy. Cần đặt lại? <a href="service.html?id=${Number(s.id)}#dat-lich">Đặt lịch mới</a></span>`
+              : b.status !== "done" && (b.end_date || b.booking_date) < todayISO()
+              ? `<span class="muted">Lịch đã qua ngày. Cần hỗ trợ, vui lòng nhắn <a href="${ZALO_URL}" target="_blank" rel="noopener">Zalo</a>.</span>`
+              : b.status === "done"
               ? canReview.has(b.id)
                 ? `<a class="btn btn-small btn-brand" href="service.html?id=${Number(s.id)}&review=${Number(b.id)}#danh-gia">${ic("star")} Đánh giá dịch vụ</a>`
                 : `<span class="muted">${ic("check")} Đã hoàn thành, cảm ơn bạn</span>`
@@ -900,6 +961,7 @@
           }
         </div>
         <form hidden novalidate>
+          ${b.status === "confirmed" ? `<p class="notice" style="margin:0 0 12px">Lịch đã được xác nhận. Nếu đổi ngày hoặc giờ, lịch sẽ quay về "Chờ xác nhận" để lễ tân xác nhận lại.</p>` : ""}
           <div class="form-grid">
             <div class="field"><label>${b.end_date ? "Ngày nhận bé" : "Ngày hẹn"}<input type="date" name="booking_date" required min="${todayISO()}" value="${esc(b.booking_date)}"></label></div>
             ${b.end_date ? `<div class="field"><label>Ngày trả bé<input type="date" name="end_date" required min="${todayISO()}" value="${esc(b.end_date)}"></label></div>` : ""}
@@ -959,6 +1021,7 @@
       const form = e.target;
       if (!form.reportValidity()) return;
       if (form.booking_date.value < todayISO()) return toast("Ngày hẹn không được ở trong quá khứ.", true);
+      if (isPastSlot(form.booking_date.value, form.booking_time.value)) return toast("Giờ hẹn hôm nay đã qua, vui lòng chọn giờ khác.", true);
       const changes = {
         booking_date: form.booking_date.value,
         booking_time: form.booking_time.value,
@@ -975,7 +1038,8 @@
         await withButton(form.querySelector("button[type=submit]"), "Đang lưu…", () =>
           DB.updateBooking(form.closest(".booking").dataset.id, changes)
         );
-        toast("Đã cập nhật lịch hẹn.");
+        const updated = await DB.getMyBookings().then((l) => l.find((x) => String(x.id) === form.closest(".booking").dataset.id)).catch(() => null);
+        toast(updated && updated.status === "pending" ? "Đã cập nhật. Lịch đang chờ lễ tân xác nhận lại." : "Đã cập nhật lịch hẹn.");
         load();
       } catch (err) {
         toast(err.message, true);
@@ -1221,7 +1285,7 @@
 
       root.innerHTML = `
         <div class="admin-bar">
-          <span class="muted">Đăng nhập: <strong>${esc(auth.email)}</strong></span>
+          <span class="admin-role" title="${esc(auth.email)}">${ic("shield")} <strong>Quản trị viên</strong></span>
           <button type="button" class="btn btn-small btn-outline" id="admin-logout">${ic("logout")} Đăng xuất</button>
         </div>
         <div class="admin-stats" id="admin-stats"></div>
@@ -1229,6 +1293,7 @@
           <button type="button" role="tab" data-tab="bookings" aria-selected="true">Lịch hẹn</button>
           <button type="button" role="tab" data-tab="services" aria-selected="false">Dịch vụ &amp; giá</button>
           <button type="button" role="tab" data-tab="reviews" aria-selected="false">Đánh giá</button>
+          <button type="button" role="tab" data-tab="customers" aria-selected="false">${ic("users")} Khách hàng</button>
           <button type="button" role="tab" data-tab="create" aria-selected="false">${ic("calendar")} Tạo lịch hẹn</button>
         </div>
         <div id="admin-panel"><p class="loading">Đang tải dữ liệu…</p></div>`;
@@ -1284,12 +1349,64 @@
                     <td><select data-act="status" aria-label="Trạng thái">${Object.entries(STATUS)
                       .map(([k, v]) => `<option value="${k}"${k === (b.status || "pending") ? " selected" : ""}>${v}</option>`)
                       .join("")}</select></td>
-                    <td><button type="button" class="icon-btn" data-act="delete" aria-label="Xóa lịch hẹn">${ic("trash")}</button></td>
+                    <td class="row-actions"><button type="button" class="icon-btn" data-act="edit" aria-label="Sửa lịch hẹn" title="Sửa lịch hẹn">${ic("calendar")}</button><button type="button" class="icon-btn" data-act="delete" aria-label="Xóa lịch hẹn" title="Xóa lịch hẹn">${ic("trash")}</button></td>
                   </tr>`
                 )
                 .join("")
             : `<tr><td colspan="6" class="loading">Không có lịch hẹn phù hợp.</td></tr>`;
         };
+        // Sửa thông tin lịch hẹn ngay trong bảng
+        function openEdit(tr) {
+          rows.querySelectorAll("tr.edit-row").forEach((r) => r.remove());
+          const b = bookings.find((x) => x.id === Number(tr.dataset.id));
+          if (!b) return;
+          const k = svcKind(b.services);
+          const er = document.createElement("tr");
+          er.className = "edit-row";
+          er.innerHTML = `<td colspan="6"><form class="admin-edit" novalidate>
+            <div class="form-grid">
+              <div class="field"><label>${k === "slot" ? "Ngày hẹn" : "Ngày nhận bé"}<input type="date" name="booking_date" required value="${esc(b.booking_date)}"></label></div>
+              ${k === "slot" ? "" : `<div class="field"><label>Ngày trả bé<input type="date" name="end_date" required value="${esc(b.end_date || b.booking_date)}"></label></div>`}
+              <div class="field"><label>Giờ<select name="booking_time">${timeOptions(String(b.booking_time).slice(0, 5))}</select></label></div>
+              <div class="field"><label>Tên khách<input name="owner_name" required maxlength="60" value="${esc(b.owner_name)}"></label></div>
+              <div class="field"><label>Số điện thoại<input name="phone" required pattern="[0-9+ ]{8,15}" maxlength="15" value="${esc(b.phone)}"></label></div>
+              <div class="field"><label>Tên thú cưng<input name="pet_name" required maxlength="40" value="${esc(b.pet_name)}"></label></div>
+              <div class="field"><label>Cân nặng (kg)<input type="number" name="pet_weight" required min="0.1" max="99" step="0.1" value="${Number(b.pet_weight)}"></label></div>
+              <div class="field full"><label>Ghi chú<input name="note" maxlength="300" value="${esc(b.note)}"></label></div>
+            </div>
+            <div class="form-actions"><button type="submit" class="btn btn-small btn-brand">Lưu thay đổi</button><button type="button" class="btn btn-small btn-outline" data-act="close">Đóng</button></div>
+          </form></td>`;
+          tr.after(er);
+          const f = er.querySelector("form");
+          f.querySelector('[data-act="close"]').addEventListener("click", () => er.remove());
+          f.addEventListener("submit", async (ev) => {
+            ev.preventDefault();
+            if (!f.reportValidity()) return;
+            const changes = {
+              booking_date: f.booking_date.value,
+              booking_time: f.booking_time.value,
+              owner_name: f.owner_name.value.trim(),
+              phone: f.phone.value.trim(),
+              pet_name: f.pet_name.value.trim(),
+              pet_weight: Number(f.pet_weight.value),
+              note: f.note.value.trim() || null,
+            };
+            if (f.end_date) {
+              const gap = daysBetween(changes.booking_date, f.end_date.value);
+              if (gap < (k === "stay" ? 1 : 0) || gap > 30) return toast("Khoảng ngày lưu trú không hợp lệ (1–30 ngày).", true);
+              changes.end_date = f.end_date.value;
+            }
+            try {
+              const saved = await withButton(f.querySelector('button[type="submit"]'), "Đang lưu…", () => DB.adminUpdateBooking(b.id, changes));
+              Object.assign(b, saved);
+              renderStats();
+              draw();
+              toast(`Đã cập nhật lịch #${b.id}.`);
+            } catch (err) {
+              toast(err.message, true);
+            }
+          });
+        }
         $("#f-status").addEventListener("change", draw);
         $("#f-search").addEventListener("input", draw);
         rows.addEventListener("change", async (e) => {
@@ -1307,6 +1424,8 @@
           }
         });
         rows.addEventListener("click", async (e) => {
+          const edit = e.target.closest('button[data-act="edit"]');
+          if (edit) return openEdit(edit.closest("tr"));
           const btn = e.target.closest('button[data-act="delete"]');
           if (!btn) return;
           const id = Number(btn.closest("tr").dataset.id);
@@ -1432,6 +1551,7 @@
           e.preventDefault();
           if (!f.reportValidity()) return;
           if (f.booking_date.value < todayISO()) return toast("Ngày hẹn không được ở trong quá khứ.", true);
+          if (isPastSlot(f.booking_date.value, f.booking_time.value)) return toast("Giờ hẹn hôm nay đã qua, chọn giờ khác.", true);
           const booking = {
             service_id: Number(f.service_id.value),
             owner_name: f.owner_name.value.trim(),
@@ -1463,7 +1583,75 @@
         });
       }
 
-      const views = { bookings: bookingsView, services: servicesView, reviews: reviewsView, create: createView };
+      // Khách hàng: xem danh sách tài khoản, số lịch đã đặt; sửa họ tên, số điện thoại khi khách nhờ.
+      // Không xóa tài khoản ở đây (dữ liệu của khách, chỉ xóa theo yêu cầu qua Supabase Dashboard).
+      async function customersView() {
+        panel.innerHTML = `<p class="loading">Đang tải khách hàng…</p>`;
+        let list;
+        try {
+          list = await DB.adminListCustomers();
+        } catch (err) {
+          panel.innerHTML = `<p class="notice error">${esc(err.message)}</p>`;
+          return;
+        }
+        panel.innerHTML = `
+          <div class="toolbar"><input id="c-search" type="search" placeholder="Tìm email, tên, số điện thoại…"><span class="muted">${list.length} tài khoản</span></div>
+          <div class="table-wrap"><table class="admin-table">
+            <thead><tr><th>Khách hàng</th><th>Số điện thoại</th><th>Ngày tạo</th><th>Lịch đã đặt</th><th></th></tr></thead>
+            <tbody id="c-rows"></tbody></table></div>
+          <p class="muted" style="margin-top:12px">Tài khoản được xóa theo yêu cầu của khách trong Supabase Dashboard (Authentication &gt; Users) để tránh xóa nhầm dữ liệu.</p>`;
+        const rowsEl = $("#c-rows");
+        const draw = () => {
+          const q = $("#c-search").value.trim().toLowerCase();
+          const shown = list.filter((c) => !q || [c.email, c.full_name, c.phone].join(" ").toLowerCase().includes(q));
+          rowsEl.innerHTML = shown.length
+            ? shown
+                .map(
+                  (c) => `<tr data-id="${esc(c.id)}">
+                    <td><strong>${esc(c.full_name || "(chưa có tên)")}</strong>${c.is_admin ? ' <span class="chip">Quản trị</span>' : ""}<span class="sub">${esc(c.email)}</span></td>
+                    <td>${esc(c.phone || "—")}</td>
+                    <td>${dateVN(String(c.created_at).slice(0, 10))}</td>
+                    <td>${Number(c.bookings_count)}</td>
+                    <td><button type="button" class="icon-btn" data-act="edit" aria-label="Sửa hồ sơ khách" title="Sửa họ tên, số điện thoại">${ic("user")}</button></td>
+                  </tr>`
+                )
+                .join("")
+            : `<tr><td colspan="5" class="loading">Không có khách hàng phù hợp.</td></tr>`;
+        };
+        $("#c-search").addEventListener("input", draw);
+        rowsEl.addEventListener("click", (e) => {
+          const btn = e.target.closest('button[data-act="edit"]');
+          if (!btn) return;
+          const tr = btn.closest("tr");
+          rowsEl.querySelectorAll("tr.edit-row").forEach((r) => r.remove());
+          const c = list.find((x) => x.id === tr.dataset.id);
+          const er = document.createElement("tr");
+          er.className = "edit-row";
+          er.innerHTML = `<td colspan="5"><form class="admin-edit" novalidate><div class="form-grid">
+            <div class="field"><label>Họ tên<input name="full_name" maxlength="60" value="${esc(c.full_name)}"></label></div>
+            <div class="field"><label>Số điện thoại<input name="phone" pattern="[0-9+ ]{8,15}" maxlength="15" value="${esc(c.phone)}"></label></div>
+          </div><div class="form-actions"><button type="submit" class="btn btn-small btn-brand">Lưu</button><button type="button" class="btn btn-small btn-outline" data-act="close">Đóng</button></div></form></td>`;
+          tr.after(er);
+          const f = er.querySelector("form");
+          f.querySelector('[data-act="close"]').addEventListener("click", () => er.remove());
+          f.addEventListener("submit", async (ev) => {
+            ev.preventDefault();
+            if (!f.reportValidity()) return;
+            try {
+              const changes = { full_name: f.full_name.value.trim(), phone: f.phone.value.trim() };
+              await withButton(f.querySelector('button[type="submit"]'), "Đang lưu…", () => DB.adminUpdateProfile(c.id, changes));
+              Object.assign(c, changes);
+              draw();
+              toast("Đã cập nhật hồ sơ khách.");
+            } catch (err) {
+              toast(err.message, true);
+            }
+          });
+        });
+        draw();
+      }
+
+      const views = { bookings: bookingsView, services: servicesView, reviews: reviewsView, customers: customersView, create: createView };
       root.querySelector(".tabs").addEventListener("click", (e) => {
         const b = e.target.closest("button[data-tab]");
         if (!b) return;

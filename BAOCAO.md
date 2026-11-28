@@ -51,6 +51,7 @@ Website có 14 trang. Tất cả các trang khách dùng chung header (menu) và
 | 19 | Làm luật đánh giá và các API: Telegram, Realtime, phí đưa đón, thời tiết, thêm vào lịch, ảnh đánh giá, chống spam | Xem mục 3.5b |
 | 20 | Link Ưu đãi ở footer chưa tới đúng chỗ, cơ sở vật chất thiếu hình, thêm ảnh nhân viên, có nên thêm thanh tìm kiếm? | Sửa cuộn tới mục, 3 ảnh cơ sở vật chất, 4 thẻ nhân viên có ảnh; đánh giá thanh tìm kiếm |
 | 21 | Khách sạn và trông giữ có nên dùng chung form với spa? | Giữ một form, các ô đổi theo loại gói; thêm ngày trả bé, chế độ ăn, thuốc, tạm tính tiền |
+| 22 | Đánh giá logic Quản trị, vai trò, lịch đã hủy, gợi ý địa chỉ; đóng vai tester kiểm tra toàn bộ | Xem mục 3.8b |
 
 | Trang chủ | Về chúng tôi |
 |---|---|
@@ -170,8 +171,25 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 | Thanh dọc hiện đủ icon Zalo, Messenger, Gọi; số điện thoại là link gọi | Đạt |
 | Pop-up sau 3 giây; dàn thú cưng hiện chú thích khi rê chuột; Cẩm nang lọc theo chủ đề, mở bài viết | Đạt |
 
+### 3.8b. Kiểm thử toàn bộ (đóng vai tester)
+
+| Hạng mục | Cách kiểm tra | Kết quả |
+|---|---|---|
+| Link, ảnh, mục `#` | Quét 14 trang HTML và link trong JavaScript | Không có link hỏng, không thiếu ảnh |
+| Hiển thị điện thoại | Mở 17 trang (kể cả dịch vụ, bài viết không tồn tại) ở khung 375px | Không tràn ngang, không ảnh lỗi |
+| Trang cần đăng nhập | Mở Tài khoản, Quản trị khi chưa đăng nhập | Chuyển về Đăng nhập |
+| Lịch đã hủy khách vẫn sửa được | Đọc code, thử trên trang Lịch hẹn | **Lỗi, đã sửa** (giao diện + database) |
+| Đổi giờ lịch đã xác nhận vẫn giữ "Đã xác nhận" | Đọc trigger | **Lỗi logic, đã sửa**: quay về "Chờ xác nhận" |
+| Đặt được giờ đã qua trong ngày | Thử đặt 09:00 lúc tối | **Lỗi, đã sửa** |
+| Huy hiệu số lịch đếm cả lịch đã hủy, đã qua | Đọc code | **Lỗi, đã sửa**: chỉ đếm lịch sắp tới |
+| Địa chỉ đưa đón trùng tên tính sai | Thử "Nguyễn Hữu Cảnh" | **Đã sửa**: danh sách gợi ý, hiện địa chỉ đã chọn; chỉnh tọa độ tiệm |
+| Quản trị chỉ đổi trạng thái, không sửa được lịch | Đánh giá nghiệp vụ | **Đã bổ sung** sửa lịch trong bảng |
+| Quản trị không xem được khách đăng ký | Đánh giá nghiệp vụ | **Đã bổ sung** tab Khách hàng |
+| Trang Quản trị hiện email admin | Đánh giá bảo mật | **Đã sửa**: hiện vai trò "Quản trị viên" |
+
 ### 3.9. Hướng phát triển
 
+- Phân quyền nhiều vai trò: Chủ tiệm (toàn quyền), Lễ tân (lịch hẹn, khách hàng), Thợ (chỉ xem lịch của mình). Hiện dùng một vai trò quản trị vì tiệm nhỏ và bài thi chỉ có một người quản lý.
 - Quản lý phòng trống (24 phòng): bảng phòng và giữ chỗ theo ngày, để khách thấy còn phòng hay không trước khi đặt. Hiện lễ tân xác nhận qua Zalo.
 
 ## 4. Các file .md và chức năng

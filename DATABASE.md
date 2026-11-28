@@ -140,4 +140,6 @@ Cột thêm ở `features_v2.sql`: `booking_id` (lịch hẹn đã hoàn thành,
 
 14. **Lưu trú nhiều ngày**: chạy `supabase/stay_dates.sql`. Chưa chạy thì website vẫn đặt được lịch, ngày trả bé được ghi vào ghi chú.
 
+15. **Sửa lỗi sau kiểm thử**: chạy `supabase/qa_fixes.sql` (chạy sau cùng, sau `features_v2.sql`): luật sửa lịch của khách, luật hủy lịch, hàm `admin_list_customers()`, quyền admin sửa `profiles`.
+
 **Không đưa mật khẩu database lên GitHub.** Mật khẩu chỉ dùng để đăng nhập Supabase, website không cần đến. File ghi chú chứa mật khẩu để ngoài folder dự án và đã được liệt kê trong `.gitignore`.

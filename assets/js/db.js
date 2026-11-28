@@ -255,13 +255,19 @@
       return data;
     },
 
+    // Số lịch sắp tới còn hiệu lực (chờ xác nhận / đã xác nhận, chưa qua ngày) cho huy hiệu ở menu
     async countMyBookings() {
       const user = await currentUser();
       if (!user) return 0;
-      const { count, error } = await sb
+      const d = new Date();
+      const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      let { count, error } = await sb
         .from("bookings")
         .select("id", { count: "exact", head: true })
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .in("status", ["pending", "confirmed"])
+        .or(`booking_date.gte.${today},end_date.gte.${today}`);
+      if (error) ({ count, error } = await sb.from("bookings").select("id", { count: "exact", head: true }).eq("user_id", user.id).in("status", ["pending", "confirmed"]).gte("booking_date", today));
       return error ? 0 : count || 0;
     },
 
@@ -365,6 +371,39 @@
       const { data, error } = await sb.from("bookings").update({ status, updated_at: new Date().toISOString() }).eq("id", id).select("id");
       if (error) throw new Error("Không đổi được trạng thái: " + error.message);
       if (!data.length) throw new Error("Không có quyền đổi lịch hẹn này.");
+    },
+
+    // UPDATE thông tin lịch hẹn (chỉ admin): ngày giờ, khách, thú cưng, ghi chú
+    async adminUpdateBooking(id, changes) {
+      requireDb();
+      const run = (row) =>
+        sb.from("bookings").update({ ...row, updated_at: new Date().toISOString() }).eq("id", id).select("*, services(id, name, price, unit)");
+      let { data, error } = await run(changes);
+      if (missingStayCol(error)) ({ data, error } = await run(withoutStayCols(changes)));
+      if (error) throw new Error("Không lưu được lịch hẹn: " + error.message);
+      if (!data.length) throw new Error("Không có quyền sửa lịch hẹn này.");
+      return data[0];
+    },
+
+    // Danh sách tài khoản khách (hàm admin_list_customers trong supabase/qa_fixes.sql)
+    async adminListCustomers() {
+      requireDb();
+      const { data, error } = await sb.rpc("admin_list_customers");
+      if (error) {
+        if (/function|does not exist|schema cache/i.test(error.message)) throw new Error("Chưa cài danh sách khách hàng. Hãy chạy supabase/qa_fixes.sql.");
+        throw new Error("Không tải được khách hàng: " + error.message);
+      }
+      return data;
+    },
+
+    async adminUpdateProfile(id, { full_name, phone }) {
+      requireDb();
+      const { data, error } = await sb
+        .from("profiles")
+        .upsert({ id, full_name: full_name || null, phone: phone || null, updated_at: new Date().toISOString() })
+        .select("id");
+      if (error) throw new Error("Không lưu được hồ sơ khách: " + error.message);
+      if (!data.length) throw new Error("Không có quyền sửa hồ sơ này.");
     },
 
     // DELETE bookings (chỉ admin)

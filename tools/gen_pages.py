@@ -19,7 +19,7 @@ YOUTUBE_VIDEO = "BGgRwsH_8vE"  # video giới thiệu Momo trên kênh YouTube c
 MAP_Q = "177+T%C3%B4n+Th%E1%BA%A5t+Thuy%E1%BA%BFt,+Kh%C3%A1nh+H%E1%BB%99i,+H%E1%BB%93+Ch%C3%AD+Minh"
 
 
-ICON_V = "20261128m"
+ICON_V = "20261129a"
 
 
 def ic(name):
@@ -39,7 +39,7 @@ def head(title, desc):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261128m">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261129a">
 </head>"""
 
 
@@ -181,10 +181,10 @@ FOOTER = f"""
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script src="assets/js/config.js?v=20261128m"></script>
-  <script src="assets/js/db.js?v=20261128m"></script>
-  <script src="assets/js/app.js?v=20261128m"></script>
-  <script src="assets/js/chatbot.js?v=20261128m"></script>
+  <script src="assets/js/config.js?v=20261129a"></script>
+  <script src="assets/js/db.js?v=20261129a"></script>
+  <script src="assets/js/app.js?v=20261129a"></script>
+  <script src="assets/js/chatbot.js?v=20261129a"></script>
 </body>
 </html>
 """
@@ -233,7 +233,7 @@ ADMIN_HEADER = f"""
   </header>
 """
 
-SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):].replace('  <script src="assets/js/chatbot.js?v=20261128m"></script>\n', '')
+SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):].replace('  <script src="assets/js/chatbot.js?v=20261129a"></script>\n', '')
 ADMIN_FOOTER = """
   <footer class="admin-footer">
     <div class="container">© 2026 Momo Pet Hotel &amp; Spa · Trang quản trị nội bộ · <a href="index.html">Về website</a></div>
@@ -705,10 +705,10 @@ page("service.html", "service", "Chi tiết dịch vụ",
                 <div class="pickup-box" id="pickup-box" hidden>
                   <div class="pickup-row">
                     <input name="pickup_address" id="pickup_address" maxlength="120" placeholder="Số nhà, đường, phường. Ví dụ: 12 Hoàng Diệu, Khánh Hội" autocomplete="street-address">
-                    <button type="button" class="btn btn-small btn-outline" id="pickup-calc">{ic('pin')} Tính phí</button>
+                    <button type="button" class="btn btn-small btn-outline" id="pickup-calc">{ic('pin')} Tìm địa chỉ</button>
                     <button type="button" class="btn btn-small btn-outline" id="pickup-geo">Dùng vị trí của tôi</button>
                   </div>
-                  <p class="pickup-result muted" id="pickup-result">Nhập địa chỉ rồi bấm "Tính phí". Khoảng cách tính theo đường đi xe máy từ tiệm.</p>
+                  <p class="pickup-result muted" id="pickup-result">Nhập địa chỉ rồi bấm "Tìm địa chỉ" và chọn đúng địa chỉ gợi ý. Khoảng cách tính theo đường xe chạy từ tiệm.</p>
                 </div>
               </div>
             </div>
