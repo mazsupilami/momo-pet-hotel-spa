@@ -52,6 +52,9 @@ Website có 14 trang. Tất cả các trang khách dùng chung header (menu) và
 | 20 | Link Ưu đãi ở footer chưa tới đúng chỗ, cơ sở vật chất thiếu hình, thêm ảnh nhân viên, có nên thêm thanh tìm kiếm? | Sửa cuộn tới mục, 3 ảnh cơ sở vật chất, 4 thẻ nhân viên có ảnh; đánh giá thanh tìm kiếm |
 | 21 | Khách sạn và trông giữ có nên dùng chung form với spa? | Giữ một form, các ô đổi theo loại gói; thêm ngày trả bé, chế độ ăn, thuốc, tạm tính tiền |
 | 22 | Đánh giá logic Quản trị, vai trò, lịch đã hủy, gợi ý địa chỉ; đóng vai tester kiểm tra toàn bộ | Xem mục 3.8b |
+| 23 | Tạo Turnstile giúp | Tạo widget, gắn Site key, bật CAPTCHA, kiểm tra chặn đúng |
+| 24 | Chạy kiểm thử phía Quản trị | Đạt các bước; sửa lỗi admin sửa hồ sơ khách |
+| 25 | Có nên bỏ "Tải file .ics"? | Gộp thành một nút "Thêm vào lịch", giữ link nhỏ cho iPhone/Outlook |
 
 | Trang chủ | Về chúng tôi |
 |---|---|
@@ -138,7 +141,7 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 - **Supabase Realtime**: trang Quản trị tự hiện lịch mới, có âm báo và dấu "Đang cập nhật trực tiếp".
 - **Tính phí đưa đón theo khoảng cách**: Geolocation của trình duyệt, OpenStreetMap Nominatim (địa chỉ sang tọa độ), OSRM (quãng đường xe chạy).
 - **Thời tiết Sài Gòn**: Open-Meteo, kèm lời khuyên chăm sóc bé theo nhiệt độ, mưa, UV.
-- **Thêm vào lịch**: Google Calendar và file .ics có nhắc trước 2 tiếng.
+- **Thêm vào lịch**: một nút "Thêm vào lịch" (Google Calendar), kèm link nhỏ tải file lịch cho iPhone/Outlook, có nhắc trước 2 tiếng.
 - **Lưu trú nhiều ngày**: form đặt lịch tự đổi theo loại gói. Khách sạn chọn ngày nhận, ngày trả, giờ nhận, chế độ ăn, thuốc; trông giữ chọn từ ngày đến ngày; spa giữ ngày và giờ. Tạm tính tiền hiện ngay (số đêm × giá × hệ số cân nặng, giảm 10% từ 5 đêm). Trang Lịch hẹn, Quản trị (doanh thu, lịch hôm nay gồm bé đang lưu trú), Telegram và nút thêm vào lịch đều hiện khoảng ngày.
 - **Chống spam**: Cloudflare Turnstile qua CAPTCHA của Supabase Auth cho đặt lịch, đăng nhập, đăng ký, quên mật khẩu.
 

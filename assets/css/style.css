@@ -851,3 +851,10 @@ html { scroll-padding-top: 96px; }
 .admin-edit .form-grid { grid-template-columns: repeat(3, 1fr); }
 .admin-edit .field.full { grid-column: 1 / -1; }
 @media (max-width: 880px) { .admin-edit .form-grid { grid-template-columns: 1fr; } }
+
+/* ---------- Thêm vào lịch: một nút + link phụ ---------- */
+.cal-links { flex-direction: column; align-items: flex-start; gap: 4px; }
+.cal-alt { color: var(--muted); font-size: .8rem; }
+.cal-alt a { font-weight: 600; }
+.booking-actions .cal-links { margin-left: auto; align-items: flex-end; }
+@media (max-width: 600px) { .booking-actions .cal-links { margin-left: 0; align-items: flex-start; } }

@@ -6,7 +6,7 @@
   // ---------- Tiện ích ----------
   const esc = (v) =>
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261129d#${name}"/></svg>`;
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261129e#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
   // Phụ thu theo cân nặng: dưới 10 kg giá niêm yết, 10–20 kg +30%, trên 20 kg +60%
   const WEIGHT_TIERS = [1, 1.3, 1.6];
@@ -318,9 +318,10 @@
       "END:VEVENT", "END:VCALENDAR",
     ].join("\r\n");
     const icsHref = "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
+    // Một nút chính (Google Calendar), kèm link nhỏ tải file lịch cho iPhone/Outlook
     return `<span class="cal-links">
-      <a class="btn btn-small btn-outline" href="${esc(g.toString())}" target="_blank" rel="noopener">${ic("calendar")} Google Calendar</a>
-      <a class="btn btn-small btn-outline" href="${icsHref}" download="momo-lich-hen.ics">${ic("calendar")} Tải file .ics</a>
+      <a class="btn btn-small btn-outline" href="${esc(g.toString())}" target="_blank" rel="noopener">${ic("calendar")} Thêm vào lịch</a>
+      <small class="cal-alt">Dùng iPhone hoặc Outlook? <a href="${icsHref}" download="momo-lich-hen.ics">Tải về lịch</a></small>
     </span>`;
   }
 
@@ -523,7 +524,7 @@
   let articlesCache = null;
   async function getArticles() {
     if (!articlesCache) {
-      const res = await fetch("data/articles.json?v=20261129d");
+      const res = await fetch("data/articles.json?v=20261129e");
       if (!res.ok) throw new Error("Không tải được bài viết.");
       articlesCache = (await res.json()).sort((a, b) => b.date.localeCompare(a.date));
     }

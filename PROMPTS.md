@@ -274,3 +274,11 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 
 **Kết quả**: Claude không nhập mật khẩu admin (mật khẩu thật của hệ thống đang chạy); người dùng tự đăng nhập, Claude dùng phiên đó. Đạt: vai trò "Quản trị viên", Realtime, tạo/sửa lịch Deluxe (2 → 3 đêm), doanh thu theo số đêm (+840.000đ khi xác nhận), xóa lịch. Lỗi tìm thấy: sửa số điện thoại khách bị RLS chặn do dùng upsert; sửa thành update (insert khi chưa có hồ sơ) và thêm quyền "profiles: admin tạo" vào `qa_fixes.sql`. Bước phía khách (đổi giờ lịch đã xác nhận, lịch đã hủy) cần người dùng tích ô xác minh một lần để tạo phiên khách.
 - Bước phía khách (người dùng tích ô xác minh một lần trên tab localhost): admin xác nhận lịch #17, khách đổi giờ thì lịch về "Chờ xác nhận" và trang admin tự cập nhật; admin hủy thì khách không còn nút Sửa/Hủy, gọi thẳng database cũng bị chặn. Đã xóa các lịch thử.
+
+## Prompt 25 — Có nên bỏ nút tải file .ics (29/11/2026)
+
+**Prompt**: Nên bỏ "Tải file .ics" vì ít người dùng? Đánh giá trước. (Sau đó: gộp thành 1 nút.)
+
+**Đánh giá**: không nên bỏ hẳn vì file .ics là cách thêm lịch trên iPhone (ứng dụng Lịch), Outlook, Mac; vấn đề là hai nút ngang nhau và chữ ".ics" khó hiểu.
+
+**Kết quả**: chỉ còn một nút "Thêm vào lịch" (Google Calendar); bên dưới là dòng nhỏ "Dùng iPhone hoặc Outlook? Tải về lịch". Áp dụng ở ô "Đã nhận lịch hẹn" và trang Lịch hẹn.

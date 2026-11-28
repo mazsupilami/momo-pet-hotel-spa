@@ -76,7 +76,7 @@ Mọi trang có chung header và footer, trong đó có đủ link tới các tr
 | F27 | Trang Quản trị cập nhật trực tiếp (Supabase Realtime), âm báo khi có lịch mới | select | `bookings` |
 | F28 | Tính phí đưa đón theo quãng đường (Geolocation, OpenStreetMap Nominatim, OSRM): miễn phí 3 km, sau đó 10.000đ/km, ngoài 15 km mời nhắn Zalo | — | ghi vào `bookings.note` |
 | F29 | Thời tiết TP.HCM ở Trang chủ kèm lời khuyên chăm sóc (Open-Meteo) | — | — |
-| F30 | Nút "Thêm vào lịch" (Google Calendar, file .ics) sau khi đặt lịch và ở trang Lịch hẹn | — | — |
+| F30 | Nút "Thêm vào lịch" (Google Calendar) kèm link nhỏ "Dùng iPhone hoặc Outlook? Tải về lịch" (file .ics) sau khi đặt lịch và ở trang Lịch hẹn | — | — |
 | F31 | Chống spam bằng Cloudflare Turnstile cho đặt lịch, đăng nhập, đăng ký, quên mật khẩu (qua CAPTCHA của Supabase Auth) | — | — |
 | F32 | Form đặt lịch đổi theo loại gói: khách sạn (ngày nhận, ngày trả, giờ nhận, chế độ ăn, thuốc), trông giữ (từ ngày đến ngày), spa (ngày, giờ); tạm tính tiền theo số đêm/ngày, cân nặng, giảm 10% từ 5 đêm; tối đa 30 ngày | **insert / update** | `bookings.end_date`, `diet`, `medication` |
 | F33 | Quản trị sửa thông tin lịch hẹn (ngày giờ, ngày trả, khách, thú cưng, cân nặng, ghi chú) ngay trong bảng | **update** | `bookings` |
