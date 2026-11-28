@@ -148,6 +148,7 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 | Gửi email khôi phục mật khẩu (Supabase ghi nhận `mail.send`) | Đạt |
 | 14 trang trên GitHub Pages trả về 200, không tràn ngang trên điện thoại | Đạt |
 | Chatbot trả lời 14 câu hỏi mẫu (giá, đặt lịch, giờ mở cửa, đưa đón, cân nặng, mèo, khách sạn…) | Đạt |
+| Chatbot AI (Gemini): tính giá theo cân nặng, áp ưu đãi lưu trú, từ chối câu lạc đề, nhớ ngữ cảnh; trang lạ gọi function bị chặn | Đạt |
 | Thanh dọc hiện đủ icon Zalo, Messenger, Gọi; số điện thoại là link gọi | Đạt |
 | Pop-up sau 3 giây; dàn thú cưng hiện chú thích khi rê chuột; Cẩm nang lọc theo chủ đề, mở bài viết | Đạt |
 

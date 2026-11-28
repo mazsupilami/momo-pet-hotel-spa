@@ -198,3 +198,6 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Khóa API đặt trong Supabase Secrets `GEMINI_API_KEY`, không nằm trong code hay GitHub.
 - `chatbot.js`: câu gõ tự do gửi cho AI; nút câu hỏi nhanh trả lời theo từ khóa để tiết kiệm lượt; AI lỗi, hết lượt hoặc chưa cài thì tự quay về chatbot từ khóa. Câu trả lời AI qua `aiHtml()`: escape HTML, chỉ giữ chữ đậm, xuống dòng, link nội bộ và Zalo.
 - Đã thử khi chưa deploy function: chatbot quay về trả lời theo từ khóa; bộ lọc chặn link `javascript:` và thẻ `<img onerror>`.
+- Sau khi người dùng deploy: Supabase tự đặt slug function là `bright-service` (đã thêm `CHAT_FUNCTION` vào `config.js`); secret lúc đầu lưu sai tên "Gemini API Key 3", người dùng đổi lại thành `GEMINI_API_KEY`.
+- Thử trực tiếp function: bé 15 kg tắm gội tính đúng 150.000đ × 1,3 = 195.000đ kèm ưu đãi; câu lạc đề (làm thơ bóng đá) bị từ chối lịch sự; hội thoại nhiều lượt gửi mèo 6 đêm Deluxe tính đúng 1.680.000đ, giảm 10% còn 1.512.000đ (AI tự sửa giá sai trong câu trước theo database). Yêu cầu từ trang lạ bị chặn (403).
+- Thử trên GitHub Pages: hỏi phòng VIP, chatbot trả lời bằng AI kèm link tới trang Phòng VIP có camera.
