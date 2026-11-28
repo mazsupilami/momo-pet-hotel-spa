@@ -166,3 +166,14 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Cẩm nang: trang `cam-nang.html` (lọc theo chủ đề) và `bai-viet.html?slug=…` (bài liên quan, nút Zalo), 6 bài trong `data/articles.json`; Trang chủ hiện 3 bài mới; menu thêm "Cẩm nang"; chatbot trả lời về cẩm nang, ưu đãi, dịch vụ tại nhà.
 - Dàn thú cưng: 8 bé (Pug, Poodle, Corgi, Border Collie, mèo ta, Chihuahua, Golden, Poodle lai) ló đầu trên thanh đỏ; rê chuột hoặc Tab thì bé nhô lên, hiện giống và tính cách. Điện thoại hiện 5 bé, không cuộn ngang.
 - Pop-up ưu đãi hiện sau 3 giây (trước là 6 giây nên dễ bỏ lỡ), mỗi phiên một lần.
+
+## Prompt 15 — Mạng xã hội ở thanh dọc, tài khoản test, menu sổ xuống, chatbot Gemini (28/11/2026)
+
+**Prompt**: Thêm Facebook, Instagram, YouTube vào thanh dọc. Không đăng nhập được bằng tài khoản khách thử, kiểm tra lại. Mật khẩu admin đã đổi, ghi vào file tài khoản test để giáo viên đăng nhập chấm bài. Đánh giá có nên làm menu sổ xuống như petservicehcm.com. Chatbot AI thật: kiểm tra có dùng được API của Google với hạn mức miễn phí mỗi ngày không.
+
+**Kết quả**:
+- Thanh dọc: Zalo, Messenger, Gọi, vạch ngăn, Facebook, Instagram, YouTube. Trên điện thoại chỉ hiện 3 nút đầu để không che nội dung.
+- Tài khoản khách thử: code đăng nhập dùng chung với admin (admin đăng nhập được) nên lỗi nằm ở dữ liệu tài khoản; soạn câu SQL kiểm tra và sửa (xác nhận email, đặt lại mật khẩu) để người dùng chạy trong Supabase.
+- File `tai-khoan-test.md` (ngoài repo) ghi link website, cách đăng nhập, tài khoản khách và ô để người dùng tự điền mật khẩu admin mới (Claude không ghi mật khẩu admin).
+- Menu sổ xuống: làm được với HTML/CSS hiện có, đề xuất cho "Dịch vụ & Giá" và "Về chúng tôi", dạng gập mở trên điện thoại.
+- Chatbot Gemini: Google AI Studio có hạn mức miễn phí, không cần thẻ (theo các báo cáo tháng 10–11/2026: Flash-Lite khoảng 500 lượt/ngày, Flash khoảng 20 lượt/ngày; Google chỉ hiện số chính xác trong AI Studio). Khóa API phải để trong Supabase Edge Function; khi hết lượt thì quay về chatbot theo từ khóa hiện có.

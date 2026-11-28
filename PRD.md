@@ -64,7 +64,7 @@ Mọi trang có chung header và footer, trong đó có đủ link tới các tr
 | F14 | Nút mắt hiện/ẩn mật khẩu ở mọi ô mật khẩu | — | — |
 | F15 | Quản trị: tạo lịch hẹn hộ khách gọi hotline hoặc đến tiệm, chọn sẵn trạng thái | **insert** | `bookings` |
 | F16 | Chatbot tư vấn tự động: báo giá (đọc từ database), hướng dẫn đặt lịch, giờ mở cửa, địa chỉ, khách sạn, đưa đón, chuyển sang Zalo | select | `services` |
-| F17 | Liên hệ nhanh: thanh dọc gồm Zalo, Messenger, Gọi hotline. Số điện thoại luôn là link gọi; Zalo có nút riêng. Facebook, Instagram, YouTube chỉ đặt ở footer để tránh trùng lặp | — | — |
+| F17 | Liên hệ nhanh: thanh dọc gồm Zalo, Messenger, Gọi hotline, Facebook, Instagram, YouTube (điện thoại chỉ hiện 3 nút đầu). Số điện thoại luôn là link gọi; Zalo có nút riêng. Thanh trên cùng không đặt mạng xã hội | — | — |
 | F18 | Bảng giá theo cân nặng (dưới 10 kg, 10–20 kg +30%, trên 20 kg +60%) tính từ database | select | `services` |
 | F19 | Pop-up ưu đãi khách mới (sau 3 giây, mỗi phiên một lần), dàn thú cưng ló đầu trên thanh đỏ, hiệu ứng rê chuột và hiện dần khi cuộn | — | — |
 | F20 | Dịch vụ tại nhà: Tắm & vệ sinh tại nhà, Cắt tỉa tại nhà (nhóm "Tại nhà") | select / insert | `services`, `bookings` |

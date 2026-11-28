@@ -40,7 +40,7 @@ Khai báo trong `:root` của `assets/css/style.css`. Không viết mã màu tr�
 3. **Đầu trang con** (`.page-hero`): ảnh nền phủ lớp màu `--ink`, đường dẫn (breadcrumb), tiêu đề, mô tả.
 4. **Dải kêu gọi** (`.cta-band`) cuối trang: nền xanh ngọc, nút đặt lịch và hotline.
 5. **Footer** 4 cột: giới thiệu + mạng xã hội, dịch vụ, liên kết trang, thông tin liên hệ.
-6. **Thanh liên hệ dọc** (`.social-rail`) bên trái, chỉ 3 nút: Zalo, Messenger, Gọi (`.sr-phone`). **Chatbot** (`.chatbot`) góc phải dưới; **nút lên đầu trang** (`.to-top`). Thanh trên cùng chỉ có địa chỉ, giờ mở cửa, hotline. Facebook, Instagram, YouTube chỉ ở footer. Mỗi kênh xuất hiện một lần ở mỗi vùng, không lặp.
+6. **Thanh liên hệ dọc** (`.social-rail`) bên trái: Zalo, Messenger, Gọi (`.sr-phone`), vạch ngăn (`.sr-sep`), Facebook, Instagram, YouTube; điện thoại chỉ hiện 3 nút đầu. **Chatbot** (`.chatbot`) góc phải dưới; **nút lên đầu trang** (`.to-top`). Thanh trên cùng chỉ có địa chỉ, giờ mở cửa, hotline. Mạng xã hội ở thanh dọc và footer, không đặt ở thanh trên cùng.
 7. Số điện thoại luôn là link `tel:` (gọi). Muốn nhắn Zalo thì dùng nút Zalo riêng, không đổi ngầm số điện thoại thành Zalo.
 
 Chiều rộng nội dung tối đa 1200px, lề hai bên 20px. Lưới dịch vụ 4 cột (trang chủ) hoặc 3 cột (trang dịch vụ), 2 cột trên máy tính bảng, 1 cột trên điện thoại.

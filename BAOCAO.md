@@ -44,6 +44,7 @@ Website có 14 trang. Tất cả các trang khách dùng chung header (menu) và
 | 12 | Quản trị | `admin.html` | Giao diện riêng cho admin |
 | 13 | Cẩm nang | `cam-nang.html` | 6 bài viết chăm sóc thú cưng, lọc theo chủ đề |
 | 14 | Bài viết | `bai-viet.html?slug=…` | Nội dung bài cẩm nang, bài liên quan, nút tư vấn Zalo |
+| 15 | Thêm mạng xã hội vào thanh dọc, kiểm tra tài khoản khách thử, ghi tài khoản chấm bài, đánh giá menu sổ xuống, chatbot AI bằng Google Gemini | Thanh dọc 6 nút; SQL kiểm tra tài khoản khách; file tài khoản test cho giáo viên; đánh giá menu sổ xuống và hạn mức miễn phí Gemini |
 
 | Trang chủ | Về chúng tôi |
 |---|---|
@@ -108,7 +109,7 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 
 ### 3.4. Liên hệ nhanh và chatbot
 
-- **Thanh liên hệ dọc** bên trái chỉ 3 nút: Zalo, Messenger, Gọi. Thanh trên cùng chỉ có địa chỉ, giờ mở cửa, hotline. Facebook, Instagram, YouTube ở footer. Bản trước lặp mạng xã hội ở cả thanh ngang và thanh dọc, nhiều số điện thoại cùng mở Zalo; đã gom lại để mỗi kênh chỉ xuất hiện một lần.
+- **Thanh liên hệ dọc** bên trái: Zalo, Messenger, Gọi, rồi Facebook, Instagram, YouTube (điện thoại chỉ hiện 3 nút đầu). Thanh trên cùng chỉ có địa chỉ, giờ mở cửa, hotline. Bản trước lặp mạng xã hội ở cả thanh ngang và thanh dọc, nhiều số điện thoại cùng mở Zalo; đã gom lại để mỗi kênh chỉ xuất hiện một lần.
 - **Bấm số điện thoại** luôn là gọi; nhắn Zalo dùng nút Zalo riêng (thanh dọc, trang Liên hệ, chi tiết dịch vụ, chatbot).
 - **Chatbot "Trợ lý Momo"** (`assets/js/chatbot.js`): khung chat góc phải dưới, có nút câu hỏi nhanh. Trả lời tự động theo từ khóa tiếng Việt (có hoặc không dấu): bảng giá và giá từng gói (đọc trực tiếp từ bảng `services` trên Supabase), cách đặt/đổi/hủy lịch, giờ mở cửa, địa chỉ, khách sạn, đưa đón, phụ thu cân nặng, tiêm phòng, nhận mèo. Câu ngoài phạm vi được chuyển sang Zalo của lễ tân. Chatbot chạy hoàn toàn trên trình duyệt nên dùng được trên GitHub Pages, không tốn phí.
 - **Hướng nâng cấp chatbot AI**: có thể dùng mô hình ngôn ngữ (ví dụ Claude) qua một Supabase Edge Function để giữ bí mật khóa API; cần khóa API và chi phí theo lượt dùng nên chưa làm trong bài này.
