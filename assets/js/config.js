@@ -10,7 +10,7 @@ window.APP_CONFIG = {
   CHAT_FUNCTION: "bright-service",
   // Cloudflare Turnstile chống spam (khóa site là khóa công khai). Để trống thì không hiện captcha.
   // Chỉ bật CAPTCHA trong Supabase (Authentication > Attack Protection) SAU KHI đã điền khóa này.
-  TURNSTILE_SITE_KEY: "",
+  TURNSTILE_SITE_KEY: "0x4AAAAAAGXUZNrAjOxbcPaY",
   // Tọa độ tiệm để tính phí đưa đón (177 Tôn Thất Thuyết, Khánh Hội).
   STORE_LAT: 10.7535,
   STORE_LON: 106.7057
