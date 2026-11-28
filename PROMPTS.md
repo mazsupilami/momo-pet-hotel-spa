@@ -221,3 +221,4 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Thời tiết: dải thời tiết dưới số liệu Trang chủ (thử: 26°C, mưa rào, lời khuyên lau khô cho bé).
 - Thêm vào lịch: Google Calendar và .ics (đã kiểm tra 9:30 giờ VN = 02:30 UTC) sau khi đặt lịch và trên trang Lịch hẹn.
 - Chống spam: ô Turnstile tự hiện khi điền `TURNSTILE_SITE_KEY`, token gửi kèm khi tạo phiên khách, đăng nhập, đăng ký, quên mật khẩu.
+- Webhook: giao diện Database > Webhooks không còn ở chỗ cũ, thay bằng `supabase/booking_webhook.sql` (trigger `pg_net`, chuỗi bí mật lưu trong Vault). Thử: đặt lịch "Test Telegram", log function `notify-booking` ghi POST 200 (Telegram nhận tin), sau đó hủy lịch thử.
