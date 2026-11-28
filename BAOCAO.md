@@ -195,6 +195,8 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 | Quản trị: doanh thu theo số đêm | Xác nhận rồi hủy lịch 3 đêm bé 8 kg | Doanh thu +840.000đ rồi trở lại; đạt |
 | Quản trị: sửa số điện thoại khách | Tab Khách hàng | **Lỗi quyền (upsert), đã sửa**; thử lại đạt và trả về số cũ |
 | Quản trị: xóa lịch | Xóa lịch thử | Đạt |
+| Khách đổi giờ lịch đã xác nhận | Admin xác nhận, khách đổi 10:00 → 11:00 | Khách thấy cảnh báo trước; lịch về "Chờ xác nhận"; trang admin tự cập nhật (Realtime) |
+| Lịch đã hủy phía khách | Admin hủy, khách mở Lịch hẹn và gọi thẳng database | Không còn nút Sửa/Hủy; sửa và xóa đều bị database chặn; huy hiệu không đếm lịch đã hủy |
 
 ### 3.9. Hướng phát triển
 
