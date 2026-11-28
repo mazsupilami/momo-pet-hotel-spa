@@ -232,3 +232,16 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Cơ sở vật chất: 3 thẻ Camera 24/7, Bếp riêng, Góc y tế đổi sang thẻ có ảnh giống hàng trên (ảnh Unsplash).
 - Đội ngũ: thêm 4 thẻ nhân viên có ảnh, tên, vai trò, mô tả (Quản lý, Trưởng nhóm grooming, Chăm sóc lưu trú, Lễ tân). Tên hư cấu, ảnh minh họa.
 - Thanh tìm kiếm: đánh giá là chưa cần thanh lớn như petmart.vn (trang bán hàng hàng nghìn sản phẩm); Momo chỉ có 11 dịch vụ và 6 bài viết, menu sổ xuống và chatbot đã đủ. Phương án gọn hơn nếu muốn: biểu tượng kính lúp mở ô tìm nhanh dịch vụ và bài cẩm nang.
+
+## Prompt 21 — Form đặt lịch cho khách sạn và trông giữ (28/11/2026)
+
+**Prompt**: Khách sạn và trông giữ cần số ngày, có nên dùng chung form với các dịch vụ khác? Đánh giá trước khi làm. (Sau đó: làm theo đề xuất.)
+
+**Đánh giá**: form chỉ có một ngày và một giờ nên gửi nhiều đêm không ghi được ngày trả, không tính được tổng tiền và ưu đãi từ 5 đêm. Đề xuất giữ một form nhưng các ô đổi theo loại gói.
+
+**Kết quả**:
+- `supabase/stay_dates.sql`: cột `end_date`, `diet`, `medication` và ràng buộc (ngày trả không trước ngày nhận, tối đa 30 ngày).
+- Form: khách sạn có Ngày nhận bé, Ngày trả bé, Giờ nhận bé, Chế độ ăn, Thuốc; trông giữ có Từ ngày, Đến ngày; spa giữ nguyên. Tạm tính hiện ngay. Thử: Deluxe 6 đêm bé 15 kg = 2.184.000đ, giảm 10% còn 1.966.000đ; trông giữ 5 ngày = 600.000đ; tắm bé 22 kg = 240.000đ.
+- Trang Lịch hẹn: hiện khoảng ngày, số đêm, chế độ ăn, thuốc, tạm tính; sửa được ngày trả. Quản trị: cột ngày hiện khoảng ngày, doanh thu tính theo số đêm/ngày và cân nặng, "Lịch hôm nay" gồm bé đang lưu trú; tab Tạo lịch có ngày trả. Telegram và nút thêm vào lịch hiện khoảng ngày.
+- Chưa chạy SQL thì lịch vẫn lưu được, thông tin ngày trả, ăn, thuốc được ghi vào ghi chú.
+- Không làm quản lý phòng trống (ghi vào hướng phát triển).

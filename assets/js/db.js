@@ -101,6 +101,21 @@
     });
   }
 
+  // Chưa chạy supabase/stay_dates.sql (chưa có cột end_date, diet, medication):
+  // gửi lại không có các cột mới và ghi thông tin vào ghi chú để không mất lịch của khách.
+  const STAY_COLS = ["end_date", "diet", "medication"];
+  const missingStayCol = (error) => error && /end_date|diet|medication/.test(error.message || "") && /column|schema/i.test(error.message || "");
+  function withoutStayCols(row) {
+    const copy = { ...row };
+    const extra = [];
+    if (copy.end_date) extra.push(`Đến ngày ${copy.end_date}`);
+    if (copy.diet) extra.push(`Ăn: ${copy.diet}`);
+    if (copy.medication) extra.push(`Thuốc: ${copy.medication}`);
+    STAY_COLS.forEach((c) => delete copy[c]);
+    if (extra.length) copy.note = [copy.note, ...extra].filter(Boolean).join(" | ").slice(0, 300);
+    return copy;
+  }
+
   const DB = {
     isConfigured: () => Boolean(sb),
     servicesSource: () => servicesSource,
@@ -220,7 +235,8 @@
 
     async createBooking(booking, captchaToken) {
       await ensureUser(captchaToken);
-      const { data, error } = await sb.from("bookings").insert(booking).select().single();
+      let { data, error } = await sb.from("bookings").insert(booking).select().single();
+      if (missingStayCol(error)) ({ data, error } = await sb.from("bookings").insert(withoutStayCols(booking)).select().single());
       if (error) throw new Error("Không đặt được lịch: " + error.message);
       return data;
     },
@@ -252,12 +268,9 @@
     // UPDATE bookings
     async updateBooking(id, changes) {
       await ensureUser();
-      const { data, error } = await sb
-        .from("bookings")
-        .update({ ...changes, updated_at: new Date().toISOString() })
-        .eq("id", id)
-        .select()
-        .single();
+      const run = (row) => sb.from("bookings").update({ ...row, updated_at: new Date().toISOString() }).eq("id", id).select().single();
+      let { data, error } = await run(changes);
+      if (missingStayCol(error)) ({ data, error } = await run(withoutStayCols(changes)));
       if (error) throw new Error("Không cập nhật được lịch: " + error.message);
       return data;
     },
@@ -340,7 +353,8 @@
     // INSERT bookings do admin tạo hộ khách gọi điện (có thể đặt sẵn trạng thái)
     async adminCreateBooking(booking) {
       requireDb();
-      const { data, error } = await sb.from("bookings").insert(booking).select("*, services(id, name, price, unit)").single();
+      let { data, error } = await sb.from("bookings").insert(booking).select("*, services(id, name, price, unit)").single();
+      if (missingStayCol(error)) ({ data, error } = await sb.from("bookings").insert(withoutStayCols(booking)).select("*, services(id, name, price, unit)").single());
       if (error) throw new Error("Không tạo được lịch hẹn: " + error.message);
       return data;
     },

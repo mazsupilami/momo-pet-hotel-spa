@@ -39,6 +39,8 @@ Mã tạo bảng nằm ở `supabase/schema.sql`. Dữ liệu dịch vụ gốc 
 | status | text | `pending` (chờ xác nhận), `confirmed`, `done`, `cancelled`. Chỉ admin đổi được (trigger `bookings_guard`) |
 | created_at, updated_at | timestamptz | |
 
+Cột thêm ở `stay_dates.sql`: `end_date` (ngày trả bé, trống với gói theo lần; từ `booking_date` đến tối đa 30 ngày sau), `diet` (≤100 ký tự), `medication` (≤150 ký tự). Số đêm = `end_date - booking_date` (khách sạn); số ngày = `end_date - booking_date + 1` (trông giữ).
+
 ### `profiles` — hồ sơ khách có tài khoản
 | Cột | Kiểu | Ghi chú |
 |---|---|---|
@@ -135,5 +137,7 @@ Cột thêm ở `features_v2.sql`: `booking_id` (lịch hẹn đã hoàn thành,
     - Cloudflare > Turnstile > Add site: tên miền `mazsupilami.github.io` và `localhost`, chế độ Managed.
     - Chép **Site key** vào `TURNSTILE_SITE_KEY` trong `assets/js/config.js` và deploy website trước.
     - Sau đó Supabase > Authentication > Attack Protection: bật CAPTCHA, chọn Turnstile, dán **Secret key**.
+
+14. **Lưu trú nhiều ngày**: chạy `supabase/stay_dates.sql`. Chưa chạy thì website vẫn đặt được lịch, ngày trả bé được ghi vào ghi chú.
 
 **Không đưa mật khẩu database lên GitHub.** Mật khẩu chỉ dùng để đăng nhập Supabase, website không cần đến. File ghi chú chứa mật khẩu để ngoài folder dự án và đã được liệt kê trong `.gitignore`.

@@ -19,6 +19,9 @@ type Booking = {
   booking_time: string;
   note: string | null;
   status?: string;
+  end_date?: string | null;
+  diet?: string | null;
+  medication?: string | null;
 };
 
 const SITE = "https://mazsupilami.github.io/momo-pet-hotel-spa";
@@ -58,13 +61,21 @@ Deno.serve(async (req) => {
   if (payload.type !== "INSERT" || payload.table !== "bookings" || !payload.record) return json({ skipped: true });
 
   const b = payload.record;
-  const [y, m, d] = String(b.booking_date).split("-");
+  const vn = (iso: string) => {
+    const [y, m, d] = String(iso).split("-");
+    return `${d}/${m}/${y}`;
+  };
+  const days = b.end_date ? Math.round((Date.parse(b.end_date) - Date.parse(b.booking_date)) / 86400000) : 0;
   const text = [
     "🐾 <b>Lịch hẹn mới</b>",
     `<b>${esc(await serviceName(b.service_id))}</b>`,
-    `📅 ${esc(String(b.booking_time).slice(0, 5))} · ${esc(`${d}/${m}/${y}`)}`,
+    b.end_date
+      ? `📅 ${esc(vn(b.booking_date))} → ${esc(vn(b.end_date))} (${days} đêm / ${days + 1} ngày) · nhận bé ${esc(String(b.booking_time).slice(0, 5))}`
+      : `📅 ${esc(String(b.booking_time).slice(0, 5))} · ${esc(vn(b.booking_date))}`,
     `🐶 Bé ${esc(b.pet_name)} (${esc(b.pet_type)}, ${esc(b.pet_weight)} kg)`,
     `👤 ${esc(b.owner_name)} · 📞 ${esc(b.phone)}`,
+    b.diet ? `🍽 ${esc(b.diet)}` : "",
+    b.medication ? `💊 ${esc(b.medication)}` : "",
     b.note ? `📝 ${esc(b.note)}` : "",
     b.status && b.status !== "pending" ? `Trạng thái: ${esc(b.status)} (admin tạo)` : "⏳ Chờ xác nhận, nhắn Zalo cho khách trong 30 phút",
   ].filter(Boolean).join("\n");

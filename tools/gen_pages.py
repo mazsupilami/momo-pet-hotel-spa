@@ -19,7 +19,7 @@ YOUTUBE_VIDEO = "BGgRwsH_8vE"  # video giới thiệu Momo trên kênh YouTube c
 MAP_Q = "177+T%C3%B4n+Th%E1%BA%A5t+Thuy%E1%BA%BFt,+Kh%C3%A1nh+H%E1%BB%99i,+H%E1%BB%93+Ch%C3%AD+Minh"
 
 
-ICON_V = "20261128l"
+ICON_V = "20261128m"
 
 
 def ic(name):
@@ -39,7 +39,7 @@ def head(title, desc):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261128l">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261128m">
 </head>"""
 
 
@@ -181,10 +181,10 @@ FOOTER = f"""
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script src="assets/js/config.js?v=20261128l"></script>
-  <script src="assets/js/db.js?v=20261128l"></script>
-  <script src="assets/js/app.js?v=20261128l"></script>
-  <script src="assets/js/chatbot.js?v=20261128l"></script>
+  <script src="assets/js/config.js?v=20261128m"></script>
+  <script src="assets/js/db.js?v=20261128m"></script>
+  <script src="assets/js/app.js?v=20261128m"></script>
+  <script src="assets/js/chatbot.js?v=20261128m"></script>
 </body>
 </html>
 """
@@ -233,7 +233,7 @@ ADMIN_HEADER = f"""
   </header>
 """
 
-SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):].replace('  <script src="assets/js/chatbot.js?v=20261128l"></script>\n', '')
+SCRIPTS = FOOTER[FOOTER.index('  <div class="toast"'):].replace('  <script src="assets/js/chatbot.js?v=20261128m"></script>\n', '')
 ADMIN_FOOTER = """
   <footer class="admin-footer">
     <div class="container">© 2026 Momo Pet Hotel &amp; Spa · Trang quản trị nội bộ · <a href="index.html">Về website</a></div>
@@ -694,8 +694,11 @@ page("service.html", "service", "Chi tiết dịch vụ",
               <div class="field"><label for="pet_name">Tên thú cưng</label><input id="pet_name" name="pet_name" required maxlength="40"></div>
               <div class="field"><label for="pet_type">Loài</label><select id="pet_type" name="pet_type" required><option>Chó</option><option>Mèo</option><option>Khác</option></select></div>
               <div class="field"><label for="pet_weight">Cân nặng (kg)</label><input id="pet_weight" name="pet_weight" type="number" required min="0.1" max="99" step="0.1" placeholder="4.5"></div>
-              <div class="field"><label for="booking_date">Ngày hẹn</label><input id="booking_date" name="booking_date" type="date" required></div>
-              <div class="field full"><label for="booking_time">Giờ hẹn</label><select id="booking_time" name="booking_time" required></select></div>
+              <div class="field" id="f-start"><label for="booking_date" id="date-label">Ngày hẹn</label><input id="booking_date" name="booking_date" type="date" required></div>
+              <div class="field" id="f-end" hidden><label for="end_date" id="end-label">Ngày trả bé</label><input id="end_date" name="end_date" type="date"></div>
+              <div class="field" id="f-time"><label for="booking_time" id="time-label">Giờ hẹn</label><select id="booking_time" name="booking_time" required></select></div>
+              <div class="field" id="f-diet" hidden><label for="diet">Chế độ ăn</label><select id="diet" name="diet"><option value="">Chọn chế độ ăn</option><option>Mang đồ ăn riêng của bé</option><option>Dùng hạt của tiệm</option><option>Dùng hạt và pate của tiệm</option></select></div>
+              <div class="field full" id="f-med" hidden><label for="medication">Thuốc đang dùng (nếu có)</label><input id="medication" name="medication" maxlength="150" placeholder="Tên thuốc, liều, giờ uống. Ví dụ: thuốc tim, nửa viên lúc 8:00"></div>
               <div class="field full"><label for="note">Ghi chú (không bắt buộc)</label><textarea id="note" name="note" maxlength="200" placeholder="Ví dụ: bé sợ tiếng máy sấy"></textarea></div>
               <div class="field full pickup">
                 <label class="check"><input type="checkbox" name="pickup" id="pickup"> Đưa đón tận nhà <small class="muted">(miễn phí 3 km đầu, sau đó 10.000đ/km)</small></label>
@@ -709,6 +712,7 @@ page("service.html", "service", "Chi tiết dịch vụ",
                 </div>
               </div>
             </div>
+            <div class="estimate" id="price-estimate" aria-live="polite" hidden></div>
             <div class="captcha" data-captcha hidden></div>
             <div class="form-actions">
               <button type="submit" class="btn">{ic('calendar')} Xác nhận đặt lịch</button>

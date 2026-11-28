@@ -6,7 +6,7 @@
   // ---------- Tiện ích ----------
   const esc = (v) =>
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128l#${name}"/></svg>`;
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128m#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
   // Phụ thu theo cân nặng: dưới 10 kg giá niêm yết, 10–20 kg +30%, trên 20 kg +60%
   const WEIGHT_TIERS = [1, 1.3, 1.6];
@@ -201,6 +201,38 @@
   }
 
 
+
+  // ---------- Lưu trú nhiều ngày ----------
+  // Loại gói theo đơn vị giá: "stay" = khách sạn (theo đêm), "day" = trông giữ (theo ngày), "slot" = theo lần.
+  const svcKind = (s) => {
+    const u = String((s && s.unit) || "").trim().toLowerCase();
+    return u === "đêm" ? "stay" : u === "ngày" ? "day" : "slot";
+  };
+  const weightFactor = (kg) => (kg > 20 ? WEIGHT_TIERS[2] : kg >= 10 ? WEIGHT_TIERS[1] : WEIGHT_TIERS[0]);
+  const isoDate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const addDays = (iso, n) => {
+    const [y, m, d] = iso.split("-").map(Number);
+    return isoDate(new Date(y, m - 1, d + n));
+  };
+  const daysBetween = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
+  // Số đêm (khách sạn) hoặc số ngày (trông giữ); gói theo lần = 1
+  const stayCount = (kind, start, end) => (kind === "slot" || !end ? 1 : kind === "stay" ? daysBetween(start, end) : daysBetween(start, end) + 1);
+  const qtyUnit = (kind) => (kind === "stay" ? "đêm" : kind === "day" ? "ngày" : "lần");
+  function estimateBooking(service, kg, start, end) {
+    const kind = svcKind(service);
+    const qty = Math.max(1, stayCount(kind, start, end));
+    const k = weightFactor(Number(kg) || 0);
+    const base = roundK(Number(service.price) * qty * k);
+    const discount = kind === "stay" && qty >= 5 ? roundK(base * 0.1) : 0;
+    return { kind, qty, k, base, discount, total: base - discount };
+  }
+  // "01/12/2026 → 07/12/2026 (6 đêm)" hoặc một ngày
+  function rangeText(b, service) {
+    if (!b.end_date) return dateVN(b.booking_date);
+    const kind = svcKind(service) === "slot" ? "day" : svcKind(service);
+    return `${dateVN(b.booking_date)} → ${dateVN(b.end_date)} (${stayCount(kind, b.booking_date, b.end_date)} ${qtyUnit(kind)})`;
+  }
+
   // ---------- Cấu hình chung ----------
   const CFG = window.APP_CONFIG || {};
   const STORE = { lat: Number(CFG.STORE_LAT) || 10.7545, lon: Number(CFG.STORE_LON) || 106.7075 };
@@ -255,7 +287,11 @@
     const [hh, mm] = String(b.booking_time).split(":").map(Number);
     // Giờ Việt Nam (UTC+7) -> UTC
     const start = new Date(Date.UTC(y, m - 1, d, hh - 7, mm));
-    const end = new Date(start.getTime() + 60 * 60000);
+    let end = new Date(start.getTime() + 60 * 60000);
+    if (b.end_date) {
+      const [y2, m2, d2] = String(b.end_date).split("-").map(Number);
+      end = new Date(Date.UTC(y2, m2 - 1, d2, hh - 7 + 1, mm));
+    }
     const fmt = (dt) => dt.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
     const title = `Momo Pet: ${serviceName} cho bé ${b.pet_name}`;
     const details = `Lịch hẹn tại Momo Pet Hotel & Spa. Mang theo sổ tiêm phòng của bé. Hotline/Zalo 0968 198 406.`;
@@ -431,7 +467,7 @@
   let articlesCache = null;
   async function getArticles() {
     if (!articlesCache) {
-      const res = await fetch("data/articles.json?v=20261128l");
+      const res = await fetch("data/articles.json?v=20261128m");
       if (!res.ok) throw new Error("Không tải được bài viết.");
       articlesCache = (await res.json()).sort((a, b) => b.date.localeCompare(a.date));
     }
@@ -613,9 +649,47 @@
     if (form) {
     const cap = (await DB.hasSession()) ? { token: () => null, reset() {} } : mountCaptcha(form);
     const getPickup = setupPickup(form);
+    const kind = svcKind(service);
+    if (kind === "slot") {
+      $("#f-time").classList.add("full");
+    } else {
+      // Khách sạn / trông giữ: chọn khoảng ngày, chế độ ăn, thuốc
+      $("#f-end").hidden = false;
+      $("#f-diet").hidden = false;
+      $("#f-med").hidden = false;
+      form.end_date.required = true;
+      $("#date-label").textContent = kind === "stay" ? "Ngày nhận bé" : "Từ ngày";
+      $("#end-label").textContent = kind === "stay" ? "Ngày trả bé" : "Đến ngày";
+      $("#time-label").textContent = kind === "stay" ? "Giờ nhận bé" : "Giờ gửi bé (mỗi ngày)";
+    }
+    const minEnd = () => (kind === "stay" ? addDays(form.booking_date.value, 1) : form.booking_date.value);
+    const syncEnd = () => {
+      if (kind === "slot") return;
+      form.end_date.min = minEnd();
+      form.end_date.max = addDays(form.booking_date.value, 30);
+      if (!form.end_date.value || form.end_date.value < form.end_date.min) form.end_date.value = form.end_date.min;
+    };
+    const showEstimate = () => {
+      const box = $("#price-estimate");
+      const kg = Number(form.pet_weight.value);
+      const e = estimateBooking(service, kg, form.booking_date.value, kind === "slot" ? null : form.end_date.value);
+      if (kind !== "slot" && e.qty < 1) return (box.hidden = true);
+      const kText = e.k > 1 ? ` × ${String(e.k).replace(".", ",")} (bé ${kg} kg)` : kg ? ` (bé ${kg} kg)` : " (giá cho bé dưới 10 kg)";
+      const qText = kind === "slot" ? "" : `${e.qty} ${qtyUnit(kind)} × `;
+      box.innerHTML = `<span>Tạm tính: ${qText}${money(service.price)}${kText}${e.discount ? ` = ${money(e.base)} · Giảm 10% lưu trú từ 5 đêm: −${money(e.discount)}` : ""}</span><strong>${money(e.total)}</strong><small class="muted">Chưa gồm phí đưa đón. Lễ tân xác nhận giá cuối cùng khi gọi lại.</small>`;
+      box.hidden = false;
+    };
+    form.booking_date.addEventListener("change", () => {
+      syncEnd();
+      showEstimate();
+    });
+    form.end_date.addEventListener("change", showEstimate);
+    form.pet_weight.addEventListener("input", showEstimate);
     form.booking_date.min = todayISO();
     form.booking_date.value = todayISO();
     form.booking_time.innerHTML = timeOptions("09:00");
+    syncEnd();
+    showEstimate();
     DB.getProfile()
       .then((pr) => {
         if (!pr) return;
@@ -628,6 +702,11 @@
       e.preventDefault();
       if (!form.reportValidity()) return;
       if (form.booking_date.value < todayISO()) return toast("Ngày hẹn không được ở trong quá khứ.", true);
+      if (kind !== "slot") {
+        const n = stayCount(kind, form.booking_date.value, form.end_date.value);
+        if (n < 1) return toast(kind === "stay" ? "Ngày trả bé phải sau ngày nhận bé ít nhất 1 đêm." : "Ngày kết thúc không được trước ngày bắt đầu.", true);
+        if (daysBetween(form.booking_date.value, form.end_date.value) > 30) return toast("Mỗi lịch lưu trú tối đa 30 ngày. Gửi lâu hơn vui lòng nhắn Zalo.", true);
+      }
       let pickup = null;
       let captchaToken = null;
       try {
@@ -649,6 +728,12 @@
         booking_time: form.booking_time.value,
         note: noteParts.filter(Boolean).join(" | ").slice(0, 300) || null,
       };
+      if (kind !== "slot") {
+        booking.end_date = form.end_date.value;
+        booking.diet = form.diet.value || null;
+        booking.medication = form.medication.value.trim() || null;
+      }
+      const est = estimateBooking(service, booking.pet_weight, booking.booking_date, booking.end_date);
       try {
         const saved = await withButton(form.querySelector("button[type=submit]"), "Đang đặt lịch…", () => DB.createBooking(booking, captchaToken));
         toast(`Đã đặt lịch cho bé ${booking.pet_name} lúc ${booking.booking_time} ngày ${dateVN(booking.booking_date)}.`);
@@ -656,7 +741,7 @@
         const done = $("#booking-done");
         done.innerHTML = `
           <h3>${ic("check")} Đã nhận lịch hẹn của bé ${esc(booking.pet_name)}</h3>
-          <p>${esc(service.name)} · ${booking.booking_time} ngày ${dateVN(booking.booking_date)}${pickup ? ` · Đưa đón ${pickup.fee ? money(pickup.fee) : "miễn phí"}/chiều` : ""}. Lễ tân sẽ xác nhận qua Zalo trong 30 phút.</p>
+          <p>${esc(service.name)} · ${kind === "slot" ? `${booking.booking_time} ngày ${dateVN(booking.booking_date)}` : `${rangeText(booking, service)}, nhận bé lúc ${booking.booking_time}`} · Tạm tính <strong>${money(est.total)}</strong>${pickup ? ` · Đưa đón ${pickup.fee ? money(pickup.fee) : "miễn phí"}/chiều` : ""}. Lễ tân sẽ xác nhận qua Zalo trong 30 phút.</p>
           <p class="muted">Thêm lịch hẹn vào điện thoại để không quên:</p>
           ${calendarLinks({ ...booking, id: saved && saved.id }, service.name)}
           ${auth.loggedIn ? "" : `<p class="muted" style="margin-top:14px"><a href="register.html">Tạo tài khoản</a> để xem lịch trên mọi thiết bị và viết đánh giá sau khi dùng dịch vụ.</p>`}`;
@@ -665,6 +750,8 @@
         form.pet_name.value = "";
         form.pet_weight.value = "";
         form.note.value = "";
+        if (kind !== "slot") form.medication.value = "";
+        showEstimate();
         refreshBookingCount();
       } catch (err) {
         toast(err.message, true);
@@ -793,12 +880,14 @@
           </div>
         </div>
         <div class="booking-info">
-          <div><span>Ngày hẹn</span><strong>${dateVN(b.booking_date)}</strong></div>
-          <div><span>Giờ hẹn</span><strong>${time}</strong></div>
+          <div><span>${b.end_date ? "Thời gian lưu trú" : "Ngày hẹn"}</span><strong>${rangeText(b, s)}</strong></div>
+          <div><span>${b.end_date ? "Giờ nhận bé" : "Giờ hẹn"}</span><strong>${time}</strong></div>
           <div><span>Thú cưng</span><strong>${esc(b.pet_name)} (${esc(b.pet_type)})</strong></div>
           <div><span>Cân nặng</span><strong>${Number(b.pet_weight)} kg</strong></div>
         </div>
+        ${b.diet || b.medication ? `<p class="muted">${b.diet ? `Chế độ ăn: ${esc(b.diet)}` : ""}${b.diet && b.medication ? " · " : ""}${b.medication ? `Thuốc: ${esc(b.medication)}` : ""}</p>` : ""}
         ${b.note ? `<p class="muted">Ghi chú: ${esc(b.note)}</p>` : ""}
+        <p class="muted">Tạm tính: <strong>${money(estimateBooking(s, b.pet_weight, b.booking_date, b.end_date).total)}</strong></p>
         <div class="booking-actions">
           ${
             b.status === "done"
@@ -812,7 +901,8 @@
         </div>
         <form hidden novalidate>
           <div class="form-grid">
-            <div class="field"><label>Ngày hẹn<input type="date" name="booking_date" required min="${todayISO()}" value="${esc(b.booking_date)}"></label></div>
+            <div class="field"><label>${b.end_date ? "Ngày nhận bé" : "Ngày hẹn"}<input type="date" name="booking_date" required min="${todayISO()}" value="${esc(b.booking_date)}"></label></div>
+            ${b.end_date ? `<div class="field"><label>Ngày trả bé<input type="date" name="end_date" required min="${todayISO()}" value="${esc(b.end_date)}"></label></div>` : ""}
             <div class="field"><label>Giờ hẹn<select name="booking_time" required>${timeOptions(time)}</select></label></div>
             <div class="field"><label>Cân nặng (kg)<input type="number" name="pet_weight" required min="0.1" max="99" step="0.1" value="${Number(b.pet_weight)}"></label></div>
             <div class="field"><label>Ghi chú<input name="note" maxlength="300" value="${esc(b.note)}"></label></div>
@@ -875,6 +965,12 @@
         pet_weight: Number(form.pet_weight.value),
         note: form.note.value.trim() || null,
       };
+      if (form.end_date) {
+        const gap = daysBetween(changes.booking_date, form.end_date.value);
+        if (gap < 0) return toast("Ngày trả bé không được trước ngày nhận bé.", true);
+        if (gap > 30) return toast("Mỗi lịch lưu trú tối đa 30 ngày.", true);
+        changes.end_date = form.end_date.value;
+      }
       try {
         await withButton(form.querySelector("button[type=submit]"), "Đang lưu…", () =>
           DB.updateBooking(form.closest(".booking").dataset.id, changes)
@@ -1147,13 +1243,14 @@
       function renderStats() {
         const today = todayISO();
         const active = bookings.filter((b) => b.status !== "cancelled");
+        // Doanh thu dự kiến: giá × số đêm/ngày × hệ số cân nặng, trừ ưu đãi lưu trú từ 5 đêm
         const revenue = bookings
           .filter((b) => b.status === "confirmed" || b.status === "done")
-          .reduce((sum, b) => sum + Number((b.services && b.services.price) || 0), 0);
+          .reduce((sum, b) => sum + (b.services ? estimateBooking(b.services, b.pet_weight, b.booking_date, b.end_date).total : 0), 0);
         $("#admin-stats").innerHTML = `
           <div class="info-card"><strong>${bookings.length}</strong><span>Tổng lịch hẹn</span></div>
           <div class="info-card"><strong>${bookings.filter((b) => b.status === "pending").length}</strong><span>Chờ xác nhận</span></div>
-          <div class="info-card"><strong>${active.filter((b) => b.booking_date === today).length}</strong><span>Lịch hôm nay</span></div>
+          <div class="info-card"><strong>${active.filter((b) => b.booking_date === today || (b.end_date && b.booking_date <= today && today <= b.end_date)).length}</strong><span>Lịch hôm nay (gồm bé đang lưu trú)</span></div>
           <div class="info-card"><strong>${money(revenue)}</strong><span>Doanh thu dự kiến (đã xác nhận)</span></div>`;
       }
 
@@ -1180,7 +1277,7 @@
             ? shown
                 .map(
                   (b) => `<tr data-id="${Number(b.id)}">
-                    <td><strong>${dateVN(b.booking_date)}</strong><span class="sub">${String(b.booking_time).slice(0, 5)}</span></td>
+                    <td><strong>${dateVN(b.booking_date)}${b.end_date ? ` → ${dateVN(b.end_date)}` : ""}</strong><span class="sub">${String(b.booking_time).slice(0, 5)}${b.end_date && b.services ? ` · ${stayCount(svcKind(b.services) === "stay" ? "stay" : "day", b.booking_date, b.end_date)} ${svcKind(b.services) === "stay" ? "đêm" : "ngày"}` : ""}</span></td>
                     <td>${esc(b.services && b.services.name)}<span class="sub">${money((b.services && b.services.price) || 0)}</span></td>
                     <td>${esc(b.owner_name)}<span class="sub">${esc(b.phone)}</span></td>
                     <td>${esc(b.pet_name)} (${esc(b.pet_type)})<span class="sub">${Number(b.pet_weight)} kg${b.note ? " · " + esc(b.note) : ""}</span></td>
@@ -1315,12 +1412,22 @@
                 .map(([k, v]) => `<option value="${k}"${k === "confirmed" ? " selected" : ""}>${v}</option>`)
                 .join("")}</select></div>
               <div class="field"><label for="ac-date">Ngày hẹn</label><input id="ac-date" name="booking_date" type="date" required min="${todayISO()}" value="${todayISO()}"></div>
+              <div class="field" id="ac-end-field" hidden><label for="ac-end">Ngày trả bé / đến ngày</label><input id="ac-end" name="end_date" type="date" min="${todayISO()}"></div>
               <div class="field"><label for="ac-time">Giờ hẹn</label><select id="ac-time" name="booking_time">${timeOptions("09:00")}</select></div>
               <div class="field full"><label for="ac-note">Ghi chú</label><input id="ac-note" name="note" maxlength="300" placeholder="Ví dụ: khách gọi hotline, bé sợ máy sấy"></div>
             </div>
             <div class="form-actions"><button type="submit" class="btn">${ic("calendar")} Tạo lịch hẹn</button></div>
           </form>`;
         const f = $("#admin-create");
+        const acKind = () => svcKind(services.find((s) => s.id === Number(f.service_id.value)));
+        const syncAc = () => {
+          const k = acKind();
+          $("#ac-end-field").hidden = k === "slot";
+          f.end_date.required = k !== "slot";
+          if (k !== "slot" && !f.end_date.value) f.end_date.value = k === "stay" ? addDays(f.booking_date.value, 1) : f.booking_date.value;
+        };
+        f.service_id.addEventListener("change", syncAc);
+        syncAc();
         f.addEventListener("submit", async (e) => {
           e.preventDefault();
           if (!f.reportValidity()) return;
@@ -1337,6 +1444,11 @@
             note: f.note.value.trim() || null,
             status: f.status.value,
           };
+          if (acKind() !== "slot") {
+            const n = stayCount(acKind(), booking.booking_date, f.end_date.value);
+            if (n < 1 || daysBetween(booking.booking_date, f.end_date.value) > 30) return toast("Khoảng ngày lưu trú không hợp lệ (1–30 ngày).", true);
+            booking.end_date = f.end_date.value;
+          }
           try {
             const created = await withButton(f.querySelector('button[type="submit"]'), "Đang tạo…", () => DB.adminCreateBooking(booking));
             bookings.unshift(created);

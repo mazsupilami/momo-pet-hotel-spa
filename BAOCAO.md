@@ -50,6 +50,7 @@ Website có 14 trang. Tất cả các trang khách dùng chung header (menu) và
 | 18 | Đặt lịch không cần tài khoản có hợp lý? Ai cũng viết đánh giá được có hợp lý? | Giữ đặt lịch không cần tài khoản; đánh giá chỉ cho khách đã hoàn thành dịch vụ |
 | 19 | Làm luật đánh giá và các API: Telegram, Realtime, phí đưa đón, thời tiết, thêm vào lịch, ảnh đánh giá, chống spam | Xem mục 3.5b |
 | 20 | Link Ưu đãi ở footer chưa tới đúng chỗ, cơ sở vật chất thiếu hình, thêm ảnh nhân viên, có nên thêm thanh tìm kiếm? | Sửa cuộn tới mục, 3 ảnh cơ sở vật chất, 4 thẻ nhân viên có ảnh; đánh giá thanh tìm kiếm |
+| 21 | Khách sạn và trông giữ có nên dùng chung form với spa? | Giữ một form, các ô đổi theo loại gói; thêm ngày trả bé, chế độ ăn, thuốc, tạm tính tiền |
 
 | Trang chủ | Về chúng tôi |
 |---|---|
@@ -137,6 +138,7 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 - **Tính phí đưa đón theo khoảng cách**: Geolocation của trình duyệt, OpenStreetMap Nominatim (địa chỉ sang tọa độ), OSRM (quãng đường xe chạy).
 - **Thời tiết Sài Gòn**: Open-Meteo, kèm lời khuyên chăm sóc bé theo nhiệt độ, mưa, UV.
 - **Thêm vào lịch**: Google Calendar và file .ics có nhắc trước 2 tiếng.
+- **Lưu trú nhiều ngày**: form đặt lịch tự đổi theo loại gói. Khách sạn chọn ngày nhận, ngày trả, giờ nhận, chế độ ăn, thuốc; trông giữ chọn từ ngày đến ngày; spa giữ ngày và giờ. Tạm tính tiền hiện ngay (số đêm × giá × hệ số cân nặng, giảm 10% từ 5 đêm). Trang Lịch hẹn, Quản trị (doanh thu, lịch hôm nay gồm bé đang lưu trú), Telegram và nút thêm vào lịch đều hiện khoảng ngày.
 - **Chống spam**: Cloudflare Turnstile qua CAPTCHA của Supabase Auth cho đặt lịch, đăng nhập, đăng ký, quên mật khẩu.
 
 ### 3.6. Nhúng
@@ -166,6 +168,10 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 | Đặt lịch mới, database gọi `notify-booking`, Telegram nhận tin (log POST 200) | Đạt |
 | Thanh dọc hiện đủ icon Zalo, Messenger, Gọi; số điện thoại là link gọi | Đạt |
 | Pop-up sau 3 giây; dàn thú cưng hiện chú thích khi rê chuột; Cẩm nang lọc theo chủ đề, mở bài viết | Đạt |
+
+### 3.9. Hướng phát triển
+
+- Quản lý phòng trống (24 phòng): bảng phòng và giữ chỗ theo ngày, để khách thấy còn phòng hay không trước khi đặt. Hiện lễ tân xác nhận qua Zalo.
 
 ## 4. Các file .md và chức năng
 

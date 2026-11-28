@@ -78,6 +78,7 @@ Mọi trang có chung header và footer, trong đó có đủ link tới các tr
 | F29 | Thời tiết TP.HCM ở Trang chủ kèm lời khuyên chăm sóc (Open-Meteo) | — | — |
 | F30 | Nút "Thêm vào lịch" (Google Calendar, file .ics) sau khi đặt lịch và ở trang Lịch hẹn | — | — |
 | F31 | Chống spam bằng Cloudflare Turnstile cho đặt lịch, đăng nhập, đăng ký, quên mật khẩu (qua CAPTCHA của Supabase Auth) | — | — |
+| F32 | Form đặt lịch đổi theo loại gói: khách sạn (ngày nhận, ngày trả, giờ nhận, chế độ ăn, thuốc), trông giữ (từ ngày đến ngày), spa (ngày, giờ); tạm tính tiền theo số đêm/ngày, cân nặng, giảm 10% từ 5 đêm; tối đa 30 ngày | **insert / update** | `bookings.end_date`, `diet`, `medication` |
 | F22 | Ưu đãi (khách mới, thẻ 10+1, lưu trú từ 5 đêm) và Cam kết chất lượng (quy trình xử lý phản hồi) | — | — |
 
 **Quy tắc vai trò**: tài khoản quản trị không dùng form đặt lịch và form đánh giá dành cho khách (hai form được thay bằng thông báo và link sang trang Quản trị). Admin đặt lịch hộ khách trong tab "Tạo lịch hẹn" của trang Quản trị.
