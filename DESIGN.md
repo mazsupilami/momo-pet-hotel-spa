@@ -40,8 +40,8 @@ Khai báo trong `:root` của `assets/css/style.css`. Không viết mã màu tr�
 3. **Đầu trang con** (`.page-hero`): ảnh nền phủ lớp màu `--ink`, đường dẫn (breadcrumb), tiêu đề, mô tả.
 4. **Dải kêu gọi** (`.cta-band`) cuối trang: nền xanh ngọc, nút đặt lịch và hotline.
 5. **Footer** 4 cột: giới thiệu + mạng xã hội, dịch vụ, liên kết trang, thông tin liên hệ.
-6. **Thanh mạng xã hội dọc** (`.social-rail`) bên trái: Zalo, Messenger, Facebook, Instagram, YouTube; **nút gọi** (`.call-pill`) góc trái dưới; **chatbot** (`.chatbot`) góc phải dưới; **nút lên đầu trang** (`.to-top`).
-7. Trên máy tính, link `tel:` tự đổi thành link Zalo (`initPhoneLinks()` trong `app.js`); trên điện thoại vẫn gọi trực tiếp.
+6. **Thanh liên hệ dọc** (`.social-rail`) bên trái, chỉ 3 nút: Zalo, Messenger, Gọi (`.sr-phone`). **Chatbot** (`.chatbot`) góc phải dưới; **nút lên đầu trang** (`.to-top`). Thanh trên cùng chỉ có địa chỉ, giờ mở cửa, hotline. Facebook, Instagram, YouTube chỉ ở footer. Mỗi kênh xuất hiện một lần ở mỗi vùng, không lặp.
+7. Số điện thoại luôn là link `tel:` (gọi). Muốn nhắn Zalo thì dùng nút Zalo riêng, không đổi ngầm số điện thoại thành Zalo.
 
 Chiều rộng nội dung tối đa 1200px, lề hai bên 20px. Lưới dịch vụ 4 cột (trang chủ) hoặc 3 cột (trang dịch vụ), 2 cột trên máy tính bảng, 1 cột trên điện thoại.
 
@@ -62,7 +62,9 @@ Chiều rộng nội dung tối đa 1200px, lề hai bên 20px. Lưới dịch v
 | `.panel` | Khung form đặt lịch, đánh giá |
 | `.booking` | Thẻ lịch hẹn: ảnh dịch vụ, trạng thái, thông tin, nút sửa và hủy |
 | `.btn-zalo` | Nút xanh Zalo (#0068FF) |
-| `.pack`, `.marquee` | Dải ảnh "đàn boss" chạy ngang, dừng khi rê chuột, nền họa tiết dấu chân |
+| `.parade`, `.peek`, `.peek-tip` | Dàn thú cưng ló đầu trên thanh đỏ ở Trang chủ. Rê chuột (hoặc Tab) bé nhô lên và hiện chú thích giống, tính cách. Điện thoại hiện 5 bé |
+| `.promo-card`, `.promo-tag` | Thẻ ưu đãi viền nét đứt, nhãn cam (-20%, 10+1, -10%) |
+| `.article-card`, `.article-wrap`, `.article-side`, `.related` | Thẻ bài cẩm nang, bố cục bài viết 2 cột (nội dung + cột tư vấn, bài liên quan) |
 | `.promo` | Pop-up ưu đãi (trang chủ, mỗi phiên một lần, sau 6 giây) |
 | `.reveal` | Hiện dần khi cuộn tới (IntersectionObserver); tắt khi người dùng chọn giảm chuyển động |
 | `.chatbot` | Khung chat trợ lý Momo (`assets/js/chatbot.js`) |
@@ -85,7 +87,7 @@ Có sẵn: `phone`, `pin`, `clock`, `mail`, `check`, `star`, `shield`, `camera`,
 
 ## 8. Ảnh
 
-Ảnh chụp thật trong `assets/img/photos/`, định dạng JPG, rộng tối đa 1400px. Nguồn: Unsplash và Pexels, giấy phép cho phép dùng miễn phí, không bắt buộc ghi nguồn. **Không dùng ảnh riêng của chú chó Momo trên website** (chỉ logo vẽ theo Momo) để website mang tính thương mại. Mọi ảnh có `alt` tiếng Việt.
+Ảnh chụp thật trong `assets/img/photos/`, định dạng JPG, rộng tối đa 1400px. Nguồn: Unsplash và Pexels, giấy phép cho phép dùng miễn phí, không bắt buộc ghi nguồn. **Ảnh thật của chú chó Momo chỉ dùng ở trang Về chúng tôi** (ảnh đầu trang `momo-sea.jpg`, ảnh câu chuyện `momo-portrait.jpg`) để khớp với logo; các trang khác dùng ảnh dịch vụ. Dàn thú cưng dùng ảnh chân dung nền sáng trong `photos/parade/`. Mọi ảnh có `alt` tiếng Việt.
 
 | Ảnh | Dùng cho |
 |---|---|

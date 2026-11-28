@@ -31,14 +31,18 @@ reset-password.html   Đặt lại mật khẩu từ email
 account.html       Tài khoản của tôi (hồ sơ, đổi mật khẩu)
 admin.html         Trang quản trị
 contact.html       Liên hệ, Google Map
+cam-nang.html      Cẩm nang (danh sách bài viết)
+bai-viet.html      Chi tiết một bài cẩm nang
 assets/css         Giao diện
 assets/js          config.js, db.js, app.js, chatbot.js
 assets/img         Logo, bộ icon (icons.svg) và ảnh (photos/)
 data/services.csv  Dữ liệu dịch vụ gốc
+data/articles.json Bài viết cẩm nang
 supabase/schema.sql  Mã tạo bảng và quy tắc bảo mật
 supabase/update_images.sql  Đổi hình dịch vụ sang ảnh thật
 supabase/auth_admin.sql     Tài khoản khách, quản trị viên, trạng thái lịch hẹn
-tools/gen_pages.py          Sinh 12 trang HTML từ một mẫu header/footer chung
+supabase/add_home_services.sql  Thêm 2 gói dịch vụ tại nhà
+tools/gen_pages.py          Sinh 14 trang HTML từ một mẫu header/footer chung
 docs/screenshots/           Ảnh chụp màn hình dùng trong BAOCAO.md
 ```
 

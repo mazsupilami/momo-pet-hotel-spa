@@ -27,9 +27,11 @@ Nhu cầu chính:
 
 | Trang | File | Nội dung |
 |---|---|---|
-| Trang chủ | `index.html` | Banner, số liệu, dịch vụ nổi bật (từ database), lý do chọn Momo, quy trình 4 bước, video YouTube, đánh giá khách hàng, thư viện ảnh, hỏi đáp |
-| Về chúng tôi | `about.html` | Câu chuyện thương hiệu, mốc thời gian, cơ sở vật chất, đội ngũ, bảng giá (từ database), giới thiệu cửa hàng |
-| Dịch vụ | `services.html` | Toàn bộ gói dịch vụ từ database, lọc theo nhóm |
+| Trang chủ | `index.html` | Banner, số liệu, dịch vụ nổi bật (từ database), lý do chọn Momo, quy trình 4 bước, video YouTube, dàn thú cưng ló đầu (rê chuột xem giống và tính cách), đánh giá khách hàng, thư viện ảnh, 3 bài cẩm nang mới, hỏi đáp |
+| Về chúng tôi | `about.html` | Câu chuyện thương hiệu kèm ảnh thật của Momo, mốc thời gian, cơ sở vật chất, đội ngũ, **Cam kết chất lượng** (`#cam-ket`), bảng giá (từ database), giới thiệu cửa hàng |
+| Dịch vụ | `services.html` | Toàn bộ gói dịch vụ từ database, lọc theo nhóm (Spa, Khách sạn, Combo, Tại nhà), bảng giá theo cân nặng, **Ưu đãi** (`#uu-dai`), chính sách |
+| Cẩm nang | `cam-nang.html` | Danh sách bài viết chăm sóc thú cưng, lọc theo chủ đề (đọc từ `data/articles.json`) |
+| Bài viết | `bai-viet.html?slug=…` | Nội dung một bài cẩm nang, bài viết liên quan, nút tư vấn Zalo |
 | Chi tiết dịch vụ | `service.html?id=…` | Thông tin một gói, form đặt lịch, đánh giá của khách |
 | Lịch hẹn của tôi | `bookings.html` | Xem lịch đã đặt, sửa lịch, hủy lịch |
 | Liên hệ | `contact.html` | Địa chỉ, giờ mở cửa, Google Map |
@@ -62,9 +64,12 @@ Mọi trang có chung header và footer, trong đó có đủ link tới các tr
 | F14 | Nút mắt hiện/ẩn mật khẩu ở mọi ô mật khẩu | — | — |
 | F15 | Quản trị: tạo lịch hẹn hộ khách gọi hotline hoặc đến tiệm, chọn sẵn trạng thái | **insert** | `bookings` |
 | F16 | Chatbot tư vấn tự động: báo giá (đọc từ database), hướng dẫn đặt lịch, giờ mở cửa, địa chỉ, khách sạn, đưa đón, chuyển sang Zalo | select | `services` |
-| F17 | Liên hệ nhanh: thanh mạng xã hội dọc (Zalo, Messenger, Facebook, Instagram, YouTube), nút gọi; trên máy tính bấm số điện thoại mở Zalo | — | — |
+| F17 | Liên hệ nhanh: thanh dọc gồm Zalo, Messenger, Gọi hotline. Số điện thoại luôn là link gọi; Zalo có nút riêng. Facebook, Instagram, YouTube chỉ đặt ở footer để tránh trùng lặp | — | — |
 | F18 | Bảng giá theo cân nặng (dưới 10 kg, 10–20 kg +30%, trên 20 kg +60%) tính từ database | select | `services` |
-| F19 | Pop-up ưu đãi khách mới, dải ảnh "đàn boss" chạy ngang, hiệu ứng rê chuột và hiện dần khi cuộn | — | — |
+| F19 | Pop-up ưu đãi khách mới (sau 3 giây, mỗi phiên một lần), dàn thú cưng ló đầu trên thanh đỏ, hiệu ứng rê chuột và hiện dần khi cuộn | — | — |
+| F20 | Dịch vụ tại nhà: Tắm & vệ sinh tại nhà, Cắt tỉa tại nhà (nhóm "Tại nhà") | select / insert | `services`, `bookings` |
+| F21 | Cẩm nang: 6 bài viết, lọc theo chủ đề, trang chi tiết bài viết | — | `data/articles.json` |
+| F22 | Ưu đãi (khách mới, thẻ 10+1, lưu trú từ 5 đêm) và Cam kết chất lượng (quy trình xử lý phản hồi) | — | — |
 
 **Quy tắc vai trò**: tài khoản quản trị không dùng form đặt lịch và form đánh giá dành cho khách (hai form được thay bằng thông báo và link sang trang Quản trị). Admin đặt lịch hộ khách trong tab "Tạo lịch hẹn" của trang Quản trị.
 

@@ -10,7 +10,7 @@
 
   const esc = (v) =>
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#${name}"/></svg>`;
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128d#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
   // Bỏ dấu tiếng Việt để so khớp từ khóa: "Cắt tỉa" -> "cat tia"
   const norm = (t) =>
@@ -19,6 +19,8 @@
 
   // Từ khóa nhận diện từng gói dịch vụ (theo id trong bảng services)
   const SERVICE_KEYS = [
+    { id: 11, keys: ["cat tia tai nha", "cat long tai nha", "tia long tai nha"] },
+    { id: 10, keys: ["tam tai nha", "tam o nha", "tam cho cho tai nha", "tam cho meo tai nha"] },
     { id: 8, keys: ["combo"] },
     { id: 3, keys: ["massage", "thu gian", "u long", "spa toan than"] },
     { id: 4, keys: ["ve sinh", "tai", "mong", "tuyen hoi"] },
@@ -63,6 +65,19 @@
     }
     if (has(t, ["gio mo", "mo cua", "dong cua", "may gio", "dia chi", "o dau", "duong nao", "ban do", "chi duong", "cho nao"])) {
       return `📍 ${ADDR}<br>⏰ 8:00 – 20:00 tất cả các ngày (khách sạn có người trực 24/7)<br><a href="contact.html">Xem bản đồ và chỉ đường</a>`;
+    }
+    if (has(t, ["cam nang", "kinh nghiem", "meo hay", "bai viet", "huong dan cham soc"])) {
+      return `Momo có mục <a href="cam-nang.html">Cẩm nang</a> với các bài: bao lâu nên tắm cho bé, chuẩn bị gì khi gửi khách sạn, cắt móng tại nhà, giữ bé mát mùa nóng…`;
+    }
+    if (has(t, ["uu dai", "khuyen mai", "giam gia", "voucher", "the thanh vien"])) {
+      return `Ưu đãi đang áp dụng: <strong>giảm 20% Combo</strong> cho khách mới, <strong>thẻ 10 lần tắm tặng 1</strong>, <strong>gửi từ 5 đêm giảm 10%</strong>. Xem chi tiết ở <a href="services.html#uu-dai">trang Ưu đãi</a>.`;
+    }
+    if (has(t, ["tai nha", "den nha", "o nha"]) && !has(t, ["dua don", "ruoc"])) {
+      const list = await getServices();
+      const home = list.filter((x) => x.category === "Tại nhà");
+      return home.length
+        ? `Momo có dịch vụ tại nhà trong khu vực gần tiệm:<ul>${home.map(serviceLine).join("")}</ul>Thợ mang đủ dụng cụ, bé không phải di chuyển.`
+        : `Momo đang triển khai dịch vụ tắm và cắt tỉa tại nhà. Nhắn Zalo để lễ tân xếp lịch cho bạn:<br>${zaloBtn()}`;
     }
     if (has(t, ["dua don", "don tan nha", "ruoc", "tan nha", "ship"])) {
       return "Momo <strong>miễn phí đưa đón</strong> trong bán kính 3 km quanh tiệm, xa hơn tính 10.000đ/km. Bạn ghi địa chỉ vào ô ghi chú khi đặt lịch, hoặc nhắn Zalo để lễ tân sắp xếp.<br>" + zaloBtn();

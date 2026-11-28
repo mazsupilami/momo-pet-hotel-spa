@@ -6,7 +6,7 @@
   // ---------- Tiện ích ----------
   const esc = (v) =>
     String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg#${name}"/></svg>`;
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="assets/img/icons.svg?v=20261128d#${name}"/></svg>`;
   const money = (n) => Number(n).toLocaleString("vi-VN") + "đ";
   // Phụ thu theo cân nặng: dưới 10 kg giá niêm yết, 10–20 kg +30%, trên 20 kg +60%
   const WEIGHT_TIERS = [1, 1.3, 1.6];
@@ -138,7 +138,7 @@
   }
 
   function initHeader() {
-    const current = page === "service" ? "services" : page;
+    const current = page === "service" ? "services" : page === "article" ? "news" : page;
     const authPages = ["account", "login", "register", "forgot", "reset"];
     if (authPages.includes(current) && $("#account-link")) $("#account-link").setAttribute("aria-current", "page");
     const link = $(`.nav [data-nav="${current}"]`);
@@ -154,10 +154,78 @@
     });
   }
 
+  // ---------- Cẩm nang (data/articles.json) ----------
+  let articlesCache = null;
+  async function getArticles() {
+    if (!articlesCache) {
+      const res = await fetch("data/articles.json?v=20261128d");
+      if (!res.ok) throw new Error("Không tải được bài viết.");
+      articlesCache = (await res.json()).sort((a, b) => b.date.localeCompare(a.date));
+    }
+    return articlesCache;
+  }
+  const articleCard = (a) => `
+    <a class="svc-card article-card" href="bai-viet.html?slug=${encodeURIComponent(a.slug)}">
+      <div class="svc-media"><img src="${esc(a.image)}" alt="" loading="lazy"><span class="svc-tag">${esc(a.category)}</span></div>
+      <div class="svc-body">
+        <span class="muted" style="font-size:.85rem">${dateVN(a.date)}</span>
+        <h3>${esc(a.title)}</h3>
+        <p>${esc(a.excerpt)}</p>
+        <div class="svc-foot"><span class="link-arrow">Đọc tiếp ${ic("arrow")}</span></div>
+      </div>
+    </a>`;
+
+  async function initNews() {
+    const list = await getArticles();
+    const cats = ["Tất cả", ...new Set(list.map((a) => a.category))];
+    const filters = $("#article-filters");
+    const box = $("#article-list");
+    const render = (cat) => {
+      box.innerHTML = list.filter((a) => cat === "Tất cả" || a.category === cat).map(articleCard).join("");
+      filters.innerHTML = cats
+        .map((c) => `<button type="button" data-cat="${esc(c)}" aria-pressed="${c === cat}">${esc(c)}</button>`)
+        .join("");
+    };
+    filters.addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-cat]");
+      if (b) render(b.dataset.cat);
+    });
+    render("Tất cả");
+  }
+
+  async function initArticle() {
+    const slug = new URLSearchParams(location.search).get("slug");
+    const list = await getArticles();
+    const a = list.find((x) => x.slug === slug);
+    const box = $("#article");
+    if (!a) {
+      $("#crumb").textContent = "Không tìm thấy";
+      box.innerHTML = `<div class="panel empty"><img src="assets/img/logo-mark.svg" alt=""><h2>Không tìm thấy bài viết</h2><a class="btn" href="cam-nang.html">Xem cẩm nang</a></div>`;
+      return;
+    }
+    document.title = `${a.title} | Momo Pet Hotel & Spa`;
+    $("#crumb").textContent = a.title;
+    // Nội dung bài viết do Momo soạn trong data/articles.json (không phải nội dung khách nhập)
+    box.innerHTML = `
+      <span class="chip">${esc(a.category)}</span>
+      <h1>${esc(a.title)}</h1>
+      <p class="muted">${dateVN(a.date)} · Momo Pet Hotel &amp; Spa</p>
+      <img class="photo wide" src="${esc(a.image)}" alt="" style="margin:18px 0 26px">
+      <div class="article-body">${a.content.map((c) => (c.startsWith("<") ? c : `<p>${c}</p>`)).join("")}</div>
+      <p class="muted article-note">Bài viết mang tính tham khảo chung. Khi bé có dấu hiệu bất thường, hãy đưa bé đến bác sĩ thú y.</p>`;
+    $("#related").innerHTML = list
+      .filter((x) => x.slug !== a.slug)
+      .slice(0, 3)
+      .map((x) => `<a class="related-item" href="bai-viet.html?slug=${encodeURIComponent(x.slug)}"><img src="${esc(x.image)}" alt=""><span>${esc(x.title)}</span></a>`)
+      .join("");
+  }
+
   // ---------- Trang chủ ----------
   async function initHome() {
     const services = await DB.getServices();
     $("#featured-services").innerHTML = services.filter((s) => s.is_featured).slice(0, 4).map(serviceCard).join("");
+    const latest = $("#latest-articles");
+    if (latest) getArticles().then((l) => (latest.innerHTML = l.slice(0, 3).map(articleCard).join(""))).catch(() => (latest.innerHTML = ""));
   }
 
   // ---------- Về chúng tôi: bảng giá ----------
@@ -1042,12 +1110,11 @@
       try {
         sessionStorage.setItem("momo-promo", "1");
       } catch {}
-    }, 6000);
+    }, 3000);
   }
 
   // ---------- Khởi động ----------
   initHeader();
-  initPhoneLinks();
   initEffects();
   refreshAccountLink();
   const inits = {
@@ -1061,6 +1128,8 @@
     register: initRegister,
     forgot: initForgot,
     reset: initReset,
+    news: initNews,
+    article: initArticle,
     admin: initAdmin,
   };
   Promise.resolve(inits[page] ? inits[page]() : null).catch((err) => {

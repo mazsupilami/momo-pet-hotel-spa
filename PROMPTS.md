@@ -152,3 +152,17 @@ Ghi lại thứ tự các prompt trong cuộc trò chuyện với Claude Code v�
 - Học từ web tham khảo: bảng giá theo cân nặng (tính từ database), đưa đón tận nhà, hỏi đáp và lưu ý mới.
 - Hiệu ứng: pop-up ưu đãi khách mới (trang chủ, mỗi phiên một lần), dải ảnh "đàn boss nhà Momo" chạy ngang dừng khi rê chuột, hiệu ứng rê chuột cho thẻ, icon, menu, logo, hiện dần khi cuộn, nút lên đầu trang.
 - Chụp lại ảnh màn hình cho báo cáo.
+
+## Prompt 14 — Ảnh Momo, giảm trùng lặp, dịch vụ tại nhà, cẩm nang, dàn thú cưng (28/11/2026)
+
+**Prompt**: Trang Về chúng tôi có thể dùng ảnh thật của Momo cho khớp logo. Giao diện đang trùng lặp: nhiều số điện thoại cùng chuyển về Zalo, icon mạng xã hội ở cả thanh ngang lẫn thanh dọc (thanh dọc còn hiện ô trắng); đánh giá có cần thiết không. Tham khảo petservicehcm.com (Spa & Tắm, Dịch vụ tại nhà, Khách sạn – Trông giữ, Bảng giá, Cam kết chất lượng) và mục Tin tức/Cẩm nang của cherrypetcoffee.com. Chưa thấy pop-up và "dàn thú cưng" như ảnh chụp (hàng chó ló đầu trên thanh đỏ, rê chuột hiện thông tin).
+
+**Kết quả**:
+- Ô trắng ở thanh dọc do trình duyệt giữ bản cũ của `icons.svg` (chưa có icon Zalo, Messenger). Thêm số phiên bản `icons.svg?v=…` cho mọi icon.
+- Giảm trùng lặp: thanh trên cùng chỉ còn địa chỉ, giờ mở cửa, hotline (bỏ nút Chat Zalo và icon mạng xã hội); thanh dọc chỉ còn Zalo, Messenger, Gọi; bỏ nút gọi nổi; Facebook, Instagram, YouTube ở footer. Bỏ việc tự đổi số điện thoại thành link Zalo: số điện thoại luôn để gọi, Zalo có nút riêng.
+- Trang Về chúng tôi dùng ảnh thật của Momo (ảnh đầu trang bên biển, ảnh câu chuyện), các trang khác vẫn dùng ảnh dịch vụ.
+- Dịch vụ tại nhà: 2 gói "Tắm & vệ sinh tại nhà", "Cắt tỉa tại nhà" (nhóm "Tại nhà") trong `data/services.csv` và `supabase/add_home_services.sql`.
+- Ưu đãi (`services.html#uu-dai`): khách mới -20% Combo, thẻ 10+1, lưu trú từ 5 đêm -10%. Cam kết chất lượng (`about.html#cam-ket`): 6 cam kết, quy trình xử lý phản hồi 3 bước, bảng tình huống và cách hỗ trợ.
+- Cẩm nang: trang `cam-nang.html` (lọc theo chủ đề) và `bai-viet.html?slug=…` (bài liên quan, nút Zalo), 6 bài trong `data/articles.json`; Trang chủ hiện 3 bài mới; menu thêm "Cẩm nang"; chatbot trả lời về cẩm nang, ưu đãi, dịch vụ tại nhà.
+- Dàn thú cưng: 8 bé (Pug, Poodle, Corgi, Border Collie, mèo ta, Chihuahua, Golden, Poodle lai) ló đầu trên thanh đỏ; rê chuột hoặc Tab thì bé nhô lên, hiện giống và tính cách. Điện thoại hiện 5 bé, không cuộn ngang.
+- Pop-up ưu đãi hiện sau 3 giây (trước là 6 giây nên dễ bỏ lỡ), mỗi phiên một lần.

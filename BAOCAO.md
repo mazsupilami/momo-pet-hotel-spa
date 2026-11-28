@@ -26,13 +26,13 @@
 
 ## 2. Các trang trong dự án
 
-Website có 12 trang. Tất cả các trang khách dùng chung header (menu) và footer, nên trang nào cũng dẫn được tới các trang còn lại.
+Website có 14 trang. Tất cả các trang khách dùng chung header (menu) và footer, nên trang nào cũng dẫn được tới các trang còn lại.
 
 | # | Trang | File | Nội dung chính |
 |---|---|---|---|
-| 1 | **Trang chủ** | `index.html` | Banner, số liệu, dịch vụ nổi bật (đọc từ database), lý do chọn Momo, quy trình 4 bước, **video YouTube**, đánh giá khách hàng, thư viện ảnh, hỏi đáp |
-| 2 | **Về chúng tôi** | `about.html` | Câu chuyện Momo, mốc thời gian, cơ sở vật chất, đội ngũ, **bảng giá** (từ database), **video giới thiệu của shop trên YouTube** |
-| 3 | Dịch vụ & Bảng giá | `services.html` | Toàn bộ gói dịch vụ từ database, lọc theo nhóm Spa / Khách sạn / Combo |
+| 1 | **Trang chủ** | `index.html` | Banner, số liệu, dịch vụ nổi bật (đọc từ database), lý do chọn Momo, quy trình 4 bước, **video YouTube**, dàn thú cưng ló đầu, đánh giá khách hàng, thư viện ảnh, 3 bài cẩm nang mới, hỏi đáp |
+| 2 | **Về chúng tôi** | `about.html` | Câu chuyện Momo (ảnh thật của Momo), mốc thời gian, **Cam kết chất lượng**, cơ sở vật chất, đội ngũ, **bảng giá** (từ database), **video giới thiệu của shop trên YouTube** |
+| 3 | Dịch vụ & Bảng giá | `services.html` | Toàn bộ gói dịch vụ từ database, lọc theo nhóm Spa / Khách sạn / Combo / Tại nhà, bảng giá theo cân nặng, **Ưu đãi** |
 | 4 | **Chi tiết dịch vụ** | `service.html?id=…` | Thông tin gói, giá, **form đặt lịch**, đánh giá của khách |
 | 5 | Lịch hẹn của tôi | `bookings.html` | Xem, **sửa**, **hủy** lịch hẹn |
 | 6 | Liên hệ | `contact.html` | Địa chỉ, giờ mở cửa, hotline, **Google Map** |
@@ -42,6 +42,8 @@ Website có 12 trang. Tất cả các trang khách dùng chung header (menu) và
 | 10 | Đặt lại mật khẩu | `reset-password.html` | Mở từ liên kết trong email |
 | 11 | Tài khoản của tôi | `account.html` | Sửa họ tên, số điện thoại, đổi mật khẩu, đăng xuất |
 | 12 | Quản trị | `admin.html` | Giao diện riêng cho admin |
+| 13 | Cẩm nang | `cam-nang.html` | 6 bài viết chăm sóc thú cưng, lọc theo chủ đề |
+| 14 | Bài viết | `bai-viet.html?slug=…` | Nội dung bài cẩm nang, bài liên quan, nút tư vấn Zalo |
 
 | Trang chủ | Về chúng tôi |
 |---|---|
@@ -102,8 +104,8 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 
 ### 3.4. Liên hệ nhanh và chatbot
 
-- **Thanh mạng xã hội dọc** bên trái (Zalo, Messenger, Facebook, Instagram, YouTube), **nút gọi** góc trái dưới, nút **Chat Zalo** trên thanh trên cùng, trang Liên hệ, trang chi tiết dịch vụ và dải kêu gọi cuối trang. Học từ cherrypetcoffee.com và petservicehcm.com.
-- **Bấm số điện thoại**: trên điện thoại gọi trực tiếp; trên máy tính mở Zalo của shop.
+- **Thanh liên hệ dọc** bên trái chỉ 3 nút: Zalo, Messenger, Gọi. Thanh trên cùng chỉ có địa chỉ, giờ mở cửa, hotline. Facebook, Instagram, YouTube ở footer. Bản trước lặp mạng xã hội ở cả thanh ngang và thanh dọc, nhiều số điện thoại cùng mở Zalo; đã gom lại để mỗi kênh chỉ xuất hiện một lần.
+- **Bấm số điện thoại** luôn là gọi; nhắn Zalo dùng nút Zalo riêng (thanh dọc, trang Liên hệ, chi tiết dịch vụ, chatbot).
 - **Chatbot "Trợ lý Momo"** (`assets/js/chatbot.js`): khung chat góc phải dưới, có nút câu hỏi nhanh. Trả lời tự động theo từ khóa tiếng Việt (có hoặc không dấu): bảng giá và giá từng gói (đọc trực tiếp từ bảng `services` trên Supabase), cách đặt/đổi/hủy lịch, giờ mở cửa, địa chỉ, khách sạn, đưa đón, phụ thu cân nặng, tiêm phòng, nhận mèo. Câu ngoài phạm vi được chuyển sang Zalo của lễ tân. Chatbot chạy hoàn toàn trên trình duyệt nên dùng được trên GitHub Pages, không tốn phí.
 - **Hướng nâng cấp chatbot AI**: có thể dùng mô hình ngôn ngữ (ví dụ Claude) qua một Supabase Edge Function để giữ bí mật khóa API; cần khóa API và chi phí theo lượt dùng nên chưa làm trong bài này.
 
@@ -111,7 +113,9 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 
 - **Bảng giá theo cân nặng** (dưới 10 kg, 10–20 kg, trên 20 kg) tính tự động từ database ở trang Dịch vụ.
 - **Đưa đón tận nhà** (miễn phí 3 km), mục **lưu ý trước khi đặt lịch**, hỏi đáp mới.
-- **Pop-up ưu đãi khách mới** ở trang chủ (mỗi phiên một lần), dải ảnh **"đàn boss"** chạy ngang dừng khi rê chuột, hiệu ứng **rê chuột** trên thẻ, icon, menu, logo và hiệu ứng **hiện dần khi cuộn**, nút **lên đầu trang**.
+- **Dịch vụ tại nhà** (Tắm & vệ sinh tại nhà, Cắt tỉa tại nhà), **Ưu đãi** (khách mới -20%, thẻ 10+1, lưu trú từ 5 đêm -10%), **Cam kết chất lượng** (6 cam kết, quy trình xử lý phản hồi 3 bước, bảng tình huống và cách hỗ trợ). Học từ petservicehcm.com.
+- **Cẩm nang** (học từ mục Tin tức của cherrypetcoffee.com): 6 bài viết, lọc theo chủ đề, trang chi tiết có bài liên quan; 3 bài mới nhất hiện ở Trang chủ; chatbot trả lời câu hỏi về cẩm nang, ưu đãi, dịch vụ tại nhà.
+- **Pop-up ưu đãi khách mới** ở trang chủ (sau 3 giây, mỗi phiên một lần), **dàn thú cưng ló đầu trên thanh đỏ** (rê chuột thì bé nhô lên và hiện giống, tính cách), hiệu ứng **rê chuột** trên thẻ, icon, menu, logo và hiệu ứng **hiện dần khi cuộn**, nút **lên đầu trang**.
 
 ### 3.6. Nhúng
 
@@ -134,9 +138,10 @@ Mã tạo bảng và quy tắc bảo mật (Row Level Security) nằm trong `sup
 | Khách mở trang Quản trị bị chặn; khách tự đổi trạng thái lịch bị database chặn | Đạt |
 | Admin đổi trạng thái, sửa giá, xóa lịch, xóa đánh giá | Đạt |
 | Gửi email khôi phục mật khẩu (Supabase ghi nhận `mail.send`) | Đạt |
-| 12 trang trên GitHub Pages trả về 200, không tràn ngang trên điện thoại | Đạt |
+| 14 trang trên GitHub Pages trả về 200, không tràn ngang trên điện thoại | Đạt |
 | Chatbot trả lời 14 câu hỏi mẫu (giá, đặt lịch, giờ mở cửa, đưa đón, cân nặng, mèo, khách sạn…) | Đạt |
-| Máy tính bấm số điện thoại mở Zalo; điện thoại giữ gọi trực tiếp | Đạt |
+| Thanh dọc hiện đủ icon Zalo, Messenger, Gọi; số điện thoại là link gọi | Đạt |
+| Pop-up sau 3 giây; dàn thú cưng hiện chú thích khi rê chuột; Cẩm nang lọc theo chủ đề, mở bài viết | Đạt |
 
 ## 4. Các file .md và chức năng
 
@@ -169,12 +174,13 @@ Chi tiết từng prompt ở **[PROMPTS.md](PROMPTS.md)**. Tóm tắt:
 | 11 | Instagram, YouTube, test toàn bộ, deploy | Test đạt, deploy GitHub Pages, Instagram 3 bài, YouTube ảnh bìa + video, báo cáo này |
 | 12 | Admin đăng nhập vẫn đặt lịch được, có đúng không? | Ẩn form đặt lịch/đánh giá với admin, thêm tab Tạo lịch hẹn hộ khách trong Quản trị |
 | 13 | Bỏ chữ ở footer, học 2 website thú cưng, bỏ ảnh Momo, liên hệ Zalo, chatbot; hiệu ứng rê chuột, pop-up, đàn chó | Footer gọn, ảnh dịch vụ, thanh mạng xã hội + Zalo, chatbot, bảng giá theo cân nặng, đưa đón, pop-up, dải ảnh chạy ngang, hiệu ứng |
+| 14 | Ảnh Momo ở trang Về chúng tôi, giảm trùng lặp liên hệ, dịch vụ tại nhà, cam kết, ưu đãi, cẩm nang, dàn thú cưng | Gom liên hệ (thanh dọc 3 nút, bỏ đổi số sang Zalo), sửa icon trắng, dịch vụ tại nhà, Ưu đãi, Cam kết chất lượng, 2 trang Cẩm nang, dàn thú cưng ló đầu, pop-up 3 giây |
 
 ## Đối chiếu tiêu chí chấm
 
 | Tiêu chí | Điểm | Đáp ứng |
 |---|---|---|
-| Ít nhất 3 trang: Trang chủ, Về chúng tôi, Chi tiết | 3 | 12 trang, có đủ 3 trang bắt buộc |
+| Ít nhất 3 trang: Trang chủ, Về chúng tôi, Chi tiết | 3 | 14 trang, có đủ 3 trang bắt buộc |
 | Database CSV / SQLite / Supabase | 3 | Supabase 5 bảng + `data/services.csv` |
 | Ít nhất 2 chức năng chỉnh sửa database | 2 | Insert, update, delete trên `bookings`, `reviews`, `profiles`, `services` |
 | Nhúng Google Map hoặc YouTube | 0,5 | Cả Google Map và 2 video YouTube |

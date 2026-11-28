@@ -11,7 +11,7 @@ Mã tạo bảng nằm ở `supabase/schema.sql`. Dữ liệu dịch vụ gốc 
 |---|---|---|
 | id | integer | Khóa chính |
 | name | text | Tên gói |
-| category | text | Spa, Khách sạn, Combo |
+| category | text | Spa, Khách sạn, Combo, Tại nhà |
 | price | integer | Giá, đơn vị đồng |
 | unit | text | lần, đêm, ngày |
 | duration | text | Thời lượng |
@@ -107,7 +107,8 @@ Hàm `is_admin()` trả về `true` nếu người đang đăng nhập có trong
 3. **Authentication > Sign In / Providers**: bật **Allow anonymous sign-ins**, rồi bấm **Save changes** ở cuối trang. Kiểm tra: mở `https://<project>.supabase.co/auth/v1/settings?apikey=<khóa publishable>`, dòng `"anonymous_users"` phải là `true`.
 4. **Project Settings > API**: chép Project URL và khóa publishable (anon) vào `assets/js/config.js`.
 5. Nếu bảng `services` được tạo trước khi có ảnh thật, chạy thêm `supabase/update_images.sql`.
-6. **SQL Editor**: chạy `supabase/auth_admin.sql` (bảng `profiles`, `admins`, cột `status`, quyền quản trị).
+6. **SQL Editor**: chạy `supabase/add_home_services.sql` để thêm 2 gói dịch vụ tại nhà (id 10, 11).
+6b. **SQL Editor**: chạy `supabase/auth_admin.sql` (bảng `profiles`, `admins`, cột `status`, quyền quản trị).
 7. **Authentication > Sign In / Providers > Email**: tắt **Confirm email** để khách đăng ký xong dùng được ngay (bản demo không gửi email).
 8. **Tạo tài khoản admin**: Authentication > Users > Add user > Create new user (tích Auto Confirm User). Sau đó chạy câu lệnh cuối file `auth_admin.sql` với email vừa tạo.
 9. **Khôi phục mật khẩu**: Authentication > URL Configuration. Đặt **Site URL** là địa chỉ website (khi chạy máy là `http://localhost:8000`, khi deploy là link GitHub Pages). Ở **Redirect URLs** thêm `http://localhost:8000/**` và link GitHub Pages kèm `/**`. Nếu thiếu, liên kết trong email sẽ mở sai địa chỉ.
