@@ -399,10 +399,10 @@
 
     async adminUpdateProfile(id, { full_name, phone }) {
       requireDb();
-      const { data, error } = await sb
-        .from("profiles")
-        .upsert({ id, full_name: full_name || null, phone: phone || null, updated_at: new Date().toISOString() })
-        .select("id");
+      const row = { full_name: full_name || null, phone: phone || null, updated_at: new Date().toISOString() };
+      // Cập nhật hồ sơ đã có; khách chưa có hồ sơ thì tạo mới (cần quyền "profiles: admin tạo" trong qa_fixes.sql)
+      let { data, error } = await sb.from("profiles").update(row).eq("id", id).select("id");
+      if (!error && !data.length) ({ data, error } = await sb.from("profiles").insert({ id, ...row }).select("id"));
       if (error) throw new Error("Không lưu được hồ sơ khách: " + error.message);
       if (!data.length) throw new Error("Không có quyền sửa hồ sơ này.");
     },

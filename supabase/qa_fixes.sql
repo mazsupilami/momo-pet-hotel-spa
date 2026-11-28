@@ -67,3 +67,8 @@ grant execute on function public.admin_list_customers() to authenticated;
 drop policy if exists "profiles: admin sửa" on public.profiles;
 create policy "profiles: admin sửa" on public.profiles
   for update to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- 5) Admin tạo hồ sơ cho khách chưa có hồ sơ (khách đăng ký nhưng chưa nhập họ tên, số điện thoại).
+drop policy if exists "profiles: admin tạo" on public.profiles;
+create policy "profiles: admin tạo" on public.profiles
+  for insert to authenticated with check (public.is_admin());
